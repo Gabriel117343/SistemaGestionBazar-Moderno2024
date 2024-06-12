@@ -39,25 +39,21 @@ export const FormOrdenCompra = ({ volver }) => {
   useEffect(()=> {
    
    function calcularCodigo () {
-    let newCodigo = 'PO-0001' // codigo por defecto
-    if (pedidos.length === 0) {
-      setCodigoPedido(newCodigo)
-      return
-    }
+    let codigoInicial = 'PO-0001' // codigo por defecto
     const maximo = pedidos.reduce((acc, pedido) => {
       let numero = parseInt(pedido.codigo.replace('PO-', ''))
       return numero > acc ? numero : acc
     }, 0)
   
-    newCodigo = (maximo + 1).toString().padStart(4, '0') // deben ver 4 digitos en el codigo, se rellena con 0 si es necesario
+    codigoInicial = (maximo + 1).toString().padStart(4, '0') // deben ver 4 digitos en el codigo, se rellena con 0 si es necesario
 
-    setCodigoPedido(`PO-${newCodigo}`) // se une el array para formar el nuevo codigo
+    setCodigoPedido(`PO-${codigoInicial}`) // se une el array para formar el nuevo codigo
    }
    calcularCodigo()
     
   }, [])
   useEffect(() => {
-    const calcularSubtotal = () => {
+     function calcularSubtotal() {
       const sub = productosAgregados.map(producto => producto.subtotal) // se crea un array con los subtotales de cada producto
       const subtotal = sub.reduce((a, b) => a + b, 0) // se suman los subtotales del array
       setSubtotal(subtotal)
@@ -83,11 +79,6 @@ export const FormOrdenCompra = ({ volver }) => {
     setProductosDeProveedor(productosDelProveedor)
     console.log(productosDelProveedor)
   }
-  
-  console.log(pedidos)
-  console.log(productos)
-  console.log(proveedores)
-  
   const agregarProducto = (event) => {
     event.preventDefault()
     const datosOrden = Object.fromEntries(new FormData(event.target))
@@ -227,7 +218,6 @@ export const FormOrdenCompra = ({ volver }) => {
     }
 
   }
-  
   
   const imprimir = () => {
     print()
