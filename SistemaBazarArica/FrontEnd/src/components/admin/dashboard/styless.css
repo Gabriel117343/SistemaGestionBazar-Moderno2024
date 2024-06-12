@@ -1,0 +1,39 @@
+.container-card {
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));  
+  gap: 15px 20px;
+  margin: 0 auto;
+
+}
+.texto-nowrap {
+  white-space: nowrap;
+
+}
+
+.icono-dash {
+  font-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+}
+
+div.color-card-1 {
+  background: rgb(206, 151, 34);
+  
+}
+div.color-card-2 {
+  background: rgb(206, 34, 34);
+}
+div.color-card-3 {
+  background: rgb(59, 160, 19);
+}
+div.color-card-4 {
+  background: rgb(34, 34, 206);
+}
+.grafico {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}

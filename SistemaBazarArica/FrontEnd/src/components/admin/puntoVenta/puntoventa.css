@@ -1,0 +1,177 @@
+.productos {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+.producto {
+ 
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ccc;
+  background: rgb(255, 255, 255);
+  max-width: 270px;
+  
+  
+
+}
+.productos-contenedor {
+  width: 100%;
+  height: 100%;
+  /* Add your background pattern here */
+  background-color: #ffffff;
+  background-image: radial-gradient(rgba(12, 12, 12, 0.171) 2px, transparent 0);
+  background-size: 30px 30px;
+  background-position: -5px -5px;
+}
+
+.ul-carrito {
+
+  min-height: 28vh;
+  
+
+}
+.ul-carrito::after {
+  content: "";
+  display: block;
+  border: 1px solid #ccc;
+  margin-top: 8px;
+}
+.contenedor-secciones {
+
+  overflow-x: auto;
+}
+
+.seccion {
+  flex-direction: row;
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fil, minmax(180px, 1fr));
+
+}
+
+.btn-seleccion {
+  width: 100%;
+  padding: 2px;
+  background: #f1f1f1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 5px 0;
+  cursor: pointer;
+  text-wrap: nowrap;
+  font-size:15px;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+
+  
+}
+.btn-filtro {
+  background: #F7971E;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #FFD200, #F7971E);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #FFD200, #F7971E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+
+  color: white;
+  opacity: 0.9;
+
+}
+
+@keyframes escalar {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.0.5);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
+.btn-nuevo-animacion:hover {
+  background-position: right center;
+  background-size: 200% auto;
+  -webkit-animation: pulse 2s infinite;
+  animation: pulse1 1.5s infinite;
+
+}
+
+@keyframes pulse11 {
+  0% {
+   box-shadow: 0 0 0 0 #e6dc8766;
+  }
+ 
+  70% {
+   box-shadow: 0 0 0 10px rgba(192, 174, 72, 0);
+  }
+ 
+  100% {
+   box-shadow: 0 0 0 0 rgba(197, 157, 48, 0);
+  }
+ }
+
+.btn-seleccion:hover {
+  
+  -webkit-animation: pulse 2s infinite;
+  animation: pulse11 1.5s infinite;
+  box-shadow: 0 0 5px 0 rgba(226, 180, 52, 0.829);
+}
+/* Estilos para el carrito de compras*/
+.precio-num {
+  font-size: 17px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+  padding: 0;
+
+}
+.stock-num {
+  font-size: 14px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+  padding: 0;
+}
+.boton-restar {
+  width: 22px;
+  height: 20px;
+  background-color: #f1f1f1;
+  border: 1px solid rgb(80, 80, 80);
+  border-radius: 20%;
+  
+  
+
+}
+.boton-restar:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+  animation: escalar 0.3s;
+  
+}
+.boton-sumar {
+  width: 22px;
+  height: 20px;
+  background-color: #f1f1f1;
+  border: 1px solid rgb(80, 80, 80);
+  border-radius: 20%;
+}
+.boton-sumar:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+  animation: escalar 0.3s;
+}
+
+.button-especial {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}

@@ -1,0 +1,32 @@
+/* Estilos para los botones*/
+@keyframes pulse1 {
+  0% {
+   box-shadow: 0 0 0 0 #05bada66;
+  }
+ 
+  70% {
+   box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
+  }
+ 
+  100% {  
+   box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
+  }
+ }
+ 
+ .btn-nuevo-animacion:hover {
+  background-position: right center;
+  background-size: 200% auto;
+  -webkit-animation: pulse 2s infinite;
+  animation: pulse1 1.5s infinite;
+
+}
+
+.targeta {
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+  background-color: green;
+  color: white;
+  padding: 10px;
+
+}

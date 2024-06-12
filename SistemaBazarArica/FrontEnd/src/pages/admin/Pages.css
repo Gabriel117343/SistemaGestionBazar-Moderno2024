@@ -1,0 +1,17 @@
+
+.titulo-page {
+    color: #555555;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e6dddd;
+    background: #f8f8f8;
+    
+}
+.container-grid {
+    width: 100%;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+     
+}
