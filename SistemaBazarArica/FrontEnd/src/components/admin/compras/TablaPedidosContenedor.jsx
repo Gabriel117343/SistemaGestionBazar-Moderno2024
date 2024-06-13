@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useRef } from 'react'
 import { PedidosContext } from '../../../context/PedidosContext'
 import { toast } from 'react-hot-toast'
 import Swal from 'sweetalert2'
@@ -8,12 +8,15 @@ import { FormOrdenCompra } from './FormOrdenCompra'
 import { StocksContext } from '../../../context/StocksContext'
 // Para la UI
 import { ButtonNew } from '../../shared/ButtonNew'
+import ReactToPrint from 'react-to-print'
+
 import './compras.css'
 export const TablaPedidosContenedor = () => {
   const [pedidoBuscado, setPedidoBuscado] = useState(null) // Nuevo estado para el input de busqueda
   const { statePedido: { pedidos }, getPedidosContext, eliminarPedidoContext, recibirPedidoContext } = useContext(PedidosContext)
   const { stateStock: { stocks }, recibirStockContext } = useContext(StocksContext)
   const [formularioActivo, setFormularioActivo] = useState(false) // Nuevo estado para la modal de registro
+  const componentRef = useRef() // referencia al componente
   useEffect(() => {
     const cargar = () => {
       console.log('dfsj')
@@ -67,9 +70,9 @@ export const TablaPedidosContenedor = () => {
       toast.error('error al refrescar la Tabla')
     }
   }
-  const imprimirTabla = () => {
-    print()
-  }
+  // const imprimirTabla = () => {
+  //   print()
+  // }
   const recibirPedido = async (pedido) => {
     // swal para confirmar que se recibira el pedido
     if (pedido.estado === 'recibido') {
@@ -140,10 +143,14 @@ export const TablaPedidosContenedor = () => {
             <i className='bi bi-search'></i>
             <input type="text" className="form-control" placeholder="Buscar Pedido" onChange={debounceCambiarFiltro} />
             <button className='btn btn-outline-primary btn-nuevo-animacion' onClick={refrescarTabla}><i className="bi bi-arrow-repeat"></i></button>
-            <button className='btn btn-outline-primary btn-nuevo-animacion' onClick={imprimirTabla}><i class="bi bi-printer"></i></button>
+           
+            <ReactToPrint
+            trigger={() => <button className='btn btn-outline-primary btn-nuevo-animacion'><i class="bi bi-printer"></i></button>}
+            content={() => componentRef.current} 
+            />
           </div>
         </div>
-        <ValidarPedidos listaPedidos={pedidos} borrarPedido={eliminarPedido} filtro={pedidoBuscado} recibirPedido={recibirPedido}/>
+        <ValidarPedidos ref={componentRef} listaPedidos={pedidos} borrarPedido={eliminarPedido} filtro={pedidoBuscado} recibirPedido={recibirPedido} componentRef={componentRef}/>
         
       </>
      )

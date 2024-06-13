@@ -6,9 +6,10 @@ import { ProductosPedidosContext } from '../../../context/ProductosPedidosContex
 import { debounce, max, set } from 'lodash'
 import { toast } from 'react-hot-toast'
 import swal from 'sweetalert2'
+import ReactToPrint from 'react-to-print'
 import './compras.css'
 export const FormOrdenCompra = ({ volver }) => {
-
+  
   const { statePedido: { pedidos }, getPedidosContext, crearPedidoContext } = useContext(PedidosContext)
   const { stateProducto: { productos }, getProductosContext } = useContext(ProductosContext)
   const { stateProveedor: { proveedores }, getProveedoresContext } = useContext(ProveedoresContext)
@@ -26,6 +27,7 @@ export const FormOrdenCompra = ({ volver }) => {
   const productoRef = useRef() // se usara para limpiar el input de producto
   const cantidadRef = useRef() // se usara para limpiar el input de cantidad
 
+  const componentRef = useRef()
   useEffect(() => {
     const cargar = () => {
       getPedidosContext() // se ejecuta la funcion getProductos del contexto de los productos
@@ -219,12 +221,10 @@ export const FormOrdenCompra = ({ volver }) => {
 
   }
   
-  const imprimir = () => {
-    print()
-  }
+ 
   // Formulario de Orden de compra
   return (
-    <section style={{borderTop: '3px solid #3085d6', borderBottom: '3px solid #3085d6'}} className='rounded py-2 px-3 bg-white'>
+    <section ref={componentRef} style={{borderTop: '3px solid #3085d6', borderBottom: '3px solid #3085d6'}} className='rounded py-2 px-3 bg-white'>
       {ordenFinalizada ? 
       (
         <h3 className="text-center">Orden de Compra para {productosAgregados[0]?.producto.proveedor.nombre}</h3>
@@ -358,7 +358,11 @@ export const FormOrdenCompra = ({ volver }) => {
                 <div className="alert alert-success p-1">Orden Finalizada</div>
                 <div className="d-flex gap-2">
                   <button className='btn btn-success' onClick={() => volver()}>Volver</button>
-                  <button className='btn btn-primary' type='button' onClick={imprimir}>Imprimir</button>
+                  <ReactToPrint
+                  
+                    trigger={() => <button className='btn btn-primary' type='button'>Imprimir</button>}
+                    content={() => componentRef.current}
+                  />
                 </div>
                 
               </div>

@@ -1,13 +1,16 @@
 import { MagicMotion } from "react-magic-motion"
 import { PedidosContext } from '../../../context/PedidosContext'
-import { useState, useContext, useEffect } from 'react'
+// forwardRef es esencial para pasar referencias a componentes funcionales en React.
+import { useState, useContext, useEffect, useRef, forwardRef} from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import { PedidoDetalle } from './PedidoDetalle'
-const MostrarPedidos = ({ listaPedidos, borrarPedido, filtro, recibirPedido }) => {
+import ReactToPrint from 'react-to-print'
+const MostrarPedidos = forwardRef(({ listaPedidos, borrarPedido, filtro, recibirPedido, componentRef }, ref) => {
   const { statePedido: { pedidos }, getPedidosContext } = useContext(PedidosContext)
   const [showModal, setShowModal] = useState(false) // estado para mostrar la modal
   const [currentPage, setCurrentPage] = useState(1) // estado para la pagina actual
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null) // estado para el pedido seleccionado
+
   useEffect(() => {
     const cargar = () => {
       getPedidosContext()
@@ -33,10 +36,6 @@ const MostrarPedidos = ({ listaPedidos, borrarPedido, filtro, recibirPedido }) =
       </div>
     )
   }
-  
-  const imprimir = () => {
-    print()
-  }
  
   // Se define la cantidad de usuarios a mostrar por pagina
   const cantidadPedidos = 10
@@ -50,7 +49,7 @@ const MostrarPedidos = ({ listaPedidos, borrarPedido, filtro, recibirPedido }) =
   let contador = startIndex + 1 // para numerar los usuarios en la tabla comenzando por el starIndex aumentado en uno
   console.log(pedidosMostrar)
   return (
-    <section>
+    <section ref={ref}>
       <table className="table table-striped">
         <thead>
           <tr>
@@ -96,7 +95,11 @@ const MostrarPedidos = ({ listaPedidos, borrarPedido, filtro, recibirPedido }) =
           {pedidoSeleccionado && <PedidoDetalle pedido={pedidoSeleccionado} />}
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={imprimir}>Imprimir</Button>
+          <Button>Imprimir</Button>
+          <ReactToPrint
+           trigger={() => <Button className='btn btn-primary' type="button">Imprimi2r</Button>}
+           content={() => componentRef.current}
+          />
           <Button variant="secondary" onClick={handleClose}>
             Cerrar
           </Button>
@@ -110,7 +113,7 @@ const MostrarPedidos = ({ listaPedidos, borrarPedido, filtro, recibirPedido }) =
         ))}
     </section>
   )
-}
+});
 const SinPedidos = () => {
   return (
     <section>
@@ -142,12 +145,14 @@ const SinPedidos = () => {
     </section>
   )
 }
-export const ValidarPedidos = ({ listaPedidos, borrarPedido, filtro, recibirPedido }) => {
+// forwardRef es esencial para pasar referencias a componentes funcionales en React, en este caso se pasa la referencia de la tabla para poder imprimir, basicamente envuelve el componente
+// no se puede desestructurar el ref, se debe pasar como parametro - tenemos 2 parametros, el primero es el props y el segundo es la referencia
+export const ValidarPedidos = forwardRef(({ listaPedidos, borrarPedido, filtro, recibirPedido }, ref) => {
   const validacion = listaPedidos.length > 0
   // RENDERIZADO CONDICIONAL, la validacion es true o false
 
   return validacion ?
-    <MostrarPedidos listaPedidos={listaPedidos} borrarPedido={borrarPedido} filtro={filtro} recibirPedido={recibirPedido} />
+    <MostrarPedidos listaPedidos={listaPedidos} borrarPedido={borrarPedido} filtro={filtro} recibirPedido={recibirPedido} ref={ref} />
     :
     <SinPedidos />
-}
+})
