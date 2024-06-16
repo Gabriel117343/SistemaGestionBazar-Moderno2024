@@ -46,17 +46,17 @@ export const ListaDeOpciones = () => {
     .reduce((a, b) => a + b, 0); // sumando los stocks
 
   return (
-    <div >
+    <div className="container-card-1">
       <article className="container-card">
         <div className="tamaño-card">
           <div className="card card-body color-card-1 text-white">
             <div className="row">
-              <div className="col-md-9">
-                <h4 className="texto-nowrap">Ordenes de Compra</h4>
+              <div className="col-md-9 contenido-card">
+                <h4>Ordenes de Compra</h4>
                 <p> Total</p>
               </div>
               <div className="col-md-3 d-flex align-items-end justify-content-end">
-                <h3 className="p-0 m-0">
+                <h3 className="p-0 m-0 contador-card">
                   <ContadorAnimado
                     value={pedidos.length ? pedidos.length : 0}
                     className="text-white"
@@ -69,12 +69,12 @@ export const ListaDeOpciones = () => {
         <div className="tamaño-card">
           <div className="card card-body color-card-3 text-white">
             <div className="row">
-              <div className="col-md-8">
-                <h4 className="texto-nowrap">Ordenes Recibidas</h4>
+              <div className="col-md-8 contenido-card">
+                <h4>Ordenes Recibidas</h4>
                 <p>Total</p>
               </div>
               <div className="col-md-4 d-flex align-items-end justify-content-end">
-              <h3 className="p-0 m-0">
+              <h3 className="p-0 m-0 contador-card">
                   <ContadorAnimado
                     value={pedidos.filter(pedido => pedido.estado === 'recibido').length}
                     className="text-white"
@@ -86,31 +86,27 @@ export const ListaDeOpciones = () => {
         </div>
 
         <div className="tamaño-card">
-          <div className="row">
-            <div className="col-md-12">
-              <div className="card card-body color-card-2 text-white">
-                <div className="row">
-                  <div className="col-md-8">
-                    <h4 className="texto-nowrap">Devoluciones</h4>
-                    <p>Total</p>
-                  </div>
-                  <div className="col-md-4 d-flex align-items-end justify-content-end">
-                    <h3 className="p-0 m-0">0</h3>
-                  </div>
+            <div className="card card-body color-card-2 text-white">
+              <div className="row">
+                <div className="col-md-8 contenido-card">
+                  <h4>Devoluciones</h4>
+                  <p>Total</p>
+                </div>
+                <div className="col-md-4 d-flex align-items-end justify-content-end">
+                  <h3 className="p-0 m-0 contador-card">0</h3>
                 </div>
               </div>
             </div>
-          </div>
         </div>
         <div className="tamaño-card">
           <div className="card card-body color-card-4 text-white">
             <div className="row">
-              <div className="col-md-8">
-                <h4 className="texto-nowrap">Clientes Registrados</h4>
+              <div className="col-md-8 contenido-card">
+                <h4>Clientes Registrados</h4>
                 <p>Total</p>
               </div>
               <div className="col-md-4 d-flex align-items-end justify-content-end">
-                <h3 className="p-0 m-0">
+                <h3 className="p-0 m-0 contador-card">
                   <ContadorAnimado
                     value={clientes.length ? clientes.length : 0}
                     className="text-white"
@@ -123,12 +119,12 @@ export const ListaDeOpciones = () => {
         <div className="tamaño-card">
           <div className="card card-body color-card-1 text-white">
             <div className="row">
-              <div className="col-md-8">
-                <h4 className="texto-nowrap">Stock en Tienda</h4>
+              <div className="col-md-8 contenido-card">
+                <h4>Stock en Tienda</h4>
                 <p>Total</p>
               </div>
               <div className="col-md-4 d-flex align-items-end justify-content-end">
-                <h3 className="p-0 m-0">
+                <h3 className="p-0 m-0 contador-card">
                   <ContadorAnimado
                     value={stocksContados ? stocksContados : 0}
                     className="text-white"
@@ -141,12 +137,12 @@ export const ListaDeOpciones = () => {
         <div className="tamaño-card">
           <div className="card card-body color-card-4 text-white">
             <div className="row">
-              <div className="col-md-8">
-                <h4 className="texto-nowrap">Ventas</h4>
+              <div className="col-md-8 contenido-card">
+                <h4>Ventas</h4>
                 <p>Total</p>
               </div>
               <div className="col-md-4 d-flex align-items-end justify-content-end">
-                <h3 className="p-0 m-0">
+                <h3 className="p-0 m-0 contador-card">
                   <ContadorAnimado
                     value={ventas.length ? ventas.length : 0}
                     className="text-white"

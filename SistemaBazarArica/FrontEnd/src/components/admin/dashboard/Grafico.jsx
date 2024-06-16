@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react"
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts'
+import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts'
 import { VentasContext } from '../../../context/VentasContext'
-
+import { SidebarContext } from '../../../context/SidebarContext'
 
 import React from 'react'
 
@@ -29,7 +29,7 @@ export const Grafico = () => {
   const thisYear = now.getFullYear();
   const ventasEsteMes = data.filter(venta => {
     return venta.fecha_venta.getMonth() === thisMonth && venta.fecha_venta.getFullYear() === thisYear;
-  });
+  }).slice(-12); // Solo los últimos 12 registros (ventas de los últimos 12 meses)
   
   
   // Calcular el ingreso total de este mes
@@ -44,52 +44,102 @@ export const Grafico = () => {
     acumulador[mes].total += venta.total;
     return acumulador;
   }, {});
+  // Encontrar la venta más alta
+  
+  const EXAGONAL_COLORS = [
+    '#FF0000', // Rojo
+    '#FF4400', // Rojo anaranjado
+    '#FF8800', // Naranja
+    '#FFCC00', // Naranja amarillento
+    '#FFFF00', // Amarillo
+    '#BFFF00', // Amarillo verdoso
+    '#80FF00', // Verde lima
+    '#00FF00'  // Verde
+];
+  const getExagonalColor = (totalVenta) => {
 
+    const ventaMaxima = Math.max(...ventasEsteMes.map(venta => venta.total));
+    
+    const porcentajeVenta = Number((totalVenta/ ventaMaxima).toFixed(2));
+    
+    if (porcentajeVenta === 0) {
+      return EXAGONAL_COLORS[0]; // Rojo
+    } else if (porcentajeVenta > 0 && porcentajeVenta <= 0.1) {
+        return EXAGONAL_COLORS[1]; // Rojo anaranjado
+    } else if (porcentajeVenta > 0.1 && porcentajeVenta <= 0.2) {
+        return EXAGONAL_COLORS[2]; // Naranja
+    } else if (porcentajeVenta > 0.2 && porcentajeVenta <= 0.3) {
+        return EXAGONAL_COLORS[3]; // Naranja amarillento
+    } else if (porcentajeVenta > 0.3 && porcentajeVenta <= 0.5) {
+        return EXAGONAL_COLORS[4]; // Amarillo
+    } else if (porcentajeVenta > 0.5 && porcentajeVenta <= 0.7) {
+        return EXAGONAL_COLORS[5]; // Amarillo verdoso
+    } else if (porcentajeVenta > 0.7 && porcentajeVenta <= 0.85) {
+        return EXAGONAL_COLORS[6]; // Verde lima
+    } else if (porcentajeVenta > 0.86 && porcentajeVenta <= 1.00) {
+      return EXAGONAL_COLORS[7]; // Verde
+    } else {
+        return EXAGONAL_COLORS[0]; // Rojo
+    }
+  }
   // Convertir el objeto a un array para usar con recharts
   const dataParaGrafico = Object.values(ventasPorMes);
-
+ 
   // Colores para el gráfico de pastel
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
   
   return (
-    <article className='row grafico'>
+    <article className='container-grafico row grafico'>
       <div className="col-md-6">
-        <BarChart
-          width={600}
-          height={300}
-          data={ventasEsteMes} // Usa solo las ventas de este mes
-          margin={{
-            top: 5, right: 30, left: 20, bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="id" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="total" fill="#008000" />
-        </BarChart>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            
+          
+            data={ventasEsteMes} // Usa solo las ventas de este mes
+            margin={{
+              top: 5, right: 30, left: 12, bottom: 12,
+            }}
+            
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="id" label={{ value: 'Ventas', position: 'insideBottom', offset: -12, style: { fontSize: '20px'} }}/>
+            <YAxis label={{ value: 'Ingresos', angle: -90, position: 'insideLeft', offset: -7, style: { fontSize: '20px'}  }}/>
+            <Tooltip />
+            <Legend />
+            <Bar  dataKey="total" barSize={40}> 
+            {
+              ventasEsteMes.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={getExagonalColor(entry.total)} />
+              ))
+            }
+            </Bar>
+          </BarChart>
 
+        </ResponsiveContainer>
       </div>
-      <div className="col-md-6 d-flex align-items-center">
-      <PieChart width={400} height={400}>
-        <Pie
-          data={dataParaGrafico}
-          cx="50%"
-          cy="30%"
-          labelLine={true}
-          label={({ name, percent }) => `${NOMBRES_MESES[name + 1]}: ${(percent * 100).toFixed(0)}%`}
-          outerRadius={80}
-          fill="#8884d8"
-          dataKey="total"
-        >
-          {
-            dataParaGrafico.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
-          }
-        </Pie>
-        <Tooltip />
-        <Legend layout="vertical" align="left" verticalAlign="middle"/>
-      </PieChart>
+      <div className="col-md-6 d-flex align-items-center piechart">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={dataParaGrafico}
+            cx="50%"
+            cy="35%"
+            labelLine={true}
+            label={({ name, percent }) => `${NOMBRES_MESES[name + 1]}: ${(percent * 100).toFixed(0)}%`}
+            outerRadius={80}
+            fill="#8884d8"
+            dataKey="total"
+          >
+            {
+              dataParaGrafico.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
+            }
+          </Pie>
+          <Tooltip />
+          <Legend layout="vertical" align="left" verticalAlign="middle"/>
+        </PieChart>
+
+      </ResponsiveContainer>
+      
       </div>
       
       

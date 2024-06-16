@@ -1,15 +1,60 @@
-.container-card {
 
+.container-card {
+  
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));  
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+  
   gap: 15px 20px;
   margin: 0 auto;
+  
 
 }
-.texto-nowrap {
+.contenido-card > h4 {
   white-space: nowrap;
+  overflow: hidden;
 
 }
+.contenido-card > p {
+  white-space: nowrap;
+  font-size: 17px;
+}
+
+@media screen and (max-width: 800px) {
+  .tamaño-card > div {
+    padding: 7px;
+  }
+  .container-card {
+    height: 30dvh;
+    align-items: start;
+    place-content: start;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    grid-template-rows: repeat();
+    gap: 7px 7px;
+    
+  }
+  
+  .contenido-card > h4 {
+    font-size: 16px;
+    overflow: inherit;    
+  }
+  .contenido-card > p {
+    font-size: 14px;
+  }
+  .contador-card {
+    font-size: 20px;
+  }
+  
+  .container-grafico {
+    display: grid;
+    height: 70dvh;
+  
+  }
+  .barchart {
+    width: 300px;
+    
+  }
+}
+
 
 .icono-dash {
   font-size: 40px;
