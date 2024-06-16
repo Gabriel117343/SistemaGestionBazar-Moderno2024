@@ -13,6 +13,7 @@ import { ListaClientes } from './ListaClientes'
 import { toast } from 'react-hot-toast'
 import { debounce } from 'lodash'
 import swal from 'sweetalert2'
+import useCarrito from '../../../hooks/useCarrito'
 import { withLoadingImage } from '../../../hocs/withLoadingImage'
 
 
@@ -29,9 +30,11 @@ const ListaProductos = ({ listaProductos }) => {
   // Cotexto para saber si el sidebar esta abierto o cerrado
   const { sidebar } = useContext(SidebarContext)
   const [productosFiltrados, setProductosFiltrados] = useState(listaProductos)
-  const [carrito, setCarrito] = useState([])
+  // const [carrito, setCarrito] = useState([])
   const [opcionCliente, setOpcionCliente] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+
+  const { carrito, agregarProductoCarrito, restarProductoCarrito, eliminarProductoCarrito, vaciarCarrito, calcularCantidadCategoria } = useCarrito()
   
   useEffect(() => {
     // se ejecuta la funcion cargar al renderizar el componente
@@ -44,66 +47,6 @@ const ListaProductos = ({ listaProductos }) => {
     
   }, [])
 
-  const agregarProducto = (producto) => {
-    
-    const productoEnCarrito = carrito.find(prod => prod.id === producto.id)
-    // se busca el producto en el carrito para saber si ya esta agregado
-
-    const productoDisponible = stocks.find(stock => stock.producto.id === producto.id)
-    // se busca el producto en el stock para saber si hay stock disponible
-    
-    const productoDisponibleCarrito = productoDisponible.cantidad - productoEnCarrito?.cantidad 
-    // Si el Stock del producto que viene del backend es 0, no se puede agregar, si la cantidad del producto en el carrito es mayor o igual a la cantidad del stock, no se puede agregar
-    if (productoDisponibleCarrito <= 0 || productoDisponible.cantidad === 0) {
-      toast.error('No hay stock disponible')
-      return
-    }
-    if (productoEnCarrito) {
-      const productosActualizados = carrito.map(prod => {
-        if (prod.id === producto.id) {
-         
-          prod.cantidad += 1
-          return prod
-        } else {
-          return prod
-        }
-      })
-      toast.success('Producto agregado')
-      setCarrito(productosActualizados)
-      
-    } else {
-      
-      setCarrito([...carrito, { ...producto, cantidad: 1 }])
-    }
-  }
-  const restarEliminarProducto = (producto) => {
-    const productoEnCarrito = carrito.find(prod => prod.id === producto.id)
-    if (productoEnCarrito.cantidad > 1) {
-      const productosActualizados = carrito.map(prod => {
-        if (prod.id === producto.id) {
-          prod.cantidad -= 1
-          return prod
-        } else {
-          return prod
-        }
-      })
-      toast.success('Producto restado')
-      setCarrito(productosActualizados)
-    } else {
-      const productosActualizados = carrito.filter(prod => prod.id !== producto.id)
-      toast.error('Producto eliminado')
-      setCarrito(productosActualizados)
-    }
-  
-  }
-  
- 
-  // // useEffect para guardar los productos
-  // useEffect (() => {
-  //   setProductosFiltrados(listaProductos)
-  
-  // }, [])
- 
   
   const filtroTipo = (event) => {
     const tipo = event.target.value
@@ -128,20 +71,24 @@ const ListaProductos = ({ listaProductos }) => {
     
     setProductosFiltrados(productosFiltrados)
   }
+
   const realizarVenta = async () => {
     console.log(carrito)
     console.log(clienteSeleccionado)
     const formVenta = new FormData()
     formVenta.append('cliente', clienteSeleccionado.id)
     formVenta.append('total', carrito.reduce((acc, prod) => acc + prod.precio * prod.cantidad, 0)) // total de la venta
+    
+    const cantidadVentaTipo = calcularCantidadCategoria()
+
+    console.log(cantidadVentaTipo)
+
     // agregar productos
-
-
 
     const { success, message } = await createVentaContext(formVenta)
 
     if (success) {
-      setCarrito([]) // se vacia el carrito
+      vaciarCarrito()
       swal.fire({           
         title: 'Venta realizada',           
         text: message,            
@@ -228,9 +175,9 @@ const ListaProductos = ({ listaProductos }) => {
                     <div className="d-flex flex-column">
                       <p className='ps-4 mb-0'><strong>{producto.cantidad}</strong>/Unidades en ${producto.cantidad*producto.precio}</p>
                       <div className="d-flex">
-                        <button className='boton-restar d-flex align-items-center justify-content-center' onClick={() => restarEliminarProducto(producto)}>-</button>
+                        <button className='boton-restar d-flex align-items-center justify-content-center' onClick={() => restarProductoCarrito(producto.id)}>-</button>
                
-                        <button className='boton-sumar ms-1 d-flex align-items-center justify-content-center' onClick={() => agregarProducto(producto)}>+</button>
+                        <button className='boton-sumar ms-1 d-flex align-items-center justify-content-center' onClick={() => agregarProductoCarrito(producto, stocks)}>+</button>
 
                       </div>
                       
@@ -248,7 +195,7 @@ const ListaProductos = ({ listaProductos }) => {
           </ul>
           <div className="d-flex justify-content-between gap-2 px-1">
             <button className='btn btn-info form-control' disabled={carrito.length > 0 ? false:true}>Cupon</button>
-            <button className='btn btn-danger form-control'disabled={carrito.length > 0 ? false:true}  onClick={() =>setCarrito([])}>Cancelar</button>
+            <button className='btn btn-danger form-control'disabled={carrito.length > 0 ? false:true}  onClick={vaciarCarrito}>Cancelar</button>
           </div>
           {clienteSeleccionado && !opcionCliente ? (
             <button className='d-flex align-items-center gap-2 pt-1 px-1 button-especial' >
@@ -356,7 +303,7 @@ const ListaProductos = ({ listaProductos }) => {
                       
                     </div>
                     <div className='pt-0 mt-0'>
-                      <button className="btn btn-warning form-control" onClick={() => agregarProducto(producto)}>Agregar</button>
+                      <button className="btn btn-warning form-control" onClick={() => agregarProductoCarrito(producto, stocks)}>Agregar</button>
                     </div>
                     
                   </div>

@@ -47,14 +47,14 @@ export const Grafico = () => {
   // Encontrar la venta más alta
   
   const EXAGONAL_COLORS = [
-    '#FF0000', // Rojo
-    '#FF4400', // Rojo anaranjado
-    '#FF8800', // Naranja
-    '#FFCC00', // Naranja amarillento
-    '#FFFF00', // Amarillo
-    '#BFFF00', // Amarillo verdoso
-    '#80FF00', // Verde lima
-    '#00FF00'  // Verde
+    '#003f5c', // Azul oscuro
+    '#2f4b7c', // Azul medio oscuro
+    '#665191', // Púrpura oscuro
+    '#a05195', // Púrpura
+    '#d45087', // Fucsia
+    '#f95d6a', // Coral
+    '#ff7c43', // Naranja
+    '#ffa600'  // Amarillo
 ];
   const getExagonalColor = (totalVenta) => {
 
@@ -82,9 +82,10 @@ export const Grafico = () => {
         return EXAGONAL_COLORS[0]; // Rojo
     }
   }
+  
   // Convertir el objeto a un array para usar con recharts
   const dataParaGrafico = Object.values(ventasPorMes);
- 
+ console.log(ventas)
   // Colores para el gráfico de pastel
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
   
