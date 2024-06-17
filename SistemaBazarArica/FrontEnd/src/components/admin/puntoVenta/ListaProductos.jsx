@@ -6,8 +6,9 @@ import { VentasContext } from '../../../context/VentasContext' // contexto de ve
 import { ClientesContext } from '../../../context/ClientesContext'
 import { SeccionesContext } from '../../../context/SeccionesContext'
 import { SidebarContext } from '../../../context/SidebarContext'
+import { CarritoContext } from '../../../context/CarritoContext'
 import { MagicMotion } from 'react-magic-motion'
-import { Modal} from 'react-bootstrap'
+import { CardImg, Modal} from 'react-bootstrap'
 import { FormRegistroCliente } from './FormRegistroCliente'
 import { ListaClientes } from './ListaClientes'
 import { toast } from 'react-hot-toast'
@@ -29,12 +30,13 @@ const ListaProductos = ({ listaProductos }) => {
   const { stateSeccion: { secciones }, getSeccionesContext } = useContext(SeccionesContext)
   // Cotexto para saber si el sidebar esta abierto o cerrado
   const { sidebar } = useContext(SidebarContext)
+  const { carrito, agregarProductoCarrito, eliminarProductoCarrito, restarProductoCarrito, vaciarCarrito } = useContext(CarritoContext)
   const [productosFiltrados, setProductosFiltrados] = useState(listaProductos)
   // const [carrito, setCarrito] = useState([])
   const [opcionCliente, setOpcionCliente] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
 
-  const { carrito, agregarProductoCarrito, restarProductoCarrito, eliminarProductoCarrito, vaciarCarrito, calcularCantidadCategoria } = useCarrito()
+  const { obtenerInfoVentaTipo, obtenerInfoVentaProducto } = useCarrito()
   
   useEffect(() => {
     // se ejecuta la funcion cargar al renderizar el componente
@@ -79,10 +81,15 @@ const ListaProductos = ({ listaProductos }) => {
     formVenta.append('cliente', clienteSeleccionado.id)
     formVenta.append('total', carrito.reduce((acc, prod) => acc + prod.precio * prod.cantidad, 0)) // total de la venta
     
-    const cantidadVentaTipo = calcularCantidadCategoria()
+    const infoVentaPorTipo = obtenerInfoVentaTipo()
 
-    console.log(cantidadVentaTipo)
-
+    console.log(infoVentaPorTipo)
+    const infoVentaPorProducto = obtenerInfoVentaProducto()
+    console.log(infoVentaPorProducto)
+    // antes de enviar se convierte a JSON para que el backend pueda leerlo
+    formVenta.append('info_venta_tipo',JSON.stringify(infoVentaPorTipo))
+    formVenta.append('info_venta_producto_id', JSON.stringify(infoVentaPorProducto))
+   
     // agregar productos
 
     const { success, message } = await createVentaContext(formVenta)
@@ -112,10 +119,10 @@ const ListaProductos = ({ listaProductos }) => {
   useEffect(() => {
     // si no hay productos en el carrito o no hay un cliente seleccionado, se habilita la opcion de seleccionar cliente
     if ((carrito.length === 0 && !opcionCliente) || !clienteSeleccionado) {
-      console.log('dfs')
+      
       setOpcionCliente(true)
     } else {
-      console.log('dfs')
+    
       setOpcionCliente(false)
     }
     // cuando cambie el cliente seleccionado, se habilita la opcion de seleccionar cliente

@@ -3,7 +3,10 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from PIL import Image
-import blurhash
+from django.db.models import JSONField # para campos JSON en la base de datos de SQLite
+# en caso de utilizar postgresql, se debe importar de la siguiente manera:
+# from django.contrib.postgres.fields import JSONField
+
 # Create your models here.
 class Usuario(AbstractUser):
     ROLES = [
@@ -133,7 +136,8 @@ class Venta(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2)
     fecha_venta = models.DateTimeField(auto_now_add=True)
     descuento = models.ForeignKey(Descuento, on_delete=models.SET_NULL, null=True, blank=True)
-
+    info_venta_tipo = JSONField(blank=True, null=True)
+    info_venta_producto_id = JSONField(blank=True, null=True)
     def __str__(self):
         return f'Venta {self.id}'
 class Seccion(models.Model):

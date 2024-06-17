@@ -85,7 +85,8 @@ export const Grafico = () => {
   
   // Convertir el objeto a un array para usar con recharts
   const dataParaGrafico = Object.values(ventasPorMes);
- console.log(ventas)
+ const v = ventas.at(-1).info_venta_tipo
+  console.log(JSON.parse(v))
   // Colores para el gráfico de pastel
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
   

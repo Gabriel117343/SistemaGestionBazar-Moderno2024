@@ -569,10 +569,13 @@ class VentaView(viewsets.ModelViewSet):
         if serializer.is_valid():
             cliente_id = request.data.get('cliente')
             total  = request.data.get('total')
+            info_venta_tipo = request.data.get('info_venta_tipo')
+       
+            info_venta_producto_id = request.data.get('info_venta_producto_id')
             try:
                 cliente = Cliente.objects.get(id=cliente_id)
                 vendedor = Usuario.objects.get(id=request.user.id)
-                venta = serializer.save(cliente=cliente, vendedor=vendedor, total=total)
+                venta = serializer.save(cliente=cliente, vendedor=vendedor, total=total, info_venta_tipo=info_venta_tipo, info_venta_producto_id=info_venta_producto_id)
                 venta.save()
                 return Response({'message': 'Venta realizada exitosamente!'}, status=status.HTTP_201_CREATED)
             except Cliente.DoesNotExist:

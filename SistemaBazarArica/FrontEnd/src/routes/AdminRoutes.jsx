@@ -21,47 +21,51 @@ import { SidebarProvider } from '../context/SidebarContext'
 import { PuntoVenta } from '../pages/admin/PuntoVenta'
 import { Secciones } from '../pages/admin/Secciones'
 import { StocksProvider } from '../context/StocksContext'
+import { CarritoProvider } from '../context/CarritoContext'
 // MENU DE OPCIONES PARA EL ADMINISTRADOR
 import { Menu } from '../components/admin/Menu'
 
 export const AdminRoutes = () => {
   return (
-    <StocksProvider>
-      <ProductosPedidosProvider>
-        <SeccionesProvider>
-          <UsuariosProvider>
-            <SidebarProvider>
-              <HeaderAdmin />
-                <Menu>
+    <CarritoProvider>
+      <StocksProvider>
+        <ProductosPedidosProvider>
+          <SeccionesProvider>
+            <UsuariosProvider>
+              <SidebarProvider>
+                <HeaderAdmin />
+                  <Menu>
+                
+                  <Routes>
+                    <Route path='/dashboard' element={<Dashboard />} />
+                    <Route path='*' element={<Navigate to='/admin/dashboard' />} /> {/* si no se encuentra la ruta se redirecciona a dashboard */}
+                    <Route path='/compras' element={<Compras />} />
+                    <Route path='/recibos' element={<Recibos />} />
+                    <Route path='/devoluciones' element={<Devoluciones />} />
+                    <Route path='/stocks' element={<Stocks />} />
+                    <Route path='/ventas' element={<Ventas />} /> 
+                    <Route path='/punto-venta' element={<PuntoVenta />} />
+                    <Route path='/proveedores' element={<Proveedores />} />
+                    <Route path='/productos' element={<Productos />} />
+                    <Route path='/usuarios' element={<Usuarios />} />
+                    <Route path='/secciones' element={<Secciones />} />
+                    <Route path='/configuracion' element={<Configuracion />} />
+                  </Routes>
+
+                </Menu>
+
+              </SidebarProvider>
               
-                <Routes>
-                  <Route path='/dashboard' element={<Dashboard />} />
-                  <Route path='*' element={<Navigate to='/admin/dashboard' />} /> {/* si no se encuentra la ruta se redirecciona a dashboard */}
-                  <Route path='/compras' element={<Compras />} />
-                  <Route path='/recibos' element={<Recibos />} />
-                  <Route path='/devoluciones' element={<Devoluciones />} />
-                  <Route path='/stocks' element={<Stocks />} />
-                  <Route path='/ventas' element={<Ventas />} /> 
-                  <Route path='/punto-venta' element={<PuntoVenta />} />
-                  <Route path='/proveedores' element={<Proveedores />} />
-                  <Route path='/productos' element={<Productos />} />
-                  <Route path='/usuarios' element={<Usuarios />} />
-                  <Route path='/secciones' element={<Secciones />} />
-                  <Route path='/configuracion' element={<Configuracion />} />
-                </Routes>
-
-              </Menu>
-
-            </SidebarProvider>
-            
+            </UsuariosProvider>
           
-          </UsuariosProvider>
-        
-        </SeccionesProvider>
+          </SeccionesProvider>
 
-      </ProductosPedidosProvider>
-      
-    </StocksProvider>
+        </ProductosPedidosProvider>
+        
+      </StocksProvider>
+
+    </CarritoProvider>
+    
     
     
     

@@ -1,87 +1,65 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { toast } from 'react-hot-toast'
+import { CarritoContext } from '../context/CarritoContext'
 // Hook personalizado para manejar el carrito de compras - CUSTOM HOOK REUTILIZABLE
 // sera utilizado tanto para el Admin como para el Vendedor
-export default function useCarrito (initialCarrito=[])  {
-  const [carrito, setCarrito] = useState(initialCarrito) // Inicialmente el carrito está vacío
+export default function useCarrito ()  {
+  const { carrito } = useContext(CarritoContext)
 
-  // Funciones para controlar el carrito
-  // (separar en un contexto global y un hook personalizado para reutilizarlo en cualquier componente)
-  const agregarProductoCarrito = (producto, stocks) => {
-    // Se busca el producto en el carrito para saber si ya está agregado
-
-    const productoEnCarrito = carrito.find(prod => prod.id === producto.id)
-
-    const productoDisponible = stocks.find(stock => stock.producto.id === producto.id)
-    const productoDisponibleCarrito = productoDisponible.cantidad - productoEnCarrito?.cantidad 
-
-    if (productoDisponibleCarrito <= 0 || productoDisponible.cantidad === 0) {
-      toast.error('Producto sin stock disponible')
-    } else if (productoEnCarrito) {
-      const productoActualizado = carrito.map(prod => {
-        if (prod.id === producto.id) {
-          prod.cantidad += 1
-          return prod
-        } else {
-          return prod
-        }
-      })
-      toast.success('Producto agregado al carrito')
-      setCarrito(productoActualizado)
-
-    } else {
-      setCarrito([...carrito, { ...producto, cantidad: 1 }])
-    }
-  }
-  const eliminarProductoCarrito = (productoId) => {
-    const productoActualizado = carrito.filter(prod => prod.id !== productoId)
-    setCarrito(productoActualizado)
-  }
-  const restarProductoCarrito = (productoId) => {
-    // Se busca el producto en el carrito para saber si ya está agregado
-    const productoEnCarrito = carrito.find(prod => prod.id === productoId)
-
-    if (productoEnCarrito.cantidad >= 1) {
-      const productoActualizado = carrito.map(prod => {
-        if (prod.id === productoId) {
-          prod.cantidad -= 1
-          return prod
-        } else {
-          return prod
-        }
-      })
-     
-      setCarrito(productoActualizado)
-    } else {
-      eliminarProductoCarrito(productoId) // Si la cantidad es 1, se elimina el producto
-    }
-  }
-  const vaciarCarrito = () => {
-    setCarrito([])
-  }
-  // Funciones para calcular totales y cantidades de productos en el carrito
-  // Asi sera posible obtener mas detalles de las ventas para usar esos datos en Graficos
-  const calcularCantidadCategoria = () => {
-    const cantidadCategoria = [] // reiniciar categoria cada vez
+  
+  const obtenerInfoVentaTipo = () => {
     const totalTiposCarrito = new Set(carrito.map(producto => producto.tipo))
 
+    const infoVentaTipo = {} // reiniciar categoria cada vez
+    console.log(totalTiposCarrito)
     for (let tipo of totalTiposCarrito) {
-      const cantidad = carrito.filter(prod => prod.tipo === tipo).reduce((acc, prod) => acc + prod.cantidad, 0)
-      if (cantidad > 0) {
-        cantidadCategoria.push({ tipo, cantidad })
+
+      const tipoEnCarrito = carrito.filter(prod => prod.tipo === tipo) // el total de productos de ese tipo
+
+      // se suman la cantidad total por el tipo ej: bebidas(cocacola3L)(cantidad: 3) + bebidas(cocacola1.5L)(cantidad: 2) = 5
+      const cantidad = tipoEnCarrito.reduce((acc, prod) => acc + prod.cantidad, 0)
+      let total = 0
+
+      for(let prod of tipoEnCarrito) {
+        
+        total += prod.cantidad * parseInt(prod.precio)
       }
+      // ej: { bebidas: [{ cantidad: 3 }, { total: 3500 }] }
+      infoVentaTipo[tipo] = [{ cantidad, cantidad}, { total, total }]
+      
     }
-    return cantidadCategoria
+    return infoVentaTipo
   }
+  const obtenerInfoVentaProducto = () => {
+    
+    const totalProductosCarritoId = new Set(carrito.map(producto => producto.id))
+    const infoVentaProducto = {}
+    for(let id of totalProductosCarritoId) {
+      // Ej: si tenemos Atun 35gr entonces calcularemos la cantidad y el total de la venta de ese producto del carrito por el id ya que el nombre "puede ser actualizado", ademas de que iterar sobre una cadena es mas costoso en terminos de rendimiento
+      // El backend se encargara de calcular la suma historica de las ventas del producto para poder devolver datos para un grafico.
+      console.log(id)
+      const productoEnCarrito = carrito.filter(prod => prod.id === id)
+      
+      const cantidad = parseInt(productoEnCarrito[0].cantidad)
+     
+      let total = cantidad * productoEnCarrito[0].precio
+      // ej: { 2: [{ cantidad: 3 }, { total: 2400 }] }
+      infoVentaProducto[id] = [{ cantidad, cantidad }, { total, total }]
+    }
+    return infoVentaProducto
+  }
+
+ 
 
   return (
     {
-      carrito,
-      agregarProductoCarrito,
-      eliminarProductoCarrito,
-      restarProductoCarrito,
-      vaciarCarrito,
-      calcularCantidadCategoria
+      // carrito,
+      // agregarProductoCarrito,
+      // eliminarProductoCarrito,
+      // restarProductoCarrito,
+      // vaciarCarrito,
+      obtenerInfoVentaTipo,
+      obtenerInfoVentaProducto
     }
   )
 }
