@@ -36,11 +36,14 @@
   
 
 }
-.ul-carrito::after {
-  content: "";
-  display: block;
-  border: 1px solid #ccc;
-  margin-top: 8px;
+
+.linea-carrito {
+  border: 1px solid #676565;
+  width: 98%;
+  display: flex;
+  margin: 0 auto;
+  margin-bottom: 10px;
+
 }
 .contenedor-secciones {
 

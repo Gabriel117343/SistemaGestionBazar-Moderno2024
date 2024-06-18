@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react"
-import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts'
+import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, Label } from 'recharts'
 import { VentasContext } from '../../../context/VentasContext'
 import { SidebarContext } from '../../../context/SidebarContext'
 
@@ -30,15 +30,14 @@ export const Grafico = () => {
   const ventasEsteMes = data.filter(venta => {
     return venta.fecha_venta.getMonth() === thisMonth && venta.fecha_venta.getFullYear() === thisYear;
   }).slice(-12); // Solo los últimos 12 registros (ventas de los últimos 12 meses)
-  
-  
-  // Calcular el ingreso total de este mes
  
-
   // Grafico circular
   const ventasPorMes = data.reduce((acumulador, venta) => {
-    const mes = venta.fecha_venta.getMonth();
+    const mes = venta.fecha_venta.getMonth()
+    const año = venta.fecha_venta.getFullYear()
+    
     if (!acumulador[mes]) {
+      if (año !== thisYear) return acumulador; // Ignorar ventas de años anteriores
       acumulador[mes] = { mes: mes + 1, total: 0 };
     }
     acumulador[mes].total += venta.total;
@@ -85,8 +84,9 @@ export const Grafico = () => {
   
   // Convertir el objeto a un array para usar con recharts
   const dataParaGrafico = Object.values(ventasPorMes);
- const v = ventas.at(-1).info_venta_tipo
-  console.log(JSON.parse(v))
+  console.log(dataParaGrafico)
+//  const v = ventas.at(-1).info_venta_tipo
+//   console.log(JSON.parse(v))
   // Colores para el gráfico de pastel
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
   
@@ -120,28 +120,30 @@ export const Grafico = () => {
         </ResponsiveContainer>
       </div>
       <div className="col-md-6 d-flex align-items-center piechart">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={dataParaGrafico}
-            cx="50%"
-            cy="35%"
-            labelLine={true}
-            label={({ name, percent }) => `${NOMBRES_MESES[name + 1]}: ${(percent * 100).toFixed(0)}%`}
-            outerRadius={80}
-            fill="#8884d8"
-            dataKey="total"
-          >
-            {
-              dataParaGrafico.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
-            }
-          </Pie>
-          <Tooltip />
-          <Legend layout="vertical" align="left" verticalAlign="middle"/>
-        </PieChart>
+        
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={dataParaGrafico}
+              cx="50%"
+              cy="48%"
+              labelLine={true}
+              label={({ mes, percent }) => `${NOMBRES_MESES[mes - 1]}: ${(percent * 100).toFixed(1)}%`}
+              outerRadius={90}
+              fill="#8884d8"
+              dataKey="total"
+            >
+              {
+                dataParaGrafico.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
+              }
+        
+            </Pie>
+            
+            <Tooltip />
+            <Legend layout="vertical" align="left" verticalAlign="middle"/>
+          </PieChart>
 
-      </ResponsiveContainer>
-      
+        </ResponsiveContainer>
       </div>
       
       

@@ -170,9 +170,11 @@ const ListaProductos = ({ listaProductos }) => {
     <div className="row">
       
       <div className="col-md-4 pt-2">
-        <div className="carrito">
 
-          <ul className='ul-carrito'>
+        <div>
+          <MagicMotion className='carrito' name='carrito' duration={0.5}>
+            <ul className='ul-carrito ps-2'>
+            
             {carrito?.map(producto => (
               <li key={producto.id}>
                 
@@ -183,7 +185,7 @@ const ListaProductos = ({ listaProductos }) => {
                       <p className='ps-4 mb-0'><strong>{producto.cantidad}</strong>/Unidades en ${producto.cantidad*producto.precio}</p>
                       <div className="d-flex">
                         <button className='boton-restar d-flex align-items-center justify-content-center' onClick={() => restarProductoCarrito(producto.id)}>-</button>
-               
+                
                         <button className='boton-sumar ms-1 d-flex align-items-center justify-content-center' onClick={() => agregarProductoCarrito(producto, stocks)}>+</button>
 
                       </div>
@@ -199,9 +201,10 @@ const ListaProductos = ({ listaProductos }) => {
               </li>
             ))}
             {carrito?.length === 0 && <div className='text-center' style={{fontSize: '150px'}}><i className="bi bi-cart-x"></i></div>}
-          </ul>
-          <div className="d-flex justify-content-between gap-2 px-1">
-            <button className='btn btn-info form-control' disabled={carrito.length > 0 ? false:true}>Cupon</button>
+            </ul>
+            <hr className='linea-carrito'/>
+            <div className="d-flex justify-content-between gap-2 px-1">
+            <button className='btn btn-info form-control' disabled={carrito.length > 0 ? false:true} onClick={() => {alert('Proximamente!')}}>Cupon</button>
             <button className='btn btn-danger form-control'disabled={carrito.length > 0 ? false:true}  onClick={vaciarCarrito}>Cancelar</button>
           </div>
           {clienteSeleccionado && !opcionCliente ? (
@@ -225,6 +228,10 @@ const ListaProductos = ({ listaProductos }) => {
             <strong>$ {carrito?.reduce((acc, prod) => acc + prod.precio * prod.cantidad, 0)}</strong>
           </div>
           <button disabled={clienteSeleccionado && !opcionCliente && carrito.length > 0 ? false:true} className='btn btn-success form-control mt-2' onClick={realizarVenta}>Pagar</button>
+
+          </MagicMotion>
+         
+         
         </div>
       </div>
       <div className="col-md-8">

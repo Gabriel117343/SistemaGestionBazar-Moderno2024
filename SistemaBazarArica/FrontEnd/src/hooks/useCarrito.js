@@ -49,8 +49,6 @@ export default function useCarrito ()  {
     return infoVentaProducto
   }
 
- 
-
   return (
     {
       // carrito,
