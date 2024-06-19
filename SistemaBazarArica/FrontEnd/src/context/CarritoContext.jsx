@@ -62,6 +62,18 @@ export const CarritoProvider = ({ children }) => {
       eliminarProductoCarrito(productoId) // Si la cantidad es 1, se elimina el producto
     }
   }
+  const actualizarCantidadCarrito = (productoId, cantidad) => {
+    console.log(cantidad)
+    const productoActualizado = carrito.map(prod => {
+      if (prod.id === productoId) {
+        prod.cantidad = cantidad
+        return prod
+      } else {
+        return prod
+      }
+    })
+    setCarrito(productoActualizado)
+  }
   const vaciarCarrito = () => {
     setCarrito([])
   }
@@ -71,7 +83,8 @@ export const CarritoProvider = ({ children }) => {
       agregarProductoCarrito,
       eliminarProductoCarrito,
       restarProductoCarrito,
-      vaciarCarrito
+      vaciarCarrito,
+      actualizarCantidadCarrito
     }}>{ children }</CarritoContext.Provider>
   )
 }

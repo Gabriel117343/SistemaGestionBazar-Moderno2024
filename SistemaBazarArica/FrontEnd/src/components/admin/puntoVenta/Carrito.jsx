@@ -9,7 +9,7 @@ export const Carrito = ({ datos, funciones }) => {
   const [showListModal, setShowListModal] = useState(false)
   const [opcionCliente, setOpcionCliente] = useState(true)
 
-  const { agregarProductoCarrito, restarProductoCarrito, vaciarCarrito, realizarVenta } = funciones
+  const { agregarProducto, restarProductoCarrito, vaciarCarrito, realizarVenta, actualizarCarrito } = funciones
   const { clienteSeleccionado, clientes, carrito } = datos
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export const Carrito = ({ datos, funciones }) => {
     
   }
   return (
-    <div className="col-md-4 pt-2">
+    <div className="col-md-4">
 
         <div>
           <MagicMotion className='carrito' name='carrito' duration={0.5}>
@@ -39,22 +39,24 @@ export const Carrito = ({ datos, funciones }) => {
                 
                 <div className="d-flex justify-content-between">
                   <div>
+                  <CardImg src={producto.imagen} style={{width: '35px', height: '30px'}}/>
                     <strong>{producto.nombre}</strong>
                     <div className="d-flex flex-column">
-                      <p className='ps-4 mb-0'><strong>{producto.cantidad}</strong>/Unidades en ${producto.cantidad*producto.precio}</p>
-                      <div className="d-flex">
-                        <button className='boton-restar d-flex align-items-center justify-content-center' onClick={() => restarProductoCarrito(producto.id)}>-</button>
-                
-                        <button className='boton-sumar ms-1 d-flex align-items-center justify-content-center' onClick={() => agregarProductoCarrito(producto, stocks)}>+</button>
-
+                      <div className="d-flex ps-4">
+                        <input type="number" className='unidades-producto ps-2' defaultValue={producto.cantidad} onChange={e => actualizarCarrito(producto.id, e.target.value)}/>
+                        <p className='mb-0'>/Unidades en ${producto.cantidad*producto.precio}</p>
                       </div>
-                      
-                      
                     </div>
                     
                   </div>
-                  <div>
+                  <div className=''>
                     <strong>${producto.precio}</strong>
+                    <div className="d-flex justify-content-end">
+                          <button className='boton-restar d-flex align-items-center justify-content-center' onClick={() => restarProductoCarrito(producto.id)}>-</button>
+                  
+                          <button className='boton-sumar ms-1 d-flex align-items-center justify-content-center' onClick={() => agregarProducto(producto)}>+</button>
+
+                        </div>
                   </div>
                 </div>
               </li>

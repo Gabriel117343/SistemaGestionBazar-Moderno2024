@@ -3,7 +3,7 @@
   padding: 0;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
   gap: 20px;
 }
 .producto {
@@ -14,6 +14,7 @@
   padding: 0;
   margin: 0;
   border: 1px solid #ccc;
+  border-radius: 0 0 8px 8px;
   background: rgb(255, 255, 255);
   max-width: 270px;
   
@@ -34,7 +35,25 @@
 
   min-height: 28vh;
 }
+.unidades-producto {
+  max-width: 30px;
+  padding: 0px 5px;
+  margin: 0;
+  max-height: 40px;
+  border: 1px solid #f0f0f0;
+  border-radius: 5px;
+  font-size: 15px;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  overflow: hidden;
 
+
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 .linea-carrito {
   border: 1px solid #676565;
   width: 98%;

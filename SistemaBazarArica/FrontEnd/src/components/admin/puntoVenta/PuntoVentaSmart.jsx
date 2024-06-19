@@ -19,7 +19,7 @@ export const PuntoVentaSmart = () => {
   const { stateCliente: { clientes, clienteSeleccionado }, getClientesContext } = useContext(ClientesContext)
   const { stateSeccion: { secciones }, getSeccionesContext } = useContext(SeccionesContext)
   // Contexto de carrito
-  const { carrito, agregarProductoCarrito, eliminarProductoCarrito, restarProductoCarrito, vaciarCarrito } = useContext(CarritoContext)
+  const { carrito, agregarProductoCarrito, eliminarProductoCarrito, restarProductoCarrito, vaciarCarrito, actualizarCantidadCarrito } = useContext(CarritoContext)
   
   const { obtenerInfoVentaTipo, obtenerInfoVentaProducto } = useCarrito()
   const [productosFiltrados, setProductosFiltrados] = useState(productos)
@@ -144,13 +144,22 @@ export const PuntoVentaSmart = () => {
     }
     setOpcionCliente(true) // se vuelve a habilitar la opcion de seleccionar cliente
   }
+  const actualizarCarrito = (idProducto, cantidad) => {
+    console.log(idProducto, cantidad)
+    if (parseInt(cantidad) <= 0 || cantidad === '') {
+      eliminarProductoCarrito(idProducto)
+      return
+    
+    }
+    actualizarCantidadCarrito(idProducto, cantidad)
 
+  }
 
   const datosListaProductos = { productosFiltrados, stocks, secciones, productos, carrito }
   const funcionesListaProductos = { debounceFiltroNombre, filtrarPorSeccion, filtroTipo, realizarVenta, resetearProductosFiltrados, agregarProducto }
 
   const datosCarrito = { carrito, clienteSeleccionado, clientes }
-  const funcionesCarrito = { eliminarProductoCarrito, restarProductoCarrito, vaciarCarrito, realizarVenta, agregarProducto }
+  const funcionesCarrito = { eliminarProductoCarrito, restarProductoCarrito, vaciarCarrito, realizarVenta, agregarProducto, actualizarCarrito }
   return (
     <section className='d-flex row'>
       <Carrito datos={{...datosCarrito}} funciones={{...funcionesCarrito}}/>

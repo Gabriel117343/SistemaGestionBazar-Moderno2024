@@ -11,7 +11,7 @@ import { debounce } from 'lodash'
 
 import { withLoadingImage } from '../../../hocs/withLoadingImage'
 const ListaProductos = ({ datos, funciones }) => {
-  const { productosFiltrados, stocks, clientes, secciones, productos, carrito } = datos
+  const { productosFiltrados, stocks, secciones, productos, carrito } = datos
   const { debounceFiltroNombre, filtrarPorSeccion, filtroTipo, resetearProductosFiltrados, agregarProducto } = funciones
   
   // Contextos
