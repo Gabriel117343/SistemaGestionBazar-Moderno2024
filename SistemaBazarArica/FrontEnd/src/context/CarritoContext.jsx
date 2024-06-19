@@ -13,6 +13,7 @@ export const CarritoProvider = ({ children }) => {
     localStorage.setItem('carrito', JSON.stringify(carrito))
   }, [carrito])
   const agregarProductoCarrito = (producto, stocks) => {
+    
     // Se busca el producto en el carrito para saber si ya está agregado
 
     const productoEnCarrito = carrito.find(prod => prod.id === producto.id)

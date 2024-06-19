@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { ListaProductosContenedor } from '../../components/admin/puntoVenta/ListaProductosContenedor'
+import { PuntoVentaSmart } from '../../components/admin/puntoVenta/PuntoVentaSmart'
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
 export const PuntoVenta = () => {
 
@@ -11,7 +11,7 @@ export const PuntoVenta = () => {
           </div>
           <GradualSpacing text="Realizar Ventas" className='m-0' type='h2'/>
         </div>
-          <ListaProductosContenedor />
+          <PuntoVentaSmart />
       </section>
   )
 }

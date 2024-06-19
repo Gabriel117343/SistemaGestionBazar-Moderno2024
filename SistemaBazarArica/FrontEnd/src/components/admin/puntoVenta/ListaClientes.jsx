@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { ClientesContext } from '../../../context/ClientesContext'
 import { toast } from 'react-hot-toast'
+import './puntoVenta.css'
 export const ListaClientes = ({ clientes, cerrarModal }) => {
   const { getClienteContext } = useContext(ClientesContext)
   console.log(clientes)
