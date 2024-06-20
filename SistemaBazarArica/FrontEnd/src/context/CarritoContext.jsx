@@ -14,11 +14,11 @@ export const CarritoProvider = ({ children }) => {
     localStorage.setItem('carrito', JSON.stringify(carrito))
   }, [carrito])
 
-  const agregarProductoCarrito = (producto) => {
-
+    const agregarProductoCarrito = (producto) => {
+    
     const productoEnCarrito = carrito.find(prod => prod.id === producto.id)
-    const productoConStock = (producto.stock.cantidad - (productoEnCarrito?.cantidad ?? 0)) 
-
+    const productoConStock = (producto.stock.cantidad - (productoEnCarrito?.cantidad ?? 0))
+    console.log(productoConStock)
     if (productoConStock <= 0 || productoConStock === undefined) {
       toast.error('Producto sin stock disponible')
     } else if (productoEnCarrito) {

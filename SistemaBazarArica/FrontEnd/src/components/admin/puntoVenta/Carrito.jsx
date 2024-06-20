@@ -9,7 +9,7 @@ export const Carrito = ({ datos, funciones }) => {
   const [showModal, setShowModal] = useState(false);
   const [showListModal, setShowListModal] = useState(false)
   const [opcionCliente, setOpcionCliente] = useState(true)
-
+  console.log('renderizado carrrito')
   const { agregarProducto, restarProductoCarrito, vaciarCarrito, realizarVenta, actualizarCarrito } = funciones
   const { clienteSeleccionado, clientes, carrito } = datos
 
@@ -28,14 +28,13 @@ export const Carrito = ({ datos, funciones }) => {
     setOpcionCliente(true)
     
   }
-  
   const validarCarrito = () => {
     const carritoSinCantidad = carrito.some(prod => prod.cantidad === 0 || prod.cantidad === '0' || prod.cantidad === '')
     if (carritoSinCantidad) {
       // sweetalert2
       Swal.fire({
         title: 'Error al realizar la venta',
-        text: 'Seleccione la cantidad a vender para cada producto',
+        text: 'Seleccione la cantidad a vender para cada productof del carrito',
         icon: 'error',
         confirmButtonText: 'Aceptar',
         confirmButtonColor: '#3085d6',

@@ -8,12 +8,12 @@ import { MagicMotion } from 'react-magic-motion'
 
 import { toast } from 'react-hot-toast'
 import { debounce } from 'lodash'
-
 import { withLoadingImage } from '../../../hocs/withLoadingImage'
 const ListaProductos = ({ datos, funciones }) => {
-  const { productosFiltrados, secciones, productos, carrito } = datos
-  const { debounceFiltroNombre, filtrarPorSeccion, filtroTipo, resetearProductosFiltrados, agregarProducto } = funciones
+  const { secciones, productos, carrito } = datos
+  const { agregarProducto } = funciones
   
+  const [productosFiltrados, setProductosFiltrados] = useState(productos)
   // Contexto para saber si el sidebar esta abierto o cerrado
   const { sidebar } = useContext(SidebarContext)
   
@@ -36,13 +36,39 @@ const ListaProductos = ({ datos, funciones }) => {
     return productosPorPagina
 
   }
+  const filtrarPorSeccion = (id) => {
+    const productosFiltrados = productos.filter(producto => producto.seccion.id === id)
+    
+    setProductosFiltrados(productosFiltrados)
+  }
+  const filtroNombre = (event) => {
+    const nombre = event.target.value
+    
+    const productosFilt = productos.filter(producto => producto.nombre.toLowerCase().includes(nombre.toLowerCase()))
+    console.log(productosFilt)
+    setProductosFiltrados(productosFilt)
+  }
+
+  const filtroTipo = (event) => {
+    const tipo = event.target.value
+    if (tipo === 'all') {
+      setProductosFiltrados(productos)
+      return
+    }
+    const productosFilt = productos.filter(producto => producto.tipo === tipo)
+    setProductosFiltrados(productosFilt)
+  }
+  const resetearProductosFiltrados = () => {
+    setProductosFiltrados(productos);
+  }
+  const debounceFiltroNombre = debounce(filtroNombre, 300) // se le pasa la funcion y el tiempo de espera
+  
   
   useEffect(() => {
  
     calculoPaginas()
     
-
-  }, [sidebar]) // se ejecuta cuando cambie el sidebar
+  }, [sidebar]) // se ejecuta cuando cambie el side
   // se calcula la cantidad de productos por pagina
   const cantidadPorPagina = calculoPaginas()
   console.log(`--Se mostraran ${cantidadPorPagina} productos por pagina--`)
@@ -108,14 +134,13 @@ const ListaProductos = ({ datos, funciones }) => {
                     <div className='pt-0'>
                       {producto.imagen ?
                       (
-                
                           <img  width='100%' height='150px' src={producto.imagen} alt={`esto es una imagen de un ${producto.nombre}`} />
                       ) 
                       :
                       (
                           <img  width='100%' height='150px' src='https://ww.idelcosa.com/img/default.jpg' alt="esta es una imagen por defecto" />
                       ) }
-                   
+
                       {/* {imagen 
                         ? <ImageWithLoading loading='lazy'  width='100%' height='150px' src={imagen} alt={`esto es una imagen de un ${nombre}`} />
                         : <ImageWithLoading effect="blur" width='100%' height='150px' src='https://ww.idelcosa.com/img/default.jpg' alt="esta es una imagen por defecto" />
@@ -126,15 +151,17 @@ const ListaProductos = ({ datos, funciones }) => {
                       <p className="producto__nombre p-0 m-0">{producto.nombre}</p>
                       <div className="d-flex justify-content-center">
                         <p className="p-0 m-0 text-success precio-num">${producto.precio}</p>
-                        <p className="p-0 m-0 ps-2 stock-num d-flex align-items-center"> Stock: {cantidadCalculada}</p>
+                        <div className="d-flex align-items-center stock-num">
+                          <strong className={`p-0 m-0 ps-2 d-flex align-items-center`}>Stock:</strong>
+                          <p className={`${cantidadCalculada === 0 && 'text-danger'}`}>{cantidadCalculada}</p>
+                        </div>
+                        
                       </div>
                     </div>
                     <div className='pt-0 mt-0'>
                       <button className="btn btn-warning form-control" onClick={() => agregarProducto(producto)}>Agregar</button>
                     </div>
-                    
                   </div>
-                  
                 </li>
               )
             }  )}

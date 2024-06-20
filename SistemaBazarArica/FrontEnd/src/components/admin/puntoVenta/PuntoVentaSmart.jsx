@@ -22,7 +22,7 @@ export const PuntoVentaSmart = () => {
   const { carrito, agregarProductoCarrito, eliminarProductoCarrito, restarProductoCarrito, vaciarCarrito, actualizarCantidadCarrito } = useContext(CarritoContext)
   
   const { obtenerInfoVentaTipo, obtenerInfoVentaProducto } = useCarrito()
-  const [productosFiltrados, setProductosFiltrados] = useState(productos)
+  
   // Cargar todos los productos, stocks, ventas, clientes y secciones al cargar el componente por primera vez
   useEffect(() => {
     const cargarProductos = async () => {
@@ -38,15 +38,7 @@ export const PuntoVentaSmart = () => {
     }
     cargarProductos()
   }, [])
-  useEffect(() => {
-    setProductosFiltrados(productos)
-    console.log(productosFiltrados)
-  }, [productos])
-
-
-  const resetearProductosFiltrados = () => {
-    setProductosFiltrados(productos);
-  }
+  
   const agregarProducto = (producto) => {
     agregarProductoCarrito(producto)
   }
@@ -80,30 +72,8 @@ export const PuntoVentaSmart = () => {
     cargarSecciones()
   }, [])
   // Funciones para filtrar productos
-  const filtroTipo = (event) => {
-    const tipo = event.target.value
-    if (tipo === 'all') {
-      setProductosFiltrados(productos)
-      return
-    }
-    const productosFilt = productos.filter(producto => producto.tipo === tipo)
-    setProductosFiltrados(productosFilt)
-  }
-  const filtroNombre = (event) => {
-    const nombre = event.target.value
-    
-    const productosFilt = productos.filter(producto => producto.nombre.toLowerCase().includes(nombre.toLowerCase()))
-    console.log(productosFilt)
-    setProductosFiltrados(productosFilt)
-  }
   
   
-  const debounceFiltroNombre = debounce(filtroNombre, 300) // se le pasa la funcion y el tiempo de espera
-  const filtrarPorSeccion = (id) => {
-    const productosFiltrados = productos.filter(producto => producto.seccion.id === id)
-    
-    setProductosFiltrados(productosFiltrados)
-  }
   const realizarVenta = async () => {
     
     const formVenta = new FormData()
@@ -156,8 +126,8 @@ export const PuntoVentaSmart = () => {
       actualizarCantidadCarrito(idProducto, cantidad)
     }
   }
-  const datosListaProductos = { productosFiltrados, secciones, productos, carrito }
-  const funcionesListaProductos = { debounceFiltroNombre, filtrarPorSeccion, filtroTipo, realizarVenta, resetearProductosFiltrados, agregarProducto }
+  const datosListaProductos = { secciones, productos, carrito }
+  const funcionesListaProductos = { realizarVenta, agregarProducto }
 
   const datosCarrito = { carrito, clienteSeleccionado, clientes }
   const funcionesCarrito = { eliminarProductoCarrito, restarProductoCarrito, vaciarCarrito, realizarVenta, agregarProducto, actualizarCarrito }
