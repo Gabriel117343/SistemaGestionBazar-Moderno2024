@@ -1,20 +1,7 @@
 import React, { useState } from 'react'
+import { MagicMotion } from 'react-magic-motion'
+export const TablaStocks = ({ listaStocks, filtrar, imprimir, refrescar }) => {
 
-export const TablaStocks = ({ listaStocks, filtro }) => {
-
-  if (filtro) {
-    listaStocks = listaStocks.filter((stock) => {
-      return stock.producto.nombre.toLowerCase().includes(filtro.toLowerCase()) || stock.producto.proveedor.nombre.toLowerCase().includes(filtro.toLowerCase()) || stock.descripcion.toLowerCase().includes(filtro.toLowerCase()) || stock.cantidad.toString().toLowerCase().includes(filtro.toLowerCase())
-    })
-  }
-  if (listaStocks.length === 0) {
-    return (
-      <div className="alert alert-warning pt-3" role="alert">
-        No hay productos con ese nombre
-      </div>
-    )
-  }
- 
   const [currentPage, setCurrentPage] = useState(1)
   // Se establece la cantidad de productos a mostrar por pagina
   const cantidadStocks = 10
@@ -28,32 +15,47 @@ export const TablaStocks = ({ listaStocks, filtro }) => {
   let contador = startIndex + 1 // para numerar los usuarios en la tabla comenzando por el starIndex aumentado en uno
   return (
     <section>
+      <div className='d-flex gap-2 align-items-center pb-2'>
+        <i className='bi bi-search'></i>
+        <input className='form-control' type="text" placeholder="Buscar por nombre, proveedor o codigo" onChange={e => filtrar(e.target.value)}/>
+        <button className='btn btn-outline-primary' onClick={refrescar}><i className="bi bi-arrow-repeat"></i></button>
+        <button className='btn btn-outline-primary' onClick={imprimir}><i class="bi bi-printer"></i></button>
+
+      </div>
       
       <table className="table table-striped mb-0">
         <thead>
           <tr>
             <th scope="col">#</th>
             <th scope="col">Producto</th>
+            <th>Codigo</th>
+            <th>Precio</th>
             <th>Proveedor</th>
             <th>Descripcion</th>
             <th scope="col" className='text-center'>Stock Disponible</th>
           </tr>
         </thead>
         <tbody>
-          {
-            stocksMostrar.map((stock) => (
-              <tr key={stock.id}>
-                <th scope="row">{contador++}</th>
-                <td>{stock.producto.nombre}</td>
-                <td>{stock.producto.proveedor.nombre}</td>
-                <td>{stock.descripcion}</td>
-                <td className='text-center'>{stock.cantidad}</td>
-     
-              </tr>
-            ))
-          }
+          <MagicMotion>
+            {
+              stocksMostrar?.map((producto) => (
+                <tr key={producto.id}>
+                  <th scope="row">{contador++}</th>
+                  <td>{producto.nombre}</td>
+                  <td>{producto.codigo}</td>
+                  <td>{producto.precio}</td>
+                  <td>{producto.proveedor.nombre}</td>
+                  <td>{producto.descripcion}</td>
+                  <td className='text-center'>{producto.stock.cantidad}</td>
+      
+                </tr>
+              ))
+            }
+
+          </MagicMotion>
         </tbody>
       </table>
+      {listaStocks.length === 0 && <h1 className='text-center pt-4'>No se han econtrado Productos..</h1>}
       <div className='pagination-buttons mb-3 mt-1 animacion-numeros'>
         {/* bucle Array.from() para generar botones según la cantidad de páginas necesarias, solo se usara el indice del array */}
         {Array.from({ length: totalBotones }, (_, index) => (
@@ -67,40 +69,56 @@ export const TablaStocks = ({ listaStocks, filtro }) => {
 }
 const SinStocks = () => {
   return (
-    <section>
-      <table className="table table-striped mb-0">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Producto</th>
-            <th scope='col'>Proveedor</th>
-            <th scope="col">Cantidad</th>
-            <th scope="col">Precio</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">-</th>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-          </tr>
-        </tbody>
-      </table>
-      <h1 className='text-center pt-5'>No Hay Stocks Registrados</h1>
-    </section>
+    <>
+     
+      <div className='d-flex gap-2 align-items-center pb-2'>
+          <i className='bi bi-search'></i>
+          <input className='form-control' type="text" placeholder="Buscar por nombre, proveedor, descripcion, stock..." />
+          <button className='btn btn-outline-primary' ><i className="bi bi-arrow-repeat"></i></button>
+          <button className='btn btn-outline-primary' ><i class="bi bi-printer"></i></button>
+
+        </div>
+      <section>
+        <table className="table table-striped mb-0">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Producto</th>
+              <th>Codigo</th>
+              <th>Precio</th>
+              <th>Proveedor</th>
+              <th>Descripcion</th>
+              <th scope="col" className='text-center'>Stock Disponible</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">-</th>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+          </tbody>
+        </table>
+        <h1 className='text-center pt-5'>No Hay Productos Registrados</h1>
+      </section>
+    </>
+    
   )
 }
 
 
-export const ValidarStocks = ({ listaStocks, filtro }) => {
-  const validacion = listaStocks.length > 0 // si listaStocks es mayor a 0
+export const ValidarStocks = ({ productos, listaStocks, filtrar, imprimir, refrescar}) => {
+  const validacion = productos.length > 0 // si listaStocks es mayor a 0
   // sera true o false
   // RENDERIZADO CONDICIONAL
   return (
     validacion
-      ? <TablaStocks listaStocks={listaStocks} filtro={filtro} />
+      ? <TablaStocks listaStocks={listaStocks} filtrar={filtrar} imprimir={imprimir} refrescar={refrescar}/>
       : <SinStocks />
   )
 }

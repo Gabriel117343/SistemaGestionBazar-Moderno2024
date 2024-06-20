@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { MagicMotion } from 'react-magic-motion'
 import { CardImg, Modal} from 'react-bootstrap'
 import { FormRegistroCliente } from './FormRegistroCliente'
 import { ListaClientes } from './ListaClientes'
 import './puntoVenta.css'
+import Swal from 'sweetalert2'
 export const Carrito = ({ datos, funciones }) => {
   const [showModal, setShowModal] = useState(false);
   const [showListModal, setShowListModal] = useState(false)
@@ -27,26 +28,52 @@ export const Carrito = ({ datos, funciones }) => {
     setOpcionCliente(true)
     
   }
+  
+  const validarCarrito = () => {
+    const carritoSinCantidad = carrito.some(prod => prod.cantidad === 0 || prod.cantidad === '0' || prod.cantidad === '')
+    if (carritoSinCantidad) {
+      // sweetalert2
+      Swal.fire({
+        title: 'Error al realizar la venta',
+        text: 'Seleccione la cantidad a vender para cada producto',
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#3085d6',
+      })
+      return
+    } else {
+      realizarVenta()
+    }
+  }
+  
+  
   return (
     <div className="col-md-4">
 
         <div>
           <MagicMotion className='carrito' name='carrito' duration={0.5}>
-            <ul className='ul-carrito ps-2'>
+            <ul className='ul-carrito ps-1'>
             
             {carrito?.map(producto => (
               <li key={producto.id}>
                 
                 <div className="d-flex justify-content-between">
                   <div>
-                  <CardImg src={producto.imagen} style={{width: '35px', height: '30px'}}/>
-                    <strong>{producto.nombre}</strong>
-                    <div className="d-flex flex-column">
-                      <div className="d-flex ps-4">
-                        <input type="number" className='unidades-producto ps-2' defaultValue={producto.cantidad} onChange={e => actualizarCarrito(producto.id, e.target.value)}/>
-                        <p className='mb-0'>/Unidades en ${producto.cantidad*producto.precio}</p>
+                    <CardImg className='img-min-producto' src={producto.imagen} style={{width: '30px', height: '26px'}}/>
+                      <strong className='ps-1'>{producto.nombre}</strong>
+                      <div className="d-flex flex-column">
+                        <div className="d-flex ps-4">
+                          <input type="number" className='unidades-producto' defaultValue={producto.cantidad} onChange={e => {
+                            if (e.target.value > 99) {
+                              e.target.value = e.target.value.slice(0, 2);
+                            }
+                            actualizarCarrito(producto.id, e.target.value);
+                          }} 
+                          min='0' 
+                          max='99' value= {producto.cantidad}/>
+                          <p className='mb-0'>/Unidades en ${producto.cantidad*producto.precio}</p>
+                        </div>
                       </div>
-                    </div>
                     
                   </div>
                   <div className=''>
@@ -88,7 +115,7 @@ export const Carrito = ({ datos, funciones }) => {
             <strong>Total</strong>
             <strong>$ {carrito?.reduce((acc, prod) => acc + prod.precio * prod.cantidad, 0)}</strong>
           </div>
-          <button disabled={clienteSeleccionado && !opcionCliente && carrito.length > 0 ? false:true} className='btn btn-success form-control mt-2' onClick={realizarVenta}>Pagar</button>
+          <button disabled={clienteSeleccionado && !opcionCliente && carrito.length > 0 ? false:true} className='btn btn-success form-control mt-2' onClick={validarCarrito}>Pagar</button>
 
           </MagicMotion>
          

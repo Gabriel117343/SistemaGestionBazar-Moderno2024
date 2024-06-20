@@ -1,5 +1,6 @@
 import { useContext, useState, createContext, useEffect } from 'react'
 import toast from 'react-hot-toast'
+
 export const CarritoContext = createContext()
 
 export const CarritoProvider = ({ children }) => {
@@ -12,20 +13,20 @@ export const CarritoProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('carrito', JSON.stringify(carrito))
   }, [carrito])
-  const agregarProductoCarrito = (producto, stocks) => {
-    
-    // Se busca el producto en el carrito para saber si ya está agregado
+
+  const agregarProductoCarrito = (producto) => {
 
     const productoEnCarrito = carrito.find(prod => prod.id === producto.id)
+    const productoConStock = (producto.stock.cantidad - (productoEnCarrito?.cantidad ?? 0)) 
 
-    const productoDisponible = stocks.find(stock => stock.producto.id === producto.id)
-    const productoDisponibleCarrito = productoDisponible.cantidad - productoEnCarrito?.cantidad 
-  
-    if (productoDisponibleCarrito <= 0 || productoDisponible.cantidad === 0) {
+    if (productoConStock <= 0 || productoConStock === undefined) {
       toast.error('Producto sin stock disponible')
     } else if (productoEnCarrito) {
       const productoActualizado = carrito.map(prod => {
         if (prod.id === producto.id) {
+          if (prod.cantidad === '0' || prod.cantidad === 0) {
+            prod.cantidad = ''
+          }
           prod.cantidad += 1
           return prod
         } else {
@@ -36,6 +37,7 @@ export const CarritoProvider = ({ children }) => {
       setCarrito(productoActualizado)
 
     } else {
+      
       setCarrito([...carrito, { ...producto, cantidad: 1 }])
     }
   }
@@ -63,16 +65,23 @@ export const CarritoProvider = ({ children }) => {
     }
   }
   const actualizarCantidadCarrito = (productoId, cantidad) => {
-    console.log(cantidad)
-    const productoActualizado = carrito.map(prod => {
-      if (prod.id === productoId) {
-        prod.cantidad = cantidad
-        return prod
-      } else {
-        return prod
-      }
-    })
-    setCarrito(productoActualizado)
+    if (parseInt(cantidad) < 0) {
+      console.log('first')
+      eliminarProductoCarrito(productoId)
+      return
+    } else {
+      const productoActualizado = carrito.map(prod => {
+        if (prod.id === productoId) {
+          prod.cantidad = cantidad
+          return prod
+        } else {
+          return prod
+        }
+      })
+      setCarrito(productoActualizado)
+
+    }
+    
   }
   const vaciarCarrito = () => {
     setCarrito([])

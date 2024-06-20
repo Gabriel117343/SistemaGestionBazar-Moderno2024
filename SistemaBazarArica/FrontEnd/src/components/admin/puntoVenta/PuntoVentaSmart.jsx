@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useMemo } from 'react'
 import { ProductosContext } from '../../../context/ProductosContext'
 import { StocksContext } from '../../../context/StocksContext'
 import { VentasContext } from '../../../context/VentasContext' // contexto de ventas
@@ -13,7 +13,7 @@ import { debounce } from 'lodash'
 import swal from 'sweetalert2'
 import './puntoVenta.css'
 export const PuntoVentaSmart = () => {
-  const { stateProducto: { productos }, getProductosContext } = useContext(ProductosContext)
+  const { stateProducto: { productos }, getProductosContext, crearProductoContext } = useContext(ProductosContext)
   const { stateStock: { stocks}, getStocksContext } = useContext(StocksContext)
   const { createVentaContext } = useContext(VentasContext)
   const { stateCliente: { clientes, clienteSeleccionado }, getClientesContext } = useContext(ClientesContext)
@@ -29,7 +29,6 @@ export const PuntoVentaSmart = () => {
       const { success, message } = await getProductosContext()
       if (success) {
         // en caso de que message sea undefined, se asigna un mensaje por defecto para evitar errores
-        
         toast.success(message ?? 'Productos cargados')
     
       } else {
@@ -40,14 +39,16 @@ export const PuntoVentaSmart = () => {
     cargarProductos()
   }, [])
   useEffect(() => {
-    setProductosFiltrados(productos);
-  }, [productos]); // Dependencia a 'productos'
+    setProductosFiltrados(productos)
+    console.log(productosFiltrados)
+  }, [productos])
+
 
   const resetearProductosFiltrados = () => {
     setProductosFiltrados(productos);
   }
   const agregarProducto = (producto) => {
-    agregarProductoCarrito(producto, stocks)
+    agregarProductoCarrito(producto)
   }
   
   useEffect(() => {
@@ -96,6 +97,7 @@ export const PuntoVentaSmart = () => {
     setProductosFiltrados(productosFilt)
   }
   
+  
   const debounceFiltroNombre = debounce(filtroNombre, 300) // se le pasa la funcion y el tiempo de espera
   const filtrarPorSeccion = (id) => {
     const productosFiltrados = productos.filter(producto => producto.seccion.id === id)
@@ -103,8 +105,7 @@ export const PuntoVentaSmart = () => {
     setProductosFiltrados(productosFiltrados)
   }
   const realizarVenta = async () => {
-    console.log(carrito)
-    console.log(clienteSeleccionado)
+    
     const formVenta = new FormData()
     formVenta.append('cliente', clienteSeleccionado.id)
     formVenta.append('total', carrito.reduce((acc, prod) => acc + prod.precio * prod.cantidad, 0)) // total de la venta
@@ -144,18 +145,18 @@ export const PuntoVentaSmart = () => {
     }
     setOpcionCliente(true) // se vuelve a habilitar la opcion de seleccionar cliente
   }
+
   const actualizarCarrito = (idProducto, cantidad) => {
-    console.log(idProducto, cantidad)
-    if (parseInt(cantidad) <= 0 || cantidad === '') {
-      eliminarProductoCarrito(idProducto)
+    const productoConStock = (productos.find(prod => prod.id === idProducto).stock.cantidad - cantidad)
+    // si la cantidad es menor o igual a 0, no se aumentar el stock en carrito
+    if (productoConStock < 0) {
+      toast.error('Producto sin stock disponible')
       return
-    
+    } else {
+      actualizarCantidadCarrito(idProducto, cantidad)
     }
-    actualizarCantidadCarrito(idProducto, cantidad)
-
   }
-
-  const datosListaProductos = { productosFiltrados, stocks, secciones, productos, carrito }
+  const datosListaProductos = { productosFiltrados, secciones, productos, carrito }
   const funcionesListaProductos = { debounceFiltroNombre, filtrarPorSeccion, filtroTipo, realizarVenta, resetearProductosFiltrados, agregarProducto }
 
   const datosCarrito = { carrito, clienteSeleccionado, clientes }

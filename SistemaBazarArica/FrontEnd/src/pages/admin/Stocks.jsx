@@ -1,6 +1,6 @@
 import React from 'react'
-import { StocksProvider } from '../../context/StocksContext' // importando el contexto de los stocks
-import { TablaStocksContenedor } from '../../components/admin/stocks/TablaStocksContenedor' // importando el componente que contiene la tabla de stocks
+import { ProductosProvider } from '../../context/ProductosContext' // importando el contexto de los stocks
+import { StockSmart } from '../../components/admin/stocks/StockSmart' // importando el componente que contiene la tabla de stocks
 import { FaBoxes } from "react-icons/fa";
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
 export const Stocks = () => {
@@ -12,9 +12,9 @@ export const Stocks = () => {
           </div>
           <GradualSpacing text="Stock en Tienda" className='m-0' type='h2'/>
         </div>
-        <StocksProvider>
-          <TablaStocksContenedor />
-        </StocksProvider>
+        <ProductosProvider>
+          <StockSmart />
+        </ProductosProvider>
       </section>
   )
 }

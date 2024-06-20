@@ -36,16 +36,22 @@
   min-height: 28vh;
 }
 .unidades-producto {
-  max-width: 30px;
-  padding: 0px 5px;
+  max-width: 35px;
+  padding: 0px 2px;
   margin: 0;
-  max-height: 40px;
-  border: 1px solid #f0f0f0;
+  height: 23px;
+  border: 1px solid #f0efef;
   border-radius: 5px;
   font-size: 15px;
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   overflow: hidden;
+  text-align: right;
+  background: #f8f8f8;
 
+}
+
+.img-min-producto {
+  box-shadow: 0 0 5px 5px #fffefe;
 
 }
 

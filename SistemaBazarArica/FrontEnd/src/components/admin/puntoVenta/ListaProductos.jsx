@@ -11,11 +11,9 @@ import { debounce } from 'lodash'
 
 import { withLoadingImage } from '../../../hocs/withLoadingImage'
 const ListaProductos = ({ datos, funciones }) => {
-  const { productosFiltrados, stocks, secciones, productos, carrito } = datos
+  const { productosFiltrados, secciones, productos, carrito } = datos
   const { debounceFiltroNombre, filtrarPorSeccion, filtroTipo, resetearProductosFiltrados, agregarProducto } = funciones
   
-  // Contextos
- 
   // Contexto para saber si el sidebar esta abierto o cerrado
   const { sidebar } = useContext(SidebarContext)
   
@@ -96,27 +94,22 @@ const ListaProductos = ({ datos, funciones }) => {
         <ul className='productos productos-contendor'>
           <MagicMotion className='row' name='productos' duration={0.5}>
             {productosMostrar?.map(producto => {
-              
-              const { id, nombre, precio, imagen } = producto // destructuracion de producto
-              const stock = stocks?.find(stock => stock.producto.id === id)
-              const cantidad = stock ? stock.cantidad : 0
-              const stockProductoCarrito = carrito.find(prod => prod.id === id)?.cantidad || 0 // se accede a la cantidad/stock del producto en el carrito
-      
+              // const stock = producto?.stock?.find(stock => stock.id === id)
+              const cantidad = producto.stock.cantidad  ?? 0 // se accede a la cantidad de productos en stock
+              const stockProductoCarrito = carrito?.find(prod => prod.id === producto.id)?.cantidad ?? 0 // se accede a la cantidad/stock del producto en el carrito
+
               const cantidadCalculada = cantidad - stockProductoCarrito
-              
-              // lo que hace cantidadCalculada es restar la cantidad de productos que ya estan en el carrito para que no se pueda agregar mas de lo que hay en stock
-              // solo es una forma de representar la cantidad de productos que se pueden agregar, pero no es la cantidad real que viene del stock del backend
-              
-       
+              // cantidadCalculada lo que hace es restar la cantidad de productos en stock con la cantidad de productos que ya estan en el carrito
+              // Es una forma de representar la cantidad de productos que se pueden agregar, no es la cantidad real que viene del stock del backend
               // const ImageWithLoading = withLoadingImage((props) => <img {...props} />);
               return (
-                <li key={id} className='producto'>
+                <li key={producto?.id} className='producto'>
                   <div className="producto">
                     <div className='pt-0'>
-                      {imagen ?
+                      {producto.imagen ?
                       (
                 
-                          <img  width='100%' height='150px' src={imagen} alt={`esto es una imagen de un ${nombre}`} />
+                          <img  width='100%' height='150px' src={producto.imagen} alt={`esto es una imagen de un ${producto.nombre}`} />
                       ) 
                       :
                       (
@@ -130,13 +123,11 @@ const ListaProductos = ({ datos, funciones }) => {
                     </div>
                     
                     <div className="p-0 m-0">
-                      <p className="producto__nombre p-0 m-0">{nombre}</p>
+                      <p className="producto__nombre p-0 m-0">{producto.nombre}</p>
                       <div className="d-flex justify-content-center">
-                        <p className="p-0 m-0 text-success precio-num">${precio}</p>
+                        <p className="p-0 m-0 text-success precio-num">${producto.precio}</p>
                         <p className="p-0 m-0 ps-2 stock-num d-flex align-items-center"> Stock: {cantidadCalculada}</p>
-                          
                       </div>
-                      
                     </div>
                     <div className='pt-0 mt-0'>
                       <button className="btn btn-warning form-control" onClick={() => agregarProducto(producto)}>Agregar</button>
@@ -145,13 +136,10 @@ const ListaProductos = ({ datos, funciones }) => {
                   </div>
                   
                 </li>
-                
               )
             }  )}
           </MagicMotion>
           {productosFiltrados.length === 0 && <h1 className='text-center pt-4'>No se han econtrado Productos..</h1>}
-          
-
         </ul>
         {/* bucle Array.from() para generar botones según la cantidad de páginas necesarias, solo se usara el indice del array */}
         <div className='pt-1'>
@@ -162,9 +150,6 @@ const ListaProductos = ({ datos, funciones }) => {
         ))}
           
         </div>
-        
-       
-        
       </div>
       
     </>
