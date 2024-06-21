@@ -1,7 +1,6 @@
 
 import './puntoventa.css'
-import React, { useContext, useEffect, useState } from 'react'
-
+import React, { useEffect, useState } from 'react'
 import { MagicMotion } from 'react-magic-motion'
 import { toast } from 'react-hot-toast'
 import { debounce } from 'lodash'
@@ -11,8 +10,6 @@ const ListaProductos = ({ datos, funciones }) => {
   const { agregarProducto } = funciones
   
   const [productosFiltrados, setProductosFiltrados] = useState(productos)
-  // Contexto para saber si el sidebar esta abierto o cerrado
-  console.log('renderizado')
   // Separar en Hooks
   const [currentPage, setCurrentPage] = useState(1)
   function calculoPaginas () {
@@ -20,12 +17,9 @@ const ListaProductos = ({ datos, funciones }) => {
     // se define la cantidad de productos por pagina dependiendo si esta en es md o lg
     // si el sidebar esta abierto o cerrado y si esta en una resolucion de 1700px o 1900pxs
     let productosPorPagina = 0
-    console.log(window.innerWidth)
     if (window.innerWidth < 1500 || (sidebar && window.innerWidth < 1900)) {
       productosPorPagina = 8
     } else if ((window.innerWidth >= 1500 && window.innerWidth <= 1900) && !sidebar) {
-      console.log(sidebar)
-      console.log(sidebar)
       productosPorPagina = 10
     } else if ( window.innerWidth >= 1900 && !sidebar) {
       console.log('d')
@@ -45,7 +39,6 @@ const ListaProductos = ({ datos, funciones }) => {
     const nombre = event.target.value
     
     const productosFilt = productos.filter(producto => producto.nombre.toLowerCase().includes(nombre.toLowerCase()))
-    console.log(productosFilt)
     setProductosFiltrados(productosFilt)
   }
 
@@ -65,7 +58,6 @@ const ListaProductos = ({ datos, funciones }) => {
 
   // se calcula la cantidad de productos por pagina
   const cantidadPorPagina = calculoPaginas()
-  console.log(`--Se mostraran ${cantidadPorPagina} productos por pagina--`)
   // calculando el índice y fin de la lista actual en función de la página actual y los elementos por página
   const startIndex = (currentPage - 1) * cantidadPorPagina
   const endIndex = startIndex + cantidadPorPagina

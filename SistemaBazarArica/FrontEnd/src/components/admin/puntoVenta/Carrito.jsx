@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { MagicMotion } from 'react-magic-motion'
-import { CardImg, Modal} from 'react-bootstrap'
+import { Modal} from 'react-bootstrap'
 import { FormRegistroCliente } from './FormRegistroCliente'
 import { ListaClientes } from './ListaClientes'
 import './puntoVenta.css'
@@ -29,6 +29,7 @@ export const Carrito = ({ datos, funciones }) => {
     setOpcionCliente(true)
     
   }
+
   const validarCarrito = () => {
     const carritoSinCantidad = carrito.some(prod => prod.cantidad === 0 || prod.cantidad === '0' || prod.cantidad === '')
     if (carritoSinCantidad) {
@@ -60,11 +61,12 @@ export const Carrito = ({ datos, funciones }) => {
                 
                 <div className="d-flex justify-content-between">
                   <div>
-                    <CardImg className='img-min-producto' src={producto.imagen} style={{width: '30px', height: '26px'}}/>
+                    
+                      <img src={producto.imagen} alt='img'  style={{width: '30px', height: '26px'}}/>
                       <strong className='ps-1'>{producto.nombre}</strong>
                       <div className="d-flex flex-column">
                         <div className="d-flex ps-4">
-                          <input type="number" className='unidades-producto' defaultValue={producto.cantidad} onChange={e => {
+                          <input type="number" className='unidades-producto' onChange={e => {
                             if (e.target.value > 99) {
                               e.target.value = e.target.value.slice(0, 2);
                             }

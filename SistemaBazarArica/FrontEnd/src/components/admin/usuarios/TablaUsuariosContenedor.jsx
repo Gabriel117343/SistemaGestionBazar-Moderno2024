@@ -84,7 +84,7 @@ export const TablaUsuariosContenedor = () => {
   }
   
   return (
-    <section className='pt-2'>
+    <section>
       <div className="row d-flex mb-2">
         <div className="col-md-2">
           <ButtonNew onClick={() => setShowRegistroModal(true)}>Nuevo</ButtonNew>

@@ -87,7 +87,7 @@ export const Menu = ({ children }) => {
   return (
 
     <div className='contenedor'>
-      <sidebar style={{width: sidebar ? "350px": "50px"}} className="sidebar">
+      <aside style={{width: sidebar ? "350px": "50px"}} className="sidebar">
 
         <div className="top_section pt-4">
           
@@ -136,7 +136,7 @@ export const Menu = ({ children }) => {
           </div>
 
         
-        </sidebar>
+        </aside>
 
         <main>{ children }</main> 
 

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { ProductosContext } from '../../../context/ProductosContext'
 import { VentasContext } from '../../../context/VentasContext' // contexto de ventas
 import { ClientesContext } from '../../../context/ClientesContext'
@@ -9,7 +9,6 @@ import useCarrito from '../../../hooks/useCarrito'
 import { toast } from 'react-hot-toast'
 import { ValidarProductos } from './ListaProductos'
 import { Carrito } from './Carrito'
-import { debounce } from 'lodash'
 import swal from 'sweetalert2'
 import './puntoVenta.css'
 export const PuntoVentaSmart = () => {

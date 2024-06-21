@@ -11,8 +11,6 @@ export const Usuarios = () => {
           <GradualSpacing text="Gestionar Usuarios" className='m-0' type='h2'/>
         </div>
         <TablaUsuariosContenedor />
-        
-        
 
       </section>
   )
