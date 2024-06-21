@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react'
 import { ProductosContext } from '../../../context/ProductosContext'
-import { StocksContext } from '../../../context/StocksContext'
 import { VentasContext } from '../../../context/VentasContext' // contexto de ventas
 import { ClientesContext } from '../../../context/ClientesContext'
 import { SeccionesContext } from '../../../context/SeccionesContext'
 import { CarritoContext } from '../../../context/CarritoContext'
+import { SidebarContext } from '../../../context/SidebarContext'
 import useCarrito from '../../../hooks/useCarrito'
 import { toast } from 'react-hot-toast'
 import { ValidarProductos } from './ListaProductos'
@@ -14,13 +14,13 @@ import swal from 'sweetalert2'
 import './puntoVenta.css'
 export const PuntoVentaSmart = () => {
   const { stateProducto: { productos }, getProductosContext, crearProductoContext } = useContext(ProductosContext)
-  const { stateStock: { stocks}, getStocksContext } = useContext(StocksContext)
+  
   const { createVentaContext } = useContext(VentasContext)
   const { stateCliente: { clientes, clienteSeleccionado }, getClientesContext } = useContext(ClientesContext)
   const { stateSeccion: { secciones }, getSeccionesContext } = useContext(SeccionesContext)
   // Contexto de carrito
   const { carrito, agregarProductoCarrito, eliminarProductoCarrito, restarProductoCarrito, vaciarCarrito, actualizarCantidadCarrito } = useContext(CarritoContext)
-  
+  const { sidebar } = useContext(SidebarContext)
   const { obtenerInfoVentaTipo, obtenerInfoVentaProducto } = useCarrito()
   
   // Cargar todos los productos, stocks, ventas, clientes y secciones al cargar el componente por primera vez
@@ -37,20 +37,6 @@ export const PuntoVentaSmart = () => {
      
     }
     cargarProductos()
-  }, [])
-  
-  const agregarProducto = (producto) => {
-    agregarProductoCarrito(producto)
-  }
-  
-  useEffect(() => {
-    const cargarStock = async () => {
-      const { success, message } = await getStocksContext()
-      if (!success) {
-        toast.error(message ?? 'Error al cargar los stocks')
-      }
-    }
-    cargarStock()
   }, [])
 
   useEffect(() => {
@@ -126,9 +112,18 @@ export const PuntoVentaSmart = () => {
       actualizarCantidadCarrito(idProducto, cantidad)
     }
   }
-  const datosListaProductos = { secciones, productos, carrito }
-  const funcionesListaProductos = { realizarVenta, agregarProducto }
+  const agregarProducto = async(producto) => {
+    const { success, message } = await agregarProductoCarrito(producto)
+    toast.dismiss({ id: 'loading'}) // se cierra el toast de cargando
+    if (success) {
+      toast.success(message, { id: 'loading'} )
+    } else {
+      toast.error(message, { id: 'loading'})
+    }
+  }
 
+  const datosListaProductos = { secciones, productos, carrito, sidebar }
+  const funcionesListaProductos = { realizarVenta, agregarProducto }
   const datosCarrito = { carrito, clienteSeleccionado, clientes }
   const funcionesCarrito = { eliminarProductoCarrito, restarProductoCarrito, vaciarCarrito, realizarVenta, agregarProducto, actualizarCarrito }
   return (

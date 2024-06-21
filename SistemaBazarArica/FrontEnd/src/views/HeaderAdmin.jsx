@@ -27,14 +27,14 @@ export const HeaderAdmin = () => {
     
         <nav className='navbar fixed-top nav' style={{width: '100%'}}>
           <div className='container-fluid ps-3 align-items-center justify-content-between'>
-            <div className="d-flex align-items-center gap-2 seleccion3">
+            <div className="d-flex align-items-center gap-2 text-nav">
               <i className='bi bi-grid-3x3-gap-fill'></i>
               <h3 className='m-0 ps-2'>Panel de Administrador</h3>
             </div>
             <div className="d-flex">
-              <div className="d-flex align-items-center seleccion3">
-                <i className='bi bi-box-arrow-left text-whitt'></i>
-                <button onClick={cerrarSesionActual} className='btn link text-white'>Cerrar Sesión</button>
+              <div className="d-flex align-items-center text-sesion">
+                <i className='bi bi-box-arrow-left'></i>
+                <button onClick={cerrarSesionActual} className='btn link '>Cerrar Sesión</button>
               </div>
             </div>
 

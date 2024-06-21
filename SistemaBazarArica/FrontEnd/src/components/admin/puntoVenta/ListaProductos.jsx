@@ -2,36 +2,36 @@
 import './puntoventa.css'
 import React, { useContext, useEffect, useState } from 'react'
 
-import { SidebarContext } from '../../../context/SidebarContext'
-
 import { MagicMotion } from 'react-magic-motion'
-
 import { toast } from 'react-hot-toast'
 import { debounce } from 'lodash'
-import { withLoadingImage } from '../../../hocs/withLoadingImage'
+// import { withLoadingImage } from '../../../hocs/withLoadingImage'
 const ListaProductos = ({ datos, funciones }) => {
-  const { secciones, productos, carrito } = datos
+  const { secciones, productos, carrito, sidebar } = datos
   const { agregarProducto } = funciones
   
   const [productosFiltrados, setProductosFiltrados] = useState(productos)
   // Contexto para saber si el sidebar esta abierto o cerrado
-  const { sidebar } = useContext(SidebarContext)
-  
+  console.log('renderizado')
   // Separar en Hooks
   const [currentPage, setCurrentPage] = useState(1)
   function calculoPaginas () {
+    
     // se define la cantidad de productos por pagina dependiendo si esta en es md o lg
     // si el sidebar esta abierto o cerrado y si esta en una resolucion de 1700px o 1900pxs
     let productosPorPagina = 0
-    if (window.innerWidth < 1700) {
+    console.log(window.innerWidth)
+    if (window.innerWidth < 1500 || (sidebar && window.innerWidth < 1900)) {
       productosPorPagina = 8
-    } else if ((window.innerWidth > 1700 || window.innerWidth < 1900) && sidebar) {
+    } else if ((window.innerWidth >= 1500 && window.innerWidth <= 1900) && !sidebar) {
+      console.log(sidebar)
       console.log(sidebar)
       productosPorPagina = 10
-    } else if ( window.innerWidth > 1900 || !sidebar) {
+    } else if ( window.innerWidth >= 1900 && !sidebar) {
+      console.log('d')
       productosPorPagina = 12
     } else {
-      productosPorPagina = 8
+      productosPorPagina = 10
     }
     return productosPorPagina
 
@@ -62,13 +62,7 @@ const ListaProductos = ({ datos, funciones }) => {
     setProductosFiltrados(productos);
   }
   const debounceFiltroNombre = debounce(filtroNombre, 300) // se le pasa la funcion y el tiempo de espera
-  
-  
-  useEffect(() => {
- 
-    calculoPaginas()
-    
-  }, [sidebar]) // se ejecuta cuando cambie el side
+
   // se calcula la cantidad de productos por pagina
   const cantidadPorPagina = calculoPaginas()
   console.log(`--Se mostraran ${cantidadPorPagina} productos por pagina--`)
@@ -79,7 +73,11 @@ const ListaProductos = ({ datos, funciones }) => {
   const productosMostrar = productosFiltrados.slice(startIndex, endIndex)
   // Servira para calcular el número total de páginas en función de la cantidad total de elementos y los elementos por página ej: el boton 1, 2, 3 etc..
   const totalBotones = Math.ceil(productosFiltrados.length / cantidadPorPagina)
-
+  useEffect(() => {
+ 
+    calculoPaginas()
+    
+  }, [sidebar]) // se ejecuta cuando cambie el side
   return (
     <>
       <div className="col-md-8">
@@ -161,7 +159,9 @@ const ListaProductos = ({ datos, funciones }) => {
                     <div className='pt-0 mt-0'>
                       <button className="btn btn-warning form-control" onClick={() => agregarProducto(producto)}>Agregar</button>
                     </div>
+                    
                   </div>
+                  
                 </li>
               )
             }  )}
@@ -196,9 +196,9 @@ const SinProductos = () => {
 
 export const ValidarProductos = ({ datos, funciones }) => {
   const { productos } = datos
+ 
   const validacion = productos?.length > 0
-  // RENDERIZADO CONDICIONAL, la validacion es true o false
-
+  
   return (
     <>
       {validacion ?

@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { MagicMotion } from 'react-magic-motion'
 import { CardImg, Modal} from 'react-bootstrap'
 import { FormRegistroCliente } from './FormRegistroCliente'
 import { ListaClientes } from './ListaClientes'
 import './puntoVenta.css'
+import { debounce } from 'lodash'
 import Swal from 'sweetalert2'
 export const Carrito = ({ datos, funciones }) => {
   const [showModal, setShowModal] = useState(false);
@@ -44,8 +45,9 @@ export const Carrito = ({ datos, funciones }) => {
       realizarVenta()
     }
   }
+  const debounceAgregarProducto = debounce(agregarProducto, 100)
   
-  
+  const debounceActualizarCarrito = debounce(actualizarCarrito, 200)
   return (
     <div className="col-md-4">
 
@@ -66,7 +68,7 @@ export const Carrito = ({ datos, funciones }) => {
                             if (e.target.value > 99) {
                               e.target.value = e.target.value.slice(0, 2);
                             }
-                            actualizarCarrito(producto.id, e.target.value);
+                            debounceActualizarCarrito(producto.id, e.target.value);
                           }} 
                           min='0' 
                           max='99' value= {producto.cantidad}/>
@@ -80,7 +82,7 @@ export const Carrito = ({ datos, funciones }) => {
                     <div className="d-flex justify-content-end">
                           <button className='boton-restar d-flex align-items-center justify-content-center' onClick={() => restarProductoCarrito(producto.id)}>-</button>
                   
-                          <button className='boton-sumar ms-1 d-flex align-items-center justify-content-center' onClick={() => agregarProducto(producto)}>+</button>
+                          <button className='boton-sumar ms-1 d-flex align-items-center justify-content-center' onClick={() => debounceAgregarProducto(producto)}>+</button>
 
                         </div>
                   </div>

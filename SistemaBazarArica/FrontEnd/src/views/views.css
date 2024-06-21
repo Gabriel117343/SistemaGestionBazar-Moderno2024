@@ -26,7 +26,19 @@
 .bi-grid-3x3-gap-fill {
   font-size: 28px;
 }
+.text-sesion button {
+   color: white;
 
+}
+@media (max-width: 450px) {
+  .text-sesion button {
+    font-size: 12px;
+    font: bold;
+  }
+  .text-nav h3 {
+    font-size: 15px;
+  }
+}
 
 
 /* Estilos para el diseño de carga*/

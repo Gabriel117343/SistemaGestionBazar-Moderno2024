@@ -8,7 +8,6 @@ export const CarritoProvider = ({ children }) => {
   const initialState = JSON.parse(localStorage.getItem('carrito')) || []
   // no se usa useReducer 
   const [carrito, setCarrito] = useState(initialState)
-  
   // mantener el estado haún cuando se recargue la página
   useEffect(() => {
     localStorage.setItem('carrito', JSON.stringify(carrito))
@@ -20,25 +19,23 @@ export const CarritoProvider = ({ children }) => {
     const productoConStock = (producto.stock.cantidad - (productoEnCarrito?.cantidad ?? 0))
     console.log(productoConStock)
     if (productoConStock <= 0 || productoConStock === undefined) {
-      toast.error('Producto sin stock disponible')
+      return { success: false, message: 'No hay stock disponible para este producto!' }
     } else if (productoEnCarrito) {
       const productoActualizado = carrito.map(prod => {
         if (prod.id === producto.id) {
-          if (prod.cantidad === '0' || prod.cantidad === 0) {
-            prod.cantidad = ''
-          }
           prod.cantidad += 1
           return prod
         } else {
           return prod
         }
       })
-      toast.success('Producto agregado al carrito')
+     
       setCarrito(productoActualizado)
+      return { success: true, message: 'Se aumentó la cantidad del producto en el carrito!'}
 
     } else {
-      
       setCarrito([...carrito, { ...producto, cantidad: 1 }])
+      return { success: true, message: 'Producto agregado al carrito!' }
     }
   }
   const eliminarProductoCarrito = (productoId) => {
@@ -66,13 +63,17 @@ export const CarritoProvider = ({ children }) => {
   }
   const actualizarCantidadCarrito = (productoId, cantidad) => {
     if (parseInt(cantidad) < 0) {
-      console.log('first')
       eliminarProductoCarrito(productoId)
       return
     } else {
       const productoActualizado = carrito.map(prod => {
         if (prod.id === productoId) {
-          prod.cantidad = cantidad
+          // Si la cantidad es vacía, se deja vacía para que el usuario pueda ver que no ha ingresado una cantidad
+          if (cantidad === '') {
+            prod.cantidad = ''
+            return prod
+          }
+          prod.cantidad = parseInt(cantidad)
           return prod
         } else {
           return prod
