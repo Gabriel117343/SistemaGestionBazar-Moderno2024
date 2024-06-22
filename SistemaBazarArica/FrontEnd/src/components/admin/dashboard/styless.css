@@ -1,12 +1,22 @@
 
+
+.tamaño-card {
+  display: grid;
+ 
+  grid-template-areas: "icono-card card-info card-info";
+  grid-template-columns: 2fr 7fr;
+  width: 100%;
+  height: 100%;
+  box-shadow: 4px 5px 3px rgba(83, 83, 83, 0.3) !important;
+  border-radius: 10px;
+}
+
 .container-card {
   
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
-  
   gap: 15px 20px;
-  margin: 0 auto;
-  
+  margin: 0 auto; 
 
 }
 .contenido-card > h4 {
@@ -14,10 +24,47 @@
   overflow: hidden;
 
 }
+.icono-card {
+  position: relative;
+  border-radius: 10px 0 0 10px;
+  
+  grid-area: icono-card;
+  color: #f1f1f1;
+  font-size: 30p;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icono-card > i {
+  position: absolute;
+  font-size: 65px;
+}
+.contador-card {
+  height: 100%;
+  display: flex;
+  align-items: end;
+
+}
+.contador {
+  align-items: start;
+}
+.card-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 0;
+  
+  transition: 0.5s;
+
+  color: white;
+
+}
 .contenido-card > p {
   white-space: nowrap;
   font-size: 17px;
 }
+
 
 @media screen and (max-width: 800px) {
   .tamaño-card > div {
@@ -69,15 +116,29 @@ div.color-card-1 {
   background: rgb(206, 151, 34);
   
 }
+.color-card-11 {
+  background: rgb(194, 137, 15);
+}
+
 div.color-card-2 {
   background: rgb(206, 34, 34);
+}
+.color-card-22 {
+  background: rgb(170, 23, 23);
 }
 div.color-card-3 {
   background: rgb(59, 160, 19);
 }
+.color-card-33 {
+  background: rgb(49, 133, 16);
+}
 div.color-card-4 {
   background: rgb(34, 34, 206);
 }
+.color-card-44 {
+  background: rgb(23, 23, 170);
+}
+
 .grafico {
   margin-bottom: 0;
   padding-bottom: 0;

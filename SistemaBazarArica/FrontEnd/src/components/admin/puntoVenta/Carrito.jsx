@@ -47,8 +47,8 @@ export const Carrito = ({ datos, funciones }) => {
     }
   }
   const debounceAgregarProducto = debounce(agregarProducto, 100)
-  
-  const debounceActualizarCarrito = debounce(actualizarCarrito, 200)
+
+  const debounceActualizarCarrito = debounce(actualizarCarrito, 100)
   return (
     <div className="col-md-4">
 
@@ -62,7 +62,7 @@ export const Carrito = ({ datos, funciones }) => {
                 <div className="d-flex justify-content-between">
                   <div>
                     
-                      <img src={producto.imagen} alt='img'  style={{width: '30px', height: '26px'}}/>
+                      <img  src={producto.imagen} alt='img' style={{width: '30px', height: '26px'}} className='img-min-producto'/>
                       <strong className='ps-1'>{producto.nombre}</strong>
                       <div className="d-flex flex-column">
                         <div className="d-flex ps-4">

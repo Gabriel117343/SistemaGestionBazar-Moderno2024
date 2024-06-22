@@ -48,107 +48,121 @@ export const ListaDeOpciones = () => {
   return (
     <div className="container-card-1">
       <article className="container-card">
-        <div className="tamaño-card">
-          <div className="card card-body color-card-1 text-white">
-            <div className="row">
-              <div className="col-md-9 contenido-card">
-                <h4>Ordenes de Compra</h4>
-                <p> Total</p>
-              </div>
-              <div className="col-md-3 d-flex align-items-end justify-content-end">
-                <h3 className="p-0 m-0 contador-card">
-                  <ContadorAnimado
-                    value={pedidos.length ? pedidos.length : 0}
-                    className="text-white"
-                  />
-                </h3>
-              </div>
+        <div className="tamaño-card color-card-1">
+          <div className="icono-card color-card-11">
+            <i class="bi bi-house-door"></i>
+          </div>
+          <div className="card-info">
+            <div className="contenido-card">
+              <h4>Ordenes de Compra</h4>
+              <p> Total</p>
+            </div>
+            <div className="contador-card">
+              <h3 className="p-0 m-0 contador-card">
+                <ContadorAnimado
+                  value={pedidos.length ? pedidos.length : 0}
+                  className="text-white"
+                />
+              </h3>
             </div>
           </div>
         </div>
-        <div className="tamaño-card">
-          <div className="card card-body color-card-3 text-white">
-            <div className="row">
-              <div className="col-md-8 contenido-card">
-                <h4>Ordenes Recibidas</h4>
-                <p>Total</p>
-              </div>
-              <div className="col-md-4 d-flex align-items-end justify-content-end">
-              <h3 className="p-0 m-0 contador-card">
-                  <ContadorAnimado
-                    value={pedidos.filter(pedido => pedido.estado === 'recibido').length}
-                    className="text-white"
-                  />
-                </h3>
-              </div>
+        <div className="tamaño-card color-card-3">
+          <div className="icono-card color-card-33">
+            <i class="bi bi-card-checklist"></i>
+          </div>
+          <div className="card-info">
+            <div className="contenido-card">
+              <h4>Ordenes Recibidas</h4>
+              <p>Total</p>
+            </div>
+            <div className="contador-card">
+              <h3>
+                <ContadorAnimado
+                  value={
+                    pedidos.filter((pedido) => pedido.estado === "recibido")
+                      .length
+                  }
+                  className="text-white"
+                />
+              </h3>
             </div>
           </div>
         </div>
 
-        <div className="tamaño-card">
-            <div className="card card-body color-card-2 text-white">
-              <div className="row">
-                <div className="col-md-8 contenido-card">
-                  <h4>Devoluciones</h4>
-                  <p>Total</p>
-                </div>
-                <div className="col-md-4 d-flex align-items-end justify-content-end">
-                  <h3 className="p-0 m-0 contador-card">0</h3>
-                </div>
-              </div>
+        <div className="tamaño-card color-card-2">
+          <div className="icono-card color-card-22">
+            <i class="bi bi-person"></i>
+          </div>
+          <div className="card-info">
+            <div className="contenido-card">
+              <h4>Usuarios Registrados</h4>
+              <p>Total</p>
             </div>
-        </div>
-        <div className="tamaño-card">
-          <div className="card card-body color-card-4 text-white">
-            <div className="row">
-              <div className="col-md-8 contenido-card">
-                <h4>Clientes Registrados</h4>
-                <p>Total</p>
-              </div>
-              <div className="col-md-4 d-flex align-items-end justify-content-end">
-                <h3 className="p-0 m-0 contador-card">
-                  <ContadorAnimado
-                    value={clientes.length ? clientes.length : 0}
-                    className="text-white"
-                  />
-                </h3>
-              </div>
+            <div className="contador-card">
+              <h3 className="p-0 m-0">
+                <ContadorAnimado
+                  value={usuarios.length ? usuarios.length : 0}
+                  className="text-white"
+                />
+              </h3>
             </div>
           </div>
         </div>
-        <div className="tamaño-card">
-          <div className="card card-body color-card-1 text-white">
-            <div className="row">
-              <div className="col-md-8 contenido-card">
-                <h4>Stock en Tienda</h4>
-                <p>Total</p>
-              </div>
-              <div className="col-md-4 d-flex align-items-end justify-content-end">
-                <h3 className="p-0 m-0 contador-card">
-                  <ContadorAnimado
-                    value={stocksContados ? stocksContados : 0}
-                    className="text-white"
-                  />
-                </h3>
-              </div>
+        <div className="tamaño-card color-card-4">
+          <div className="icono-card color-card-44">
+            <i class="bi bi-person-rolodex"></i>
+          </div>
+          <div className="card-info">
+            <div className="contenido-card">
+              <h4>Clientes Registrados</h4>
+              <p>Total</p>
+            </div>
+            <div className="contador-card">
+              <h3 className="p-0 m-0">
+                <ContadorAnimado
+                  value={clientes.length ? clientes.length : 0}
+                  className="text-white"
+                />
+              </h3>
             </div>
           </div>
         </div>
-        <div className="tamaño-card">
-          <div className="card card-body color-card-4 text-white">
-            <div className="row">
-              <div className="col-md-8 contenido-card">
-                <h4>Ventas</h4>
-                <p>Total</p>
-              </div>
-              <div className="col-md-4 d-flex align-items-end justify-content-end">
-                <h3 className="p-0 m-0 contador-card">
-                  <ContadorAnimado
-                    value={ventas.length ? ventas.length : 0}
-                    className="text-white"
-                  />
-                </h3>
-              </div>
+        <div className="tamaño-card color-card-1">
+          <div className="icono-card color-card-11">
+            <i class="bi bi-box"></i>
+          </div>
+          <div className="card-info">
+            <div className="contenido-card">
+              <h4>Productos en Stock</h4>
+              <p>Total</p>
+            </div>
+            <div className="contador-card">
+              <h3 className="p-0 m-0">
+                <ContadorAnimado
+                  value={stocks.length ? stocks.length : 0}
+                  className="text-white"
+                />
+              </h3>
+            </div>
+          </div>
+        </div>
+        <div className="tamaño-card color-card-3">
+          <div className="icono-card color-card-33">
+            <i class="bi bi-cash"></i>
+          </div>
+          <div className="card-info">
+            <div className="contenido-card">
+              <h4>Ventas</h4>
+              <p>Total</p>
+            </div>
+            <div className="contador-card">
+              <h3 className="p-0 m-0">
+                <ContadorAnimado
+                  value={ventas.length ? ventas.length : 0}
+                  className="text-white"
+                />
+              </h3>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react"
-import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, Label } from 'recharts'
+import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts'
 import { VentasContext } from '../../../context/VentasContext'
 import { SidebarContext } from '../../../context/SidebarContext'
 
