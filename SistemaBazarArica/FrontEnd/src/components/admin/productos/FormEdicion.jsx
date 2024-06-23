@@ -5,7 +5,7 @@ import { SeccionesContext } from '../../../context/SeccionesContext'
 import toast from 'react-hot-toast'
 
 export const FormEdicion = ({ cerrarModal, producto}) => {
-  const { id, nombre, seccion, proveedor, precio, stock, estado, imagen } = producto
+  const { id, nombre, seccion, proveedor, precio, estado, imagen } = producto
   const { actualizarProductoContext } = useContext(ProductosContext)
   const { stateProveedor: { proveedores }, getProveedoresContext } = useContext(ProveedoresContext)
   const { stateSeccion: { secciones }, getSeccionesContext } = useContext(SeccionesContext)

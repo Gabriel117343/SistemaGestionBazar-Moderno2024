@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { ValidarUsuarios } from './TablaUsuarios'
 import Swal from 'sweetalert2'
-import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { UsuariosContext } from '../../../context/UsuariosContext'
 import './styles.css'
-import { Modal, Button } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { FormularioEdicion } from './FormularioEdicion'
 import { FormRegistroUsuarios } from './FormRegistroUsuarios'
 import { debounce } from 'lodash'

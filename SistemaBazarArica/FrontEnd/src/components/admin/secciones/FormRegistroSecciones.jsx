@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 export const FormRegistroSecciones = ({ cerrarModal, crearSeccion }) => {
   const imagenIncial = '../../../public/images/seccion-productos.jpg'

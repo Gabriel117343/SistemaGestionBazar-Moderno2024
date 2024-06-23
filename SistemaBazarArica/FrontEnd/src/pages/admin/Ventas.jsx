@@ -1,4 +1,3 @@
-import React from 'react'
 import { ListaVentas } from '../../components/admin/ventas/ListaVentas'
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
 export const Ventas = () => {

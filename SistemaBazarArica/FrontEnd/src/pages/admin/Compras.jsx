@@ -1,4 +1,3 @@
-import React from "react";
 import { BsInboxesFill } from "react-icons/bs";
 import "./Pages.css";
 import { PedidosProvider } from "../../context/PedidosContext";

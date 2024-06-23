@@ -1,6 +1,5 @@
-import React from 'react'
-import { ProductosProvider } from '../../context/ProductosContext' // importando el contexto de los stocks
-import { StockSmart } from '../../components/admin/stocks/StockSmart' // importando el componente que contiene la tabla de stocks
+import { ProductosProvider } from '../../context/ProductosContext'
+import { StockSmart } from '../../components/admin/stocks/StockSmart'
 import { FaBoxes } from "react-icons/fa";
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
 export const Stocks = () => {

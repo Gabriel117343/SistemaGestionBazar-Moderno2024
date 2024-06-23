@@ -147,149 +147,149 @@ export const Carrito = () => {
   const[isHovered, setIsHovered] = useState(false);
   const debounceIsHovered = debounce(setIsHovered, 250);
   const debounceActualizarCarrito = debounce(actualizarCarrito, 100);
-  console.log(carrito);
+ 
   return (
     <div className="col-md-4">
-      <div>
-        <MagicMotion className="carrito" name="carrito" duration={0.5}>
-          <ul className="ul-carrito ps-1">
-            {carrito?.map((producto) => (
-              <li key={producto.id}>
-                <div className="d-flex justify-content-between">
-                  <div>
-                    <div
-                      onMouseEnter={() => debounceIsHovered(true)}
-                      onMouseLeave={() => debounceIsHovered(false)}
-                      onClick={() => eliminarProductoCarrito(producto.id)}
-                      style={{
-                        position: "relative",
-                        display: "inline-block",
-                        backgroundColor: isHovered ? "" : "transparent",
-                      }}
-                    >
-                      {isHovered && <span className="letra-x">X</span>}
-                      <img
-                        src={
-                          producto.imagen ||
-                          "https://ww.idelcosa.com/img/default.jpg"
-                        }
-                        alt={producto.imagen ? "img" : "imagen por defecto"}
-                        style={{ width: "30px", height: "26px" }}
-                        className="img-min-producto"
-                      />
-                    </div>
-                    <strong className="ps-1">{producto.nombre}</strong>
-                    <div className="d-flex flex-column">
-                      <div className="d-flex ps-4">
-                        <input
-                          type="number"
-                          className="unidades-producto"
-                          onChange={(e) => {
-                            if (e.target.value > 99) {
-                              e.target.value = e.target.value.slice(0, 2);
-                            }
-                            debounceActualizarCarrito(
-                              producto.id,
-                              e.target.value
-                            );
-                          }}
-                          min="0"
-                          max="99"
-                          value={producto.cantidad}
-                        />
-                        <p className="mb-0">
-                          /Unidades en ${producto.cantidad * producto.precio}
-                        </p>
-                      </div>
-                    </div>
+      <MagicMotion className="carrito" name="carrito" duration={0.5}>
+        <ul className="ul-carrito ps-1">
+          {carrito?.map((producto) => (
+            <li key={producto.id}>
+              <div className="d-flex justify-content-between ps-1">
+                <div>
+                  <div
+                    onMouseEnter={() => debounceIsHovered(true)}
+                    onMouseLeave={() => debounceIsHovered(false)}
+                    onClick={() => eliminarProductoCarrito(producto.id)}
+                    style={{
+                      position: "relative",
+                      display: "inline-block",
+                      backgroundColor: isHovered ? "" : "transparent",
+                    }}
+                  >
+                    {isHovered && <span className="letra-x">X</span>}
+                    <img
+                      src={
+                        producto.imagen ||
+                        "https://ww.idelcosa.com/img/default.jpg"
+                      }
+                      alt={producto.imagen ? "img" : "imagen por defecto"}
+                      style={{ width: "30px", height: "26px" }}
+                      className="img-min-producto"
+                    />
                   </div>
-                  <div className="">
-                    <strong>${producto.precio}</strong>
-                    <div className="d-flex justify-content-end">
-                      <button
-                        className="boton-restar d-flex align-items-center justify-content-center"
-                        onClick={() => restarProductoCarrito(producto.id)}
-                      >
-                        -
-                      </button>
-
-                      <button
-                        className="boton-sumar ms-1 d-flex align-items-center justify-content-center"
-                        onClick={() => debounceAgregarProducto(producto)}
-                      >
-                        +
-                      </button>
+                  <strong className="ps-1">{producto.nombre}</strong>
+                  <div className="d-flex flex-column">
+                    <div className="d-flex ps-4">
+                      <input
+                        type="number"
+                        className="unidades-producto"
+                        onChange={(e) => {
+                          if (e.target.value > 99) {
+                            e.target.value = e.target.value.slice(0, 2);
+                          }
+                          debounceActualizarCarrito(
+                            producto.id,
+                            e.target.value
+                          );
+                        }}
+                        min="0"
+                        max="99"
+                        value={producto.cantidad}
+                      />
+                      <p className="mb-0">
+                        /Unidades en ${producto.cantidad * producto.precio}
+                      </p>
                     </div>
                   </div>
                 </div>
-              </li>
-            ))}
-            {carrito?.length === 0 && (
-              <div className="text-center" style={{ fontSize: "150px" }}>
-                <i className="bi bi-cart-x"></i>
+                <div className="">
+                  <strong>${producto.precio}</strong>
+                  <div className="d-flex justify-content-end">
+                    <button
+                      className="boton-restar d-flex align-items-center justify-content-center"
+                      onClick={() => restarProductoCarrito(producto.id)}
+                    >
+                      -
+                    </button>
+
+                    <button
+                      className="boton-sumar ms-1 d-flex align-items-center justify-content-center"
+                      onClick={() => debounceAgregarProducto(producto)}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
               </div>
-            )}
-          </ul>
-          <hr className="linea-carrito" />
-          <div className="d-flex justify-content-between gap-2 px-1">
-            <button
-              className="btn btn-info form-control"
-              disabled={carrito.length > 0 ? false : true}
-              onClick={() => {
-                alert("Proximamente!");
-              }}
-            >
-              Cupon
-            </button>
-            <button
-              className="btn btn-danger form-control"
-              disabled={carrito.length > 0 ? false : true}
-              onClick={vaciarCarrito}
-            >
-              Cancelar
-            </button>
-          </div>
-          {clienteSeleccionado && !opcionCliente ? (
-            <button className="d-flex align-items-center gap-2 pt-1 px-1 button-especial">
-              <i
-                className="bi bi-person-circle"
-                style={{ fontSize: "40px" }}
-                onClick={() => ajustarOpciones()}
-              ></i>
-              <p className="text-center m-0">
-                {clienteSeleccionado?.nombre} {clienteSeleccionado?.apellido}
-              </p>
-            </button>
-          ) : (
-            <div className="d-flex align-items-center gap-3 pt-1 px-1">
-              <i
-                className="bi bi-person-circle"
-                style={{ fontSize: "40px" }}
-              ></i>
-              <button
-                className="btn border "
-                onClick={() => setShowModal(true)}
-              >
-                Agregar Cliente
-              </button>
-              <button
-                className="btn border"
-                onClick={() => setShowListModal(true)}
-              >
-                Seleccionar Cliente
-              </button>
+            </li>
+          ))}
+          {carrito?.length === 0 && (
+            <div className="text-center" style={{ fontSize: "150px" }}>
+              <i className="bi bi-cart-x"></i>
             </div>
           )}
-          <div className="d-flex justify-content-between gap-2 pt-2 px-2">
-            <strong>Total</strong>
-            <strong>
-              ${" "}
-              {carrito?.reduce(
-                (acc, prod) => acc + prod.precio * prod.cantidad,
-                0
-              )}
-            </strong>
+        </ul>
+        <hr className="linea-carrito" />
+        <div className="d-flex justify-content-between gap-2 ps-2">
+          <button
+            className="btn btn-info form-control"
+            disabled={carrito.length > 0 ? false : true}
+            onClick={() => {
+              alert("Proximamente!");
+            }}
+          >
+            Cupon
+          </button>
+          <button
+            className="btn btn-danger form-control"
+            disabled={carrito.length > 0 ? false : true}
+            onClick={vaciarCarrito}
+          >
+            Cancelar
+          </button>
+        </div>
+        {clienteSeleccionado && !opcionCliente ? (
+          <button className="d-flex align-items-center gap-2 pt-1 ps-2 button-especial">
+            <i
+              className="bi bi-person-circle"
+              style={{ fontSize: "40px" }}
+              onClick={() => ajustarOpciones()}
+            ></i>
+            <p className="text-center m-0">
+              {clienteSeleccionado?.nombre} {clienteSeleccionado?.apellido}
+            </p>
+          </button>
+        ) : (
+          <div className="d-flex align-items-center gap-3 pt-1 ps-2">
+            <i
+              className="bi bi-person-circle"
+              style={{ fontSize: "40px" }}
+            ></i>
+            <button
+              className="btn border "
+              onClick={() => setShowModal(true)}
+            >
+              Agregar Cliente
+            </button>
+            <button
+              className="btn border"
+              onClick={() => setShowListModal(true)}
+            >
+              Seleccionar Cliente
+            </button>
           </div>
+        )}
+        <div className="d-flex justify-content-between gap-2 pt-2 ps-2">
+          <strong>Total</strong>
+          <strong>
+            ${" "}
+            {carrito?.reduce(
+              (acc, prod) => acc + prod.precio * prod.cantidad,
+              0
+            )}
+          </strong>
+        </div>
+        <div className="ps-2">
           <button
             disabled={
               clienteSeleccionado && !opcionCliente && carrito.length > 0
@@ -301,8 +301,10 @@ export const Carrito = () => {
           >
             Pagar
           </button>
-        </MagicMotion>
-      </div>
+        </div>
+        
+      </MagicMotion>
+    
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Registrar Cliente</Modal.Title>

@@ -1,8 +1,5 @@
 import React, { useId, useContext, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
-import debounce  from 'lodash/debounce'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome' // icono eye para usar en input contraseña
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { ProductosContext } from '../../../context/ProductosContext'
 import { ProveedoresContext } from '../../../context/ProveedoresContext'
 import { SeccionesContext } from '../../../context/SeccionesContext'

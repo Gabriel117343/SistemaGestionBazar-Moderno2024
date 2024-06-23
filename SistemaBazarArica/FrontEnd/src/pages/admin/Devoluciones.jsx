@@ -1,4 +1,3 @@
-import React from "react";
 import { ImBoxRemove } from "react-icons/im";
 import GradualSpacing from "../../components/shared/magic_ui/GradualSpacing";
 export const Devoluciones = () => {

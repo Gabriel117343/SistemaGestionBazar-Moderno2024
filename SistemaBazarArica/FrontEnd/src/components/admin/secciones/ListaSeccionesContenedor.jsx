@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState} from 'react'
+import { useContext, useEffect, useState} from 'react'
 import { ValidarSecciones } from './ListaSecciones'
 import Swal from 'sweetalert2'
 import { toast } from 'react-hot-toast'
 import { SeccionesContext } from '../../../context/SeccionesContext'
 import './secciones.css'
-import { Modal, Button } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { FormEdicion } from './FormEdicion'
 import { FormRegistroSecciones } from './FormRegistroSecciones'
 import { debounce } from 'lodash'

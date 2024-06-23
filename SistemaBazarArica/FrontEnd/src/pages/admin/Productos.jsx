@@ -1,4 +1,3 @@
-import React from 'react'
 import { TablaProductosContenedor } from '../../components/admin/productos/TablaProductosContenedor'
 import { ProveedoresProvider } from '../../context/ProveedoresContext'
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'

@@ -1,4 +1,3 @@
-import React from 'react'
 import { TablaUsuariosContenedor } from '../../components/admin/usuarios/TablaUsuariosContenedor'
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
 export const Usuarios = () => {

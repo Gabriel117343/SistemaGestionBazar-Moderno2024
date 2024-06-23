@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'
 import { toast } from 'react-hot-toast'
 import { ProductosContext } from '../../../context/ProductosContext'
 import './styles.css'
-import { Modal, Button } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { FormEdicion } from './FormEdicion'
 import { FormRegistroProductos } from './FormRegistroProductos'
 import { debounce } from 'lodash'

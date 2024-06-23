@@ -1,4 +1,3 @@
-import React from "react";
 import { FormConfiguracionCuenta } from "../../components/admin/configuracion/FormConfiguracionCuenta";
 import "./pages.css";
 import GradualSpacing from "../../components/shared/magic_ui/GradualSpacing";

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useId, useContext } from 'react'
+import { useState, useRef, useId, useContext } from 'react'
 
 
 import { useClasesInput } from '../../../hooks/useClasesInput'// cutom hook para las clases - hook personalizado

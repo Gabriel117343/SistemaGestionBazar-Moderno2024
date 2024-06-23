@@ -1,4 +1,3 @@
-import React from 'react'
 import { ListaSeccionesContenedor } from '../../components/admin/secciones/ListaSeccionesContenedor'
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
 export const Secciones = () => {

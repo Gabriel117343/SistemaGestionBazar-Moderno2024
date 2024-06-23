@@ -1,4 +1,3 @@
-import React from 'react'
 
 export const ClientesReducer = (stateCliente, action) => {
   const { type, payload } = action

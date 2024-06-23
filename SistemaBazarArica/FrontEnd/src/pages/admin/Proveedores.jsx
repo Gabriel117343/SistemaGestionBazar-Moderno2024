@@ -1,4 +1,3 @@
-import React from 'react'
 import { BsPersonVcardFill } from "react-icons/bs"
 import { TablaProveedoresContenedor } from '../../components/admin/proveedores/TablaProveedoresContenedor'
 import { ProveedoresProvider } from '../../context/ProveedoresContext'

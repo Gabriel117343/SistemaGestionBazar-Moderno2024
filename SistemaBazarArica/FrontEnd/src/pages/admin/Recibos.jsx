@@ -1,4 +1,3 @@
-import React from 'react'
 import { FaTruckRampBox } from "react-icons/fa6"
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
 export const Recibos = () => {

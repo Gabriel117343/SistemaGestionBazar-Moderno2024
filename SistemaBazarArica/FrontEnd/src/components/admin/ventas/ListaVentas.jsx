@@ -13,13 +13,18 @@ export const ListaVentas = () => {
     }
     cargar()
   }, [])
-  console.log(ventas)
-  console.log(clientes)
+
   const filtroCliente = (event) => {
     const cliente = event.target.value
     if (cliente === 'all') {
       setVentasFiltradas(ventas)
       return
+    } else {
+      const ventasFiltradas = ventas.filter(venta => {
+        const clienteVenta = clientes.find(cliente => cliente.nombre === venta.cliente.nombre)
+        return clienteVenta.nombre.toLowerCase().includes(cliente.toLowerCase())
+      })
+      setVentasFiltradas(ventasFiltradas)
     }
     
   }

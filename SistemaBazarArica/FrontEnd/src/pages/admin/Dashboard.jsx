@@ -1,4 +1,3 @@
-import React from "react";
 import { FcShop } from "react-icons/fc";
 import { ListaDeOpciones } from "../../components/admin/dashboard/ListaDeOpciones";
 import { StocksProvider } from "../../context/StocksContext";

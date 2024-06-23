@@ -51,7 +51,7 @@ function App() {
         obtenerUsuarioLogeado(token).finally(() => {
           setTimeout(() => {
             setLoading(false);
-          }, 2000); // finally se ejecuta cuando se resuelve la promesa o cuando se rechaza
+          }, 1000); // finally se ejecuta cuando se resuelve la promesa o cuando se rechaza
         });
       }
     } else {

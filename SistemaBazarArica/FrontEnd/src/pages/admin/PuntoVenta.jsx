@@ -1,4 +1,3 @@
-
 import { Carrito } from "../../components/admin/puntoVenta/Carrito";
 import { FiltroProductos } from "../..//components/admin/puntoVenta/FiltroProductos";
 import GradualSpacing from "../../components/shared/magic_ui/GradualSpacing";
@@ -6,7 +5,6 @@ import GradualSpacing from "../../components/shared/magic_ui/GradualSpacing";
 export const PuntoVenta = () => {
   return (
     <>
-    
       <div className="container-fluid">
         <div className="d-flex align-items-center justify-content-left gap-3 pt-2 titulo-page pb-2">
           <div
