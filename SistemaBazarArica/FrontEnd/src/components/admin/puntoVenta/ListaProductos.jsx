@@ -5,7 +5,6 @@ import { SidebarContext } from "../../../context/SidebarContext";
 import { CarritoContext } from "../../../context/CarritoContext";
 export const ListaProductos = ({ productos }) => {
   const { sidebar } = useContext(SidebarContext);
-
   const [currentPage, setCurrentPage] = useState(1);
   const { carrito, agregarProductoCarrito } = useContext(CarritoContext);
   function calculoPaginas() {
@@ -137,7 +136,6 @@ export const ListaProductos = ({ productos }) => {
   );
 };
 const SinProductos = () => {
-  console.log("ejecuto");
   return (
     <div className="pt-2">
       <h1 className="text-center pt-4">No se han econtrado Productos..</h1>
@@ -145,8 +143,8 @@ const SinProductos = () => {
   );
 };
 export const ValidarProductos = ({ productos }) => {
-  console.log(productos);
-  const validacion = productos?.length > 0;
+
+  const validacion = productos.length != 1;
 
   return (
     <>

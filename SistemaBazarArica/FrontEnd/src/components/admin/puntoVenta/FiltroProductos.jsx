@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { SeccionesContext } from "../../../context/SeccionesContext";
 import { ProductosContext } from "../../../context/ProductosContext";
 import CargaDeDatos from "../../../views/CargaDeDatos";
-import { debounce, set } from "lodash";
+import { debounce} from "lodash";
 import { ValidarProductos } from "./ListaProductos";
 // import { withLoadingImage } from '../../../hocs/withLoadingImage'
 export const FiltroProductos = () => {
@@ -45,8 +45,13 @@ export const FiltroProductos = () => {
     const productosFiltrados = productos.filter(
       (producto) => producto.seccion.id === id
     );
+    if (productosFiltrados.length === 0) {
+      setProductosFiltrados([1]); // se establece un array con un elemento para mostrar que no hay productos y no se rompa el componente
 
-    setProductosFiltrados(productosFiltrados);
+      return
+    } else {
+      setProductosFiltrados(productosFiltrados);
+    }
   };
   const filtroNombre = (event) => {
     const nombre = event.target.value;
@@ -54,7 +59,12 @@ export const FiltroProductos = () => {
     const productosFilt = productos.filter((producto) =>
       producto.nombre.toLowerCase().includes(nombre.toLowerCase())
     );
-    setProductosFiltrados(productosFilt);
+    if (productosFilt.length === 0) {
+      setProductosFiltrados([1]);
+      return
+    } else {
+      setProductosFiltrados(productosFilt);
+    }
   };
 
   const filtroTipo = (event) => {
@@ -62,11 +72,17 @@ export const FiltroProductos = () => {
     if (tipo === "all") {
       setProductosFiltrados(productos);
       return;
+    } else {
+      const productosFilt = productos.filter(
+        (producto) => producto.tipo === tipo
+      );
+      if (productosFilt.length === 0) {
+        setProductosFiltrados([1]);
+        return
+      } else {
+        setProductosFiltrados(productosFilt);
+      }
     }
-    const productosFilt = productos.filter(
-      (producto) => producto.tipo === tipo
-    );
-    setProductosFiltrados(productosFilt);
   };
   const resetearProductosFiltrados = () => {
     setProductosFiltrados(productos);
@@ -118,7 +134,7 @@ export const FiltroProductos = () => {
             <div key={seccion.id} className="seccion">
               <button
                 onClick={() => filtrarPorSeccion(seccion.id)}
-                className={`border rounded btn-seleccion ${productosFiltrados.some((producto) => producto.seccion.numero === seccion.numero) ? "btn-filtro" : ""}`}
+                className={`border rounded btn-seleccion ${productosFiltrados?.some((producto) => producto?.seccion?.numero === seccion?.numero) ? "btn-filtro" : ""}`}
               >
                 {seccion.nombre}
               </button>
