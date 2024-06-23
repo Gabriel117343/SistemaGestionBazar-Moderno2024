@@ -19,7 +19,6 @@ export const ProductosProvider = ({ children }) => {
 
     try {
       const res = await getAllProductos(token) // res para referenciarse al response del servidor
-      console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
           type: 'GET_PRODUCTOS',
@@ -66,6 +65,7 @@ export const ProductosProvider = ({ children }) => {
     }
   }
   const eliminarProductoContext = async (id) => {
+    console.log(id)
     try {
       const res = await deleteProducto(id, token)
       console.log(res)

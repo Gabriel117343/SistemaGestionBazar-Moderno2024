@@ -36,6 +36,7 @@
   min-height: 28vh;
 }
 .unidades-producto {
+ 
   max-width: 35px;
   padding: 0px 2px;
   margin: 0;
@@ -49,12 +50,20 @@
   background: #f8f8f8;
 
 }
-
-.img-min-producto {
-  box-shadow: 0 0 5px 5px #fffefe;
-
+.letra-x {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  color: rgb(212, 20, 20);
+  font-weight: 500;
+  box-shadow: 0 0 2px 0.5px red;
+  cursor: pointer;
+  z-index: 2;
+  font-size: 20px;
+  text-align: center;
 }
-
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
