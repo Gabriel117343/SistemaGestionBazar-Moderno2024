@@ -18,7 +18,7 @@ export const PuntoVenta = () => {
           <GradualSpacing text="Realizar Ventas" className="m-0" type="h2" />
         </div>
       </div>
-      <section className="d-flex row">
+      <section className="d-flex row contenedor-puntoventa">
         <Carrito />
         <FiltroProductos />
       </section>

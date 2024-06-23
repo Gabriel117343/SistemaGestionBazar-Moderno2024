@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { SeccionesContext } from "../../../context/SeccionesContext";
 import { ProductosContext } from "../../../context/ProductosContext";
 import CargaDeDatos from "../../../views/CargaDeDatos";
-import { debounce } from "lodash";
+import { debounce, set } from "lodash";
 import { ValidarProductos } from "./ListaProductos";
 // import { withLoadingImage } from '../../../hocs/withLoadingImage'
 export const FiltroProductos = () => {
@@ -41,7 +41,6 @@ export const FiltroProductos = () => {
     cargarSecciones();
   }, []);
 
-  console.log("render");
   const filtrarPorSeccion = (id) => {
     const productosFiltrados = productos.filter(
       (producto) => producto.seccion.id === id
@@ -73,17 +72,16 @@ export const FiltroProductos = () => {
     setProductosFiltrados(productos);
   };
   const debounceFiltroNombre = debounce(filtroNombre, 300); // se le pasa la funcion y el tiempo de espera
-
   return (
     <>
       <div className="col-md-8">
         <div className="row pb-1">
           <div className="col-md-6">
-            <label htmlFor="">Filtrar por tipo</label>
+            <label htmlFor="tipoSelect">Filtrar por tipo</label>
             <select
               className="form-control"
               name="tipo"
-              id=""
+              id="tipoSelect"
               onChange={filtroTipo}
             >
               <option value="all">Todas</option>
@@ -97,9 +95,10 @@ export const FiltroProductos = () => {
             </select>
           </div>
           <div className="col-md-6">
-            <label htmlFor="">Buscar</label>
+            <label htmlFor="buscarSelect">Buscar</label>
             <input
               type="text"
+              id="buscarSelect"
               className="form-control"
               placeholder="Ej: Arroz Miraflores"
               onChange={debounceFiltroNombre}

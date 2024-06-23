@@ -10,7 +10,6 @@ import {
   Routes,
   Route,
   Navigate,
-  useNavigate,
 } from "react-router-dom";
 
 import { AdminRoutes } from "./routes/AdminRoutes";

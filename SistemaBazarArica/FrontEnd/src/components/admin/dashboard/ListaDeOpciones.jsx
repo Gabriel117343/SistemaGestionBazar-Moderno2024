@@ -41,16 +41,12 @@ export const ListaDeOpciones = () => {
     cargar();
   }, []);
 
-  const stocksContados = stocks
-    .map((stock) => stock.cantidad)
-    .reduce((a, b) => a + b, 0); // sumando los stocks
-
   return (
     <div className="container-card-1">
       <article className="container-card">
         <div className="tamaño-card color-card-1">
           <div className="icono-card color-card-11">
-            <i class="bi bi-house-door"></i>
+            <i className="bi bi-house-door"></i>
           </div>
           <div className="card-info">
             <div className="contenido-card">
@@ -69,7 +65,7 @@ export const ListaDeOpciones = () => {
         </div>
         <div className="tamaño-card color-card-3">
           <div className="icono-card color-card-33">
-            <i class="bi bi-card-checklist"></i>
+            <i className="bi bi-card-checklist"></i>
           </div>
           <div className="card-info">
             <div className="contenido-card">
@@ -92,7 +88,7 @@ export const ListaDeOpciones = () => {
 
         <div className="tamaño-card color-card-2">
           <div className="icono-card color-card-22">
-            <i class="bi bi-person"></i>
+            <i className="bi bi-person"></i>
           </div>
           <div className="card-info">
             <div className="contenido-card">
@@ -111,7 +107,7 @@ export const ListaDeOpciones = () => {
         </div>
         <div className="tamaño-card color-card-4">
           <div className="icono-card color-card-44">
-            <i class="bi bi-person-rolodex"></i>
+            <i className="bi bi-person-rolodex"></i>
           </div>
           <div className="card-info">
             <div className="contenido-card">
@@ -130,7 +126,7 @@ export const ListaDeOpciones = () => {
         </div>
         <div className="tamaño-card color-card-1">
           <div className="icono-card color-card-11">
-            <i class="bi bi-box"></i>
+            <i className="bi bi-box"></i>
           </div>
           <div className="card-info">
             <div className="contenido-card">
@@ -149,7 +145,7 @@ export const ListaDeOpciones = () => {
         </div>
         <div className="tamaño-card color-card-3">
           <div className="icono-card color-card-33">
-            <i class="bi bi-cash"></i>
+            <i className="bi bi-cash"></i>
           </div>
           <div className="card-info">
             <div className="contenido-card">

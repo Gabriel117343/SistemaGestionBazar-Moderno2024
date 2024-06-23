@@ -54,8 +54,8 @@ export const ListaProductos = ({ productos }) => {
 
   return (
     <article>
-      <ul className="productos productos-contendor">
-        <MagicMotion className="row" name="productos" duration={0.5}>
+      <ul className="productos">
+        <MagicMotion name="productos" duration={0.5}>
           {productosMostrar?.map((producto) => {
             // const stock = producto?.stock?.find(stock => stock.id === id)
             const cantidad = producto.stock.cantidad ?? 0; // se accede a la cantidad de productos en stock
@@ -109,9 +109,8 @@ export const ListaProductos = ({ productos }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="pt-0 mt-0">
+                  <div className="pt-0 mt-0 btn-agregar">
                     <button
-                      className="btn btn-warning form-control"
                       onClick={() => agregarProducto(producto)}
                     >
                       Agregar
@@ -122,11 +121,7 @@ export const ListaProductos = ({ productos }) => {
             );
           })}
         </MagicMotion>
-        {/* {productos.length === 0 && (
-          <h1 className="text-center pt-4">No se han econtrado Productos..</h1>
-        )} */}
-      </ul>
-      {/* bucle Array.from() para generar botones según la cantidad de páginas necesarias, solo se usara el indice del array */}
+      </ul> 
       <div className="pt-1">
         {Array.from({ length: totalBotones }, (_, index) => (
           <button
