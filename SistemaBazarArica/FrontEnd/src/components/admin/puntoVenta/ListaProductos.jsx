@@ -19,6 +19,9 @@ export const ListaProductos = ({ productos }) => {
       !sidebar
     ) {
       productosPorPagina = 10;
+    } else if (window.innerWidth >= 1900 && !sidebar && window.innerHeight >= 900) {
+      productosPorPagina = 17;
+
     } else if (window.innerWidth >= 1900 && !sidebar) {
       console.log("d");
       productosPorPagina = 12;
@@ -27,7 +30,6 @@ export const ListaProductos = ({ productos }) => {
     }
     return productosPorPagina;
   }
-
   // se calcula la cantidad de productos por pagina
   const cantidadPorPagina = calculoPaginas();
   // calculando el índice y fin de la lista actual en función de la página actual y los elementos por página
@@ -64,17 +66,14 @@ export const ListaProductos = ({ productos }) => {
             const cantidadCalculada = cantidad - stockProductoCarrito;
             // cantidadCalculada lo que hace es restar la cantidad de productos en stock con la cantidad de productos que ya estan en el carrito
             // Es una forma de representar la cantidad de productos que se pueden agregar, no es la cantidad real que viene del stock del backend
-            // const ImageWithLoading = withLoadingImage((props) => <img {...props} />);
             return (
               <li key={producto?.id} className="producto">
-                {cantidadCalculada <= 50 && (
+                {cantidadCalculada <= 5 && (
                   <div className="icono-informativo">
                     <i class="bi bi-exclamation-circle"></i>
                   </div>
                 
                 )}
-                
-                
                 <div className={cantidadCalculada === 0 ? 'img-blanco-negro' : ''}>
                   {producto.imagen ? (
                     <img

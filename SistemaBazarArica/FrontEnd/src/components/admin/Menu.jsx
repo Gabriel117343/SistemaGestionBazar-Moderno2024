@@ -126,7 +126,7 @@ export const Menu = ({ children }) => {
                 )}
               </div>
 
-              <div className="bars ms-5 py-2 mx-1">
+              <div className="bars ms-5 py-2 px-2">
                 <FaBars onClick={accionSidebar} />
               </div>
             </div>

@@ -220,7 +220,7 @@ export const Carrito = () => {
           )}
         </ul>
         <hr className="linea-carrito" />
-        <div className="d-flex justify-content-between gap-2 ps-2">
+        <div className="d-flex justify-content-between gap-2 ps-2 btn-pago">
           <button
             className="btn btn-info form-control"
             disabled={carrito.length > 0 ? false : true}
@@ -239,11 +239,11 @@ export const Carrito = () => {
           </button>
         </div>
         {clienteSeleccionado && !opcionCliente ? (
-          <button className="d-flex align-items-center gap-2 pt-1 ps-2 button-especial">
+          <button onClick={() => ajustarOpciones()} className="d-flex align-items-center gap-2 pt-1 ps-2 button-especial">
             <i
               className="bi bi-person-circle"
               style={{ fontSize: "40px" }}
-              onClick={() => ajustarOpciones()}
+              
             ></i>
             <p className="text-center m-0">
               {clienteSeleccionado?.nombre} {clienteSeleccionado?.apellido}
@@ -273,14 +273,14 @@ export const Carrito = () => {
             )}
           </strong>
         </div>
-        <div className="ps-2">
+        <div className="ps-2 btn-pago">
           <button
             disabled={
               clienteSeleccionado && !opcionCliente && carrito.length > 0
                 ? false
                 : true
             }
-            className="btn btn-success form-control mt-2"
+            className="btn btn-success form-control mt-2 ps-2"
             onClick={validarCarrito}
           >
             Pagar
