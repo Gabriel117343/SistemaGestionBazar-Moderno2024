@@ -25,20 +25,26 @@
   animation: zoomAnim3 0.3s forwards;
 
 }
+.img-blanco-negro {
+  filter: grayscale(90%)
+}
 .icono-informativo {
   font-size: 19px;
-  color: #ff9d9d;
+  width: 25px;
+  height: 25px;
+  color: #ff7272;
+  opacity: 0.8;
   position: absolute;
-  background: white;
-  border-radius: 50%;
   top: 0px;
   right: 0px;
-  margin: 2px 5px 0 0 ;
   cursor: pointer;
   justify-self: center;
+  z-index: 10;
+  display: flex;
 
 
 }
+
 .btn-agregar > button {
   background: #eeb20b;
   width: 100%;

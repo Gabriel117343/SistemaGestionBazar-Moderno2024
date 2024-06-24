@@ -67,7 +67,7 @@ export const ListaProductos = ({ productos }) => {
             // const ImageWithLoading = withLoadingImage((props) => <img {...props} />);
             return (
               <li key={producto?.id} className="producto">
-                {cantidadCalculada === 0 && (
+                {cantidadCalculada <= 50 && (
                   <div className="icono-informativo">
                     <i class="bi bi-exclamation-circle"></i>
                   </div>
@@ -75,7 +75,7 @@ export const ListaProductos = ({ productos }) => {
                 )}
                 
                 
-                <div className="pt-0">
+                <div className={cantidadCalculada === 0 ? 'img-blanco-negro' : ''}>
                   {producto.imagen ? (
                     <img
                       width="100%"

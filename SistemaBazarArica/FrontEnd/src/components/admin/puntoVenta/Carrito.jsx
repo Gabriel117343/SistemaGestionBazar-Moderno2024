@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { MagicMotion } from "react-magic-motion";
 import { Modal } from "react-bootstrap";
 import { FormRegistroCliente } from "./FormRegistroCliente";
