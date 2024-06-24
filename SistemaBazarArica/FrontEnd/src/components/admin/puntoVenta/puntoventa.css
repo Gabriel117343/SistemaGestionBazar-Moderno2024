@@ -1,3 +1,4 @@
+/* estilos para el contenedor de los productos */
 .productos {
   margin: 0;
   padding: 0;
@@ -5,6 +6,38 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
   gap: 20px;
+}
+.producto {
+
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  border: 2px solid #ccc;
+  border-radius: 0 0 8px 8px;
+  background: rgb(255, 255, 255);
+  max-width: 270px;
+  position: relative;
+}
+.producto:hover {
+  box-shadow: 0 0 5px 5px rgba(231, 231, 231, 0.5);
+  animation: zoomAnim3 0.3s forwards;
+
+}
+.icono-informativo {
+  font-size: 19px;
+  color: #ff9d9d;
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  top: 0px;
+  right: 0px;
+  margin: 2px 5px 0 0 ;
+  cursor: pointer;
+  justify-self: center;
+
+
 }
 .btn-agregar > button {
   background: #eeb20b;
@@ -22,6 +55,7 @@
 .btn-agregar > button:hover {
   animation: zoomAnim2 0.3s forwards;
 }
+/* animaciones personalizadas */
 @keyframes zoomAnim {
   from {
       transform: scale(1); /* Estado inicial, sin escalar */
@@ -50,23 +84,7 @@
   
 }
 
-.producto {
-
-  display: flex;
-  text-align: center;
-  flex-direction: column;
-  padding: 0;
-  margin: 0;
-  border: 1px solid #ccc;
-  border-radius: 0 0 8px 8px;
-  background: rgb(255, 255, 255);
-  max-width: 270px;
-}
-.producto:hover {
-  box-shadow: 0 0 5px 5px rgba(231, 231, 231, 0.5);
-  animation: zoomAnim3 0.3s forwards;
-
-}
+/* estilos para el carrito de compras */
 .ul-carrito {
 
   min-height: 28vh;
