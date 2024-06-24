@@ -1,5 +1,5 @@
 import "./puntoventa.css";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { SeccionesContext } from "../../../context/SeccionesContext";
 import { ProductosContext } from "../../../context/ProductosContext";
@@ -19,6 +19,10 @@ export const FiltroProductos = () => {
   } = useContext(ProductosContext);
   const [isLoading, setIsLoding] = useState(true);
   const [productosFiltrados, setProductosFiltrados] = useState(productos);
+
+  const tipoRef = useRef(null);
+  const buscadorRef = useRef(null);
+
   useEffect(() => {
     const cargarProductos = async () => {
       const { success, message } = await getProductosContext();
@@ -42,6 +46,9 @@ export const FiltroProductos = () => {
   }, []);
 
   const filtrarPorSeccion = (id) => {
+    // se resetea el input de busqueda y el select de tipo
+    buscadorRef.current.value = "";
+    tipoRef.current.value = "all";
     const productosFiltrados = productos.filter(
       (producto) => producto.seccion.id === id
     );
@@ -54,6 +61,9 @@ export const FiltroProductos = () => {
     }
   };
   const filtroNombre = (event) => {
+    event.preventDefault();
+    // se setea el select de tipo en all
+    tipoRef.current.value = "all";
     const nombre = event.target.value;
 
     const productosFilt = productos.filter((producto) =>
@@ -68,6 +78,8 @@ export const FiltroProductos = () => {
   };
 
   const filtroTipo = (event) => {
+    // se setea el input de busqueda en vacio
+    buscadorRef.current.value = "";
     const tipo = event.target.value;
     if (tipo === "all") {
       setProductosFiltrados(productos);
@@ -95,10 +107,11 @@ export const FiltroProductos = () => {
           <div className="col-md-6">
             <label htmlFor="tipoSelect">Filtrar por tipo</label>
             <select
+              ref={tipoRef}
               className="form-control"
               name="tipo"
               id="tipoSelect"
-              onChange={filtroTipo}
+              onChange={e => filtroTipo(e)}
             >
               <option value="all">Todas</option>
               <option value="bebidas">Bebidas</option>
@@ -113,11 +126,12 @@ export const FiltroProductos = () => {
           <div className="col-md-6">
             <label htmlFor="buscarSelect">Buscar</label>
             <input
+              ref={buscadorRef}
               type="text"
               id="buscarSelect"
               className="form-control"
               placeholder="Ej: Arroz Miraflores"
-              onChange={debounceFiltroNombre}
+              onChange={e => debounceFiltroNombre(e)}
             />
           </div>
         </div>

@@ -6,6 +6,7 @@ import { PedidosContext } from "../../../context/PedidosContext";
 import { VentasContext } from "../../../context/VentasContext";
 import { ClientesContext } from "../../../context/ClientesContext";
 import ContadorAnimado from "../../shared/magic_ui/ContadorAnimado";
+
 export const ListaDeOpciones = () => {
   const {
     stateUsuario: { usuarios },
@@ -40,7 +41,7 @@ export const ListaDeOpciones = () => {
   }, []);
 
   return (
-    <section>
+    <section >
       <article className="container-card">
         <div className="tamaño-card color-card-1">
           <div className="icono-card color-card-11">

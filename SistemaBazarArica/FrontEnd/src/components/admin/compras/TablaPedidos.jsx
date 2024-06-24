@@ -13,7 +13,6 @@ const MostrarPedidos = forwardRef(
     { listaPedidos, componentRef },
     ref
   ) => {
-    console.log(listaPedidos)
     const {
       recibirPedidoContext,
       getPedidosContext, eliminarPedidoContext,

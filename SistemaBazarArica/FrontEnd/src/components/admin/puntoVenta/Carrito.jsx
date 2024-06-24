@@ -144,10 +144,7 @@ export const Carrito = () => {
   };
 
   const debounceAgregarProducto = debounce(agregarProducto, 100);
-  const[isHovered, setIsHovered] = useState(false);
-  const debounceIsHovered = debounce(setIsHovered, 250);
   const debounceActualizarCarrito = debounce(actualizarCarrito, 100);
- 
   return (
     <div className="col-md-4">
       <MagicMotion className="carrito" name="carrito" duration={0.5}>
@@ -157,16 +154,9 @@ export const Carrito = () => {
               <div className="d-flex justify-content-between ps-1">
                 <div>
                   <div
-                    onMouseEnter={() => debounceIsHovered(true)}
-                    onMouseLeave={() => debounceIsHovered(false)}
+                    className="imagen-producto-mini"
                     onClick={() => eliminarProductoCarrito(producto.id)}
-                    style={{
-                      position: "relative",
-                      display: "inline-block",
-                      backgroundColor: isHovered ? "" : "transparent",
-                    }}
                   >
-                    {isHovered && <span className="letra-x">X</span>}
                     <img
                       src={
                         producto.imagen ||
@@ -261,14 +251,8 @@ export const Carrito = () => {
           </button>
         ) : (
           <div className="d-flex align-items-center gap-3 pt-1 ps-2">
-            <i
-              className="bi bi-person-circle"
-              style={{ fontSize: "40px" }}
-            ></i>
-            <button
-              className="btn border "
-              onClick={() => setShowModal(true)}
-            >
+            <i className="bi bi-person-circle" style={{ fontSize: "40px" }}></i>
+            <button className="btn border " onClick={() => setShowModal(true)}>
               Agregar Cliente
             </button>
             <button
@@ -302,9 +286,8 @@ export const Carrito = () => {
             Pagar
           </button>
         </div>
-        
       </MagicMotion>
-    
+
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Registrar Cliente</Modal.Title>
