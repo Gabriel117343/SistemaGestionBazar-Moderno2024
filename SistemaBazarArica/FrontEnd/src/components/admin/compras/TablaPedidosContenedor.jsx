@@ -3,7 +3,7 @@ import { PedidosContext } from "../../../context/PedidosContext";
 import { toast } from "react-hot-toast";
 import CargaDeDatos from '../../../views/CargaDeDatos'
 import { ValidarPedidos } from "./TablaPedidos";
-import { debounce } from "lodash";
+import { debounce, set } from "lodash";
 import { FormOrdenCompra } from "./FormOrdenCompra";
 
 // Para la UI
@@ -20,6 +20,8 @@ export const TablaPedidosContenedor = () => {
   const [formularioActivo, setFormularioActivo] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const componentRef = useRef(); // referencia al componente que se imprimira
+  const inputRef = useRef(null);
+  
   useEffect(() => {
     const cargar = async() => {
       const { success, message } = await getPedidosContext();
@@ -32,16 +34,12 @@ export const TablaPedidosContenedor = () => {
     };
     cargar();
   }, [formularioActivo]); // se ejecuta la funcion cargar al renderizar el componente
- 
   const cambiarFiltro = (event) => {
-     const nuevaLista = pedidos.filter((pedido) => pedido.proveedor.nombre.toLowerCase().includes(event.target.value.toLowerCase()));
-     if (nuevaLista.length === 0) {
-      console.log('vacio')
-        setPedidosFiltrados([1]);
-        return
-     }
-     setPedidosFiltrados(nuevaLista);
+    const texto = event.target.value.toLowerCase().trim();
+    if (texto.length === 0) return setPedidosFiltrados(pedidos); // si el input esta vacio no se filtra nada y se muestra la lista completa
+    const nuevaLista = pedidos.filter((pedido) => pedido.proveedor.nombre.toLowerCase().includes(texto) || pedido.codigo.toLowerCase().includes(texto));
 
+    setPedidosFiltrados(nuevaLista);
   };
   const debounceCambiarFiltro = debounce(cambiarFiltro, 300); // se crea una funcion debounced para no hacer tantas peticiones al servidor
   const cambiarSeleccionForm = () => {
@@ -59,8 +57,6 @@ export const TablaPedidosContenedor = () => {
       toast.error("error al refrescar la Tabla");
     }
   };
-
-  
   return formularioActivo ? (
     <FormOrdenCompra volver={cambiarSeleccionForm} />
   ) : (
@@ -72,6 +68,7 @@ export const TablaPedidosContenedor = () => {
         <div className="col-md-10 d-flex align-items-center justify-content-center gap-2">
           <i className="bi bi-search"></i>
           <input
+            ref={inputRef}
             type="text"
             className="form-control"
             placeholder="Buscar Pedido"
@@ -96,7 +93,7 @@ export const TablaPedidosContenedor = () => {
       </div>
       {
         isLoading ? <CargaDeDatos />
-        : <ValidarPedidos pedidos={pedidosFiltrados?.length > 0  ? pedidosFiltrados : pedidos} />
+        : <ValidarPedidos pedidos={inputRef?.current?.value?.length > 0 ? pedidosFiltrados : pedidos} />
       }
     </>
   );

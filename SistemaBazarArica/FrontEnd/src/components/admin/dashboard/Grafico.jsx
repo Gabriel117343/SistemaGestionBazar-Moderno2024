@@ -26,7 +26,7 @@ export const Grafico = () => {
     };
     cargar();
   }, []);
-  console.log(ventas);
+
   // Convertir el total a número y la fecha de venta a un objeto Date
   const data = ventas.map((venta) => ({
     ...venta,

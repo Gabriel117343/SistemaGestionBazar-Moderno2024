@@ -56,7 +56,7 @@ export const ListaProductos = ({ productos }) => {
   return (
     <article>
       <ul className="productos">
-        <MagicMotion name="productos" duration={0.5}>
+        <MagicMotion duration={0.5}>
           {productosMostrar?.map((producto) => {
             // const stock = producto?.stock?.find(stock => stock.id === id)
             const cantidad = producto.stock.cantidad ?? 0; // se accede a la cantidad de productos en stock
@@ -70,9 +70,8 @@ export const ListaProductos = ({ productos }) => {
               <li key={producto?.id} className="producto">
                 {cantidadCalculada <= 5 && (
                   <div className="icono-informativo">
-                    <i class="bi bi-exclamation-circle"></i>
-                  </div>
-                
+                    <i className="bi bi-exclamation-circle"></i>
+                  </div>  
                 )}
                 <div className={cantidadCalculada === 0 ? 'img-blanco-negro' : ''}>
                   {producto.imagen ? (
@@ -91,7 +90,6 @@ export const ListaProductos = ({ productos }) => {
                     />
                   )}
                 </div>
-
                 <div className="p-0 m-0">
                   <p className="producto__nombre p-0 m-0">{producto.nombre}</p>
                   <div className="d-flex justify-content-center">
@@ -144,7 +142,7 @@ const SinProductos = () => {
   );
 };
 export const ValidarProductos = ({ productos }) => {
-  const validacion = productos.length != 1;
+  const validacion = productos.length > 0;
 
   return (
     <>

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { FaBars } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { LoginContext } from "../../context/LoginContext";
@@ -102,7 +102,7 @@ export const Menu = ({ children }) => {
                           ? usuario.imagen
                           : "https://cdn-icons-png.flaticon.com/512/6073/6073873.png"
                       }
-                      alt="Esta es una imagen de un usuario"
+                      alt={`imagen de ${usuario.nombre}`}
                     />
                     <strong className="text-capitalizept-2">
                       {usuario.nombre} {usuario.apellido}

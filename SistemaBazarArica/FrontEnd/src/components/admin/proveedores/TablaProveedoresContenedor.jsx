@@ -95,7 +95,7 @@ export const TablaProveedoresContenedor = () => {
           <i className='bi bi-search'></i>
           <input className='form-control' type="text" placeholder="Buscar por nombre, persona de contacto, telefono..." onChange={debounceCambiarFiltro}/>
           <button className='btn btn-outline-primary btn-nuevo-animacion' onClick={refrescarTabla}><i className="bi bi-arrow-repeat"></i></button>
-          <button className='btn btn-outline-primary btn-nuevo-animacion' onClick={imprimirTabla}><i class="bi bi-printer"></i></button>
+          <button className='btn btn-outline-primary btn-nuevo-animacion' onClick={imprimirTabla}><i className="bi bi-printer"></i></button>
         </div>
       </div>
       <ValidarProveedores listaProveedores={proveedores} borrarProovedor={borrarProveedor} edicionProveedor={edicionProveedor} filtro={proveedorBuscado}/>

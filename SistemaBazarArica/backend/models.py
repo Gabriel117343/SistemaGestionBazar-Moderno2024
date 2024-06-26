@@ -83,11 +83,11 @@ class Cliente(models.Model):
 
 class Pedido(models.Model):
     ESTADOS_PEDIDO = [
-        ('pendiente', 'Pendiente'),
-        ('procesando', 'Procesando'),
-        ('enviado', 'Enviado'),
-        ('entregado', 'Entregado'),
-        ('cancelado', 'Cancelado'),
+        ('pendiente', 'Pendiente'),    # Pedido creado, aún no enviado al proveedor.
+        ('ordenado', 'Ordenado'),      # Pedido ha sido enviado al proveedor.
+        ('enviado', 'Enviado'),        # El proveedor ha enviado el pedido.
+        ('recibido', 'Recibido'),      # El pedido ha sido recibido en el bazar.
+        ('cancelado', 'Cancelado'),    # Pedido cancelado por cualquier razón.
     ]
     # campo codigo que tiene el codigo del pedido ej: PO-0001 y se autoincrementa
     codigo = models.CharField(max_length=50, unique=True)

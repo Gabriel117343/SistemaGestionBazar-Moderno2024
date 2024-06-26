@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { VentasContext } from '../../../context/VentasContext'
 import { ClientesContext } from '../../../context/ClientesContext'
 import { toast } from 'react-hot-toast'

@@ -58,9 +58,7 @@
   font-family: sans-serif;
  
 }
-.btn-agregar > button:hover {
-  animation: zoomAnim2 0.3s forwards;
-}
+
 /* animaciones personalizadas */
 @keyframes zoomAnim {
   from {

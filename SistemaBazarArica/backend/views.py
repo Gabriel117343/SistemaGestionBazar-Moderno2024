@@ -172,7 +172,6 @@ class SendPasswordResetEmailView(APIView):
     print('YYYYYYYYYY')
     def post(self, request):
         email = request.data.get('email')
-        print('UUUUUUUUUUUUUUUUUUUU')
         print(email)
         reset_link = request.data.get('reset_link')
         print(reset_link)

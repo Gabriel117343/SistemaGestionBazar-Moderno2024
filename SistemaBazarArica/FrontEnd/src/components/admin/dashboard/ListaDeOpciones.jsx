@@ -31,11 +31,11 @@ export const ListaDeOpciones = () => {
 
   useEffect(() => {
     const cargar = () => {
-      getUsuarios(); // llamando a la funcion para obtener los usuarios
-      getStocksContext(); // llamando a la funcion para obtener los stocks
-      getPedidosContext(); // llamando a la funcion para obtener los pedidos
-      getVentasContext(); // llamando a la funcion para obtener las ventas
-      getClientesContext(); // llamando a la funcion para obtener los clientes
+      getUsuarios();
+      getStocksContext();
+      getPedidosContext();
+      getVentasContext();
+      getClientesContext();
     };
     cargar();
   }, []);
