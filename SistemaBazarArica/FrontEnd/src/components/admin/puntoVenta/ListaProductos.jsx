@@ -90,8 +90,8 @@ export const ListaProductos = ({ productos }) => {
                     />
                   )}
                 </div>
-                <div className="p-0 m-0">
-                  <p className="producto__nombre p-0 m-0">{producto.nombre}</p>
+                <div className="p-0 m-0 producto-info">
+                  <p className="producto_nombre p-0 m-0">{producto.nombre}</p>
                   <div className="d-flex justify-content-center">
                     <p className="p-0 m-0 text-success precio-num">
                       ${producto.precio}

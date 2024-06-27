@@ -132,7 +132,7 @@ export const Carrito = () => {
       // sweetalert2
       Swal.fire({
         title: "Error al realizar la venta",
-        text: "Seleccione la cantidad a vender para cada productof del carrito",
+        text: "Seleccione la cantidad a vender para cada producto del carrito",
         icon: "error",
         confirmButtonText: "Aceptar",
         confirmButtonColor: "#3085d6",

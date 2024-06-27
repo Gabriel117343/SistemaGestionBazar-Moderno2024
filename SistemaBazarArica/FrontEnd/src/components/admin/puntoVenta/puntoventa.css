@@ -25,6 +25,12 @@
   animation: zoomAnim3 0.3s forwards;
 
 }
+.producto-info > p {
+  text-wrap: nowrap;
+  font-size: 15px;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  overflow: hidden;
+}
 .img-blanco-negro {
   filter: grayscale(90%)
 }
@@ -44,7 +50,10 @@
 
 
 }
-
+e
+.btn-agregar {
+  flex-direction: column;
+}
 .btn-agregar > button {
   background: #eeb20b;
   width: 100%;

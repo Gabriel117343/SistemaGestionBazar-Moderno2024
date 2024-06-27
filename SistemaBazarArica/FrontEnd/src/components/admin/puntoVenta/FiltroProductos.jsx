@@ -88,6 +88,7 @@ export const FiltroProductos = () => {
   const busquedaActiva =
     tipoRef?.current?.value !== "all" ||
     buscadorRef?.current?.value?.length > 0;
+  console.log(busquedaActiva)
   const debounceFiltroNombre = debounce(filtroNombre, 300); // se le pasa la funcion y el tiempo de espera
   return (
     <>
