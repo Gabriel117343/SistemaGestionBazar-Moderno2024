@@ -26,7 +26,9 @@
 
 }
 .producto-info > p {
-  text-wrap: nowrap;
+  white-space: nowrap; /* Asegura que el texto se mantenga en una sola línea */
+  text-overflow: ellipsis; /* Añade puntos suspensivos al final del texto truncado */
+  padding-left: 2px;
   font-size: 15px;
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   overflow: hidden;
