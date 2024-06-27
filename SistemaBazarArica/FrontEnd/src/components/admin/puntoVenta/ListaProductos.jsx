@@ -7,6 +7,7 @@ export const ListaProductos = ({ productos }) => {
   const { sidebar } = useContext(SidebarContext);
   const [currentPage, setCurrentPage] = useState(1);
   const { carrito, agregarProductoCarrito } = useContext(CarritoContext);
+  
   function calculoPaginas() {
     // se define la cantidad de productos por pagina dependiendo si esta en es md o lg
     // si el sidebar esta abierto o cerrado y si esta en una resolucion de 1700px o 1900pxs
@@ -30,11 +31,20 @@ export const ListaProductos = ({ productos }) => {
     }
     return productosPorPagina;
   }
+  useEffect(() => {
+    setCurrentPage(1);
+    // se setea la pagina actual a 1 cada vez que se cambie la cantidad de productos
+  }, [productos.length]);
+
   // se calcula la cantidad de productos por pagina
   const cantidadPorPagina = calculoPaginas();
+  console.log(cantidadPorPagina)
   // calculando el índice y fin de la lista actual en función de la página actual y los elementos por página
+  
   const startIndex = (currentPage - 1) * cantidadPorPagina;
+  console.log(startIndex)
   const endIndex = startIndex + cantidadPorPagina;
+  
   // Obtengo los elementos a mostrar en la página actual, slice filtrara el inicio a fin
   const productosMostrar = productos.slice(startIndex, endIndex);
   // Servira para calcular el número total de páginas en función de la cantidad total de elementos y los elementos por página ej: el boton 1, 2, 3 etc..
@@ -49,10 +59,7 @@ export const ListaProductos = ({ productos }) => {
       toast.error(message, { id: "loading" });
     }
   };
-  useEffect(() => {
-    calculoPaginas();
-  }, [sidebar]); // se ejecuta cuando cambie el side
-
+  
   return (
     <article>
       <ul className="productos">
@@ -144,8 +151,8 @@ const SinProductos = () => {
 export const ValidarProductos = ({ productos }) => {
   const validacion = productos.length > 0;
 
-  return (
-    <>
+return (
+  <>
       {validacion ? <ListaProductos productos={productos} /> : <SinProductos />}
     </>
   );

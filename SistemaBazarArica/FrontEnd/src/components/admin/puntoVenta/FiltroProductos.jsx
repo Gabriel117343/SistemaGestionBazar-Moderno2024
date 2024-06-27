@@ -38,7 +38,7 @@ export const FiltroProductos = () => {
     const cargarSecciones = async () => {
       const { success, message } = await getSeccionesContext();
       if (!success) {
-        toast.error(message ?? "Error al cargar las secciones");
+        toast.error(message ?? "Ha ocurrido un error inesperado al cargar las secciones");
       }
     };
     cargarProductos();
@@ -69,6 +69,7 @@ export const FiltroProductos = () => {
       producto.nombre.toLowerCase().includes(nombre)
     );
     setProductosFiltrados(productosFilt);
+    console.log(productosFiltrados)
   };
 
   const filtroTipo = (event) => {

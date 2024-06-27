@@ -41,6 +41,8 @@ from rest_framework.decorators import action
 from django.db.models import F
 
 import blurhash # para generar blurhash para las imagenes
+
+
 User = get_user_model() # esto es para obtener el modelo de usuario que se está utilizando en el proyecto
 
 @api_view(['GET'])
@@ -103,7 +105,7 @@ class LoginView(APIView):
             except Exception as e:
 
                 return Response({'error': 'Cannot create token'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            current_site = get_current_site(request) # Obteniedo el dominio actual http://localhost:8000  para que la imagen se pueda mostrar en el front End
+            current_site = get_current_site(request) # Obteniedo el dominio actual http://localhost:8000  para que la imagen se pueda mostrar en el front End de React
             domain = current_site.domain
             return Response({'token': token.key,'message': 'Se ha logeado Exitosamente', 'usuario':{'nombre':user.nombre, 'rol': user.rol, 'apellido': user.apellido, 'jornada':user.jornada, 'is_active': user.is_active, 'imagen': f'http://{domain}{user.imagen.url}' if user.imagen else None, 'email': user.email, 'id':user.id}}, status=status.HTTP_200_OK)
         else:
@@ -292,8 +294,10 @@ class ProductoView(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]  # Utiliza la autenticación basada en tokens
     # uso de try exept para capturar errores
     def list(self, request, *args, **kwargs):
+        print("Obteniendo Productos")
         try: 
-            queryset = self.get_queryset()
+            queryset = self.get_queryset().select_related('proveedor', 'seccion', 'stock')
+            # utilizar select_related para obtener los datos relacionados con el proveedor y la sección, evitando así consultas adicionales a la base de datos y el problema de N + 1.
             serializer = self.get_serializer(queryset, many=True)
             return Response({'data': serializer.data, 'message': 'Productos obtenidos!'}, status=status.HTTP_200_OK)
         except Exception as e:

@@ -83,6 +83,7 @@ class StockSerializer(serializers.ModelSerializer):
         fields = ['id', 'cantidad', 'descripcion']
 class ProductoSerializer(serializers.ModelSerializer):
     proveedor = ProveedorSerializer(read_only=True) # se serializa el proveedor de forma manual
+    # al establecer read_only=True, no se espera que el campo proveedor sea enviado en la petición post o put desde la api en React
     seccion = SeccionSerializer(read_only=True) # se serializa la seccion de forma manual
     stock = StockSerializer(read_only=True) # se serializa el stock de forma manual
     class Meta:
