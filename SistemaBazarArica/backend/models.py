@@ -96,7 +96,7 @@ class Pedido(models.Model):
     fecha_pedido = models.DateTimeField(auto_now_add=True)
     estado = models.CharField(max_length=20, choices=ESTADOS_PEDIDO, default='pendiente')
     total = models.DecimalField(max_digits=10, decimal_places=2)
-    observacion = models.TextField(blank=True, null=True)
+    observacion = models.TextField(blank=True, null=True, default='Sin observaciones')
 
     def __str__(self):
         return f'Pedido {self.id} - {self.proveedor.nombre} - {self.estado}'

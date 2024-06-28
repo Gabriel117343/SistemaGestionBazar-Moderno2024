@@ -3,7 +3,7 @@ import { PedidosContext } from "../../../context/PedidosContext";
 import { toast } from "react-hot-toast";
 import CargaDeDatos from '../../../views/CargaDeDatos'
 import { ValidarPedidos } from "./TablaPedidos";
-import { debounce, set } from "lodash";
+import { debounce } from "lodash";
 import { FormOrdenCompra } from "./FormOrdenCompra";
 
 // Para la UI
@@ -21,7 +21,7 @@ export const TablaPedidosContenedor = () => {
   const [isLoading, setIsLoading] = useState(true);
   const componentRef = useRef(); // referencia al componente que se imprimira
   const inputRef = useRef(null);
-  
+
   useEffect(() => {
     const cargar = async() => {
       const { success, message } = await getPedidosContext();

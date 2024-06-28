@@ -38,7 +38,9 @@ export const FiltroProductos = () => {
     const cargarSecciones = async () => {
       const { success, message } = await getSeccionesContext();
       if (!success) {
-        toast.error(message ?? "Ha ocurrido un error inesperado al cargar las secciones");
+        toast.error(
+          message ?? "Ha ocurrido un error inesperado al cargar las secciones"
+        );
       }
     };
     cargarProductos();
@@ -69,7 +71,6 @@ export const FiltroProductos = () => {
       producto.nombre.toLowerCase().includes(nombre)
     );
     setProductosFiltrados(productosFilt);
-    console.log(productosFiltrados)
   };
 
   const filtroTipo = (event) => {
@@ -89,7 +90,7 @@ export const FiltroProductos = () => {
   const busquedaActiva =
     tipoRef?.current?.value !== "all" ||
     buscadorRef?.current?.value?.length > 0;
-  console.log(busquedaActiva)
+  console.log(busquedaActiva);
   const debounceFiltroNombre = debounce(filtroNombre, 300); // se le pasa la funcion y el tiempo de espera
   return (
     <>

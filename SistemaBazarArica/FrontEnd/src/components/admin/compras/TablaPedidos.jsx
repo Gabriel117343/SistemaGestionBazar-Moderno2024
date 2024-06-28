@@ -1,11 +1,12 @@
 import { MagicMotion } from "react-magic-motion";
+import { Modal, Button } from "react-bootstrap";
 import { PedidosContext } from "../../../context/PedidosContext";
 import { StocksContext } from "../../../context/StocksContext";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
 // forwardRef es esencial para pasar referencias a componentes funcionales en React, en este caso se pasa la referencia de la tabla para poder imprimir, basicamente envuelve el componente
 import { useState, useContext, useEffect, forwardRef } from "react";
-import { Modal, Button } from "react-bootstrap";
+
 import { PedidoDetalle } from "./PedidoDetalle";
 import ReactToPrint from "react-to-print";
 const MostrarPedidos = forwardRef(({ listaPedidos, componentRef }, ref) => {
@@ -169,7 +170,7 @@ const MostrarPedidos = forwardRef(({ listaPedidos, componentRef }, ref) => {
                         {pedido.estado}
                       </p>
                     )}
-                    {pedido?.estado.toLowerCase() === "Ordenado" && (
+                    {pedido?.estado.toLowerCase() === "ordenado" && (
                       <p
                         style={{
                           borderRadius: "30px",
@@ -313,7 +314,7 @@ const SinPedidos = () => {
 // forwardRef es esencial para pasar referencias a componentes funcionales en React, en este caso se pasa la referencia de la tabla para poder imprimir, basicamente envuelve el componente
 // no se puede desestructurar el ref, se debe pasar como parametro - tenemos 2 parametros, el primero es el props y el segundo es la referencia
 export const ValidarPedidos = forwardRef(({ pedidos }, ref) => {
-  console.log(pedidos);
+
   const validacion = pedidos.length > 0;
   // RENDERIZADO CONDICIONAL, la validacion es true o false
   return validacion ? (

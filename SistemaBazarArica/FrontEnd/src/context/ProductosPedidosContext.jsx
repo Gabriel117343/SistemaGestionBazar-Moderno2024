@@ -12,9 +12,7 @@ export const ProductosPedidosProvider = ({ children }) => {
     pedidoSeleccionado: null
   }
   const [productosPedidosState, dispatch] = useReducer(ProductosPedidosReducer, initialState)
-  // ASI TENGO TODO EL ESTADO DEL CONTEXTO
   const getAllProductosPedidosContext = async () => {
-    console.log('first')
     try {
       const res = await getAllProductosPedidos(token)
       if (res.status === 200 || res.status === 201) {

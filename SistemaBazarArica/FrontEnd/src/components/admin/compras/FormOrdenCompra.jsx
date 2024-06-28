@@ -21,11 +21,7 @@ export const FormOrdenCompra = ({ volver }) => {
     stateProveedor: { proveedores },
     getProveedoresContext,
   } = useContext(ProveedoresContext);
-  const {
-    productosPedidosState: { listaPedidos },
-    getAllProductosPedidosContext,
-    crearProductoPedidoContext,
-  } = useContext(ProductosPedidosContext);
+  const { crearProductoPedidoContext } = useContext(ProductosPedidosContext);
 
   const [productosDeProveedor, setProductosDeProveedor] = useState([]); // Nuevo estado para los productos del proveedor
   const [productosAgregados, setProductosAgregados] = useState([]); // Nuevo estado para los productos agregados a la orden de compra
@@ -45,10 +41,10 @@ export const FormOrdenCompra = ({ volver }) => {
       getPedidosContext(); // se ejecuta la funcion getProductos del contexto de los productos
       getProductosContext();
       getProveedoresContext();
-      getAllProductosPedidosContext();
     };
     cargar();
   }, []);
+
   useEffect(() => {
     function calcularCodigo() {
       let codigoInicial = "PO-0001"; // codigo por defecto
@@ -79,13 +75,11 @@ export const FormOrdenCompra = ({ volver }) => {
     };
     calcularTotal();
   }, [subtotal, descuento, impuesto, productosAgregados]);
-
-  const encontrarProductosDeProveedor = (e) => {
-    const id = e.target.value;
-    const idInt = parseInt(id); // se convierte el id a entero para poder compararlo con el id del proveedor
+  const encontrarProductosDeProveedor = (id) => {
+    const idProveedor = parseInt(id);
 
     const productosDelProveedor = productos.filter(
-      (producto) => producto.proveedor.id === idInt
+      (producto) => producto.proveedor.id === idProveedor
     );
     setProductosDeProveedor(productosDelProveedor);
     console.log(productosDelProveedor);
@@ -93,6 +87,7 @@ export const FormOrdenCompra = ({ volver }) => {
   const agregarProducto = (event) => {
     event.preventDefault();
     const datosOrden = Object.fromEntries(new FormData(event.target));
+    console.log(datosOrden);
     if (
       datosOrden.producto === "" ||
       datosOrden.cantidad === "" ||
@@ -107,6 +102,7 @@ export const FormOrdenCompra = ({ volver }) => {
       const producto = productosDeProveedor.find(
         (producto) => producto.id === parseInt(datosOrden.producto)
       );
+      console.log(producto);
       const productoAgregado = {
         cantidad: parseInt(datosOrden.cantidad),
         producto: producto,
@@ -144,7 +140,9 @@ export const FormOrdenCompra = ({ volver }) => {
     setDescuento(descuentoTotal);
   };
   const calcularImpuesto = (event) => {
-    if (event.target.value > 100) {
+    const impuesto = parseInt(event.target.value);
+
+    if (impuesto > 100) {
       swal.fire({
         icon: "error",
         title: "Error",
@@ -164,27 +162,28 @@ export const FormOrdenCompra = ({ volver }) => {
     ) {
       setImpuesto(0);
     }
-    const impuesto = event.target.value;
-    const impuestoInt = parseInt(impuesto); // transforma a entero el impuesto
-    const impuestoTotal = (impuestoInt * subtotal) / 100; // calcula el impuesto
+    const impuestoTotal = (impuesto * subtotal) / 100; // calcula el impuesto
 
     setImpuesto(impuestoTotal); // setea el impuesto
   };
   const crearPedido = async (event) => {
     event.preventDefault();
     const datosOrden = Object.fromEntries(new FormData(event.target));
+    console.log(datosOrden.observacion ?? "Sin observaciones");
     if (datosOrden.observacion === "") {
-      datosOrden.observacion = "Sin observaciones"; // si no se agrega una observacion se agrega un texto por defecto
+      datosOrden.observacion = "Sin observaciones"; // si no se agrega una observación se agrega un texto por defecto.
     }
 
     const formPedido = new FormData();
-    formPedido.append("codigo", codigoPedido); // se agrega el codigo generado en el useEffect al form
-    // codigo del proveedor atravez del primero producto de la lista de productos agregados
+    formPedido.append("codigo", codigoPedido); // se agrega el código generado en el useEffect al form
+    // codigo del proveedor a traves del primero producto de la lista de productos agregados
     formPedido.append("proveedor", productosAgregados[0].producto.proveedor.id);
 
-    // se puede agregar un objeto al form con append, estos seran los productos del pedido
     formPedido.append("total", total);
-    formPedido.append("observacion", datosOrden.observacion);
+    if (datosOrden.observacion.length > 0) {
+      // Si hay observaciones, agregarlas al FormData
+      formPedido.append("observacion", datosOrden.observacion);
+    }
 
     const { success, message, pedidoId } = await crearPedidoContext(formPedido);
     console.log(pedidoId);
@@ -209,6 +208,7 @@ export const FormOrdenCompra = ({ volver }) => {
         // Enviar el FormData con el producto del pedido
         const { success, message } =
           await crearProductoPedidoContext(formProductoPedido);
+
         if (!success) {
           swal.fire({
             icon: "error",
@@ -229,7 +229,7 @@ export const FormOrdenCompra = ({ volver }) => {
       swal.fire({
         icon: "error",
         title: "Error",
-        text: message,
+        text: message ?? "Ha ocurrido un error inesperado al crear el pedido",
       });
     }
   };
@@ -282,17 +282,13 @@ export const FormOrdenCompra = ({ volver }) => {
                   className="form-control fondoSelect"
                   name="proveedor"
                   id="proveedor"
-                  onChange={encontrarProductosDeProveedor}
+                  onChange={(e) =>
+                    encontrarProductosDeProveedor(e.target.value)
+                  }
                 >
-                  <option value="">Seleccione un proveedor</option>
+                  <option value="">Seleccióne un proveedor</option>
                   {proveedores.map((proveedor) => (
-                    <option
-                      onChange={() =>
-                        encontrarProductosDeProveedor(proveedor.id)
-                      }
-                      value={proveedor.id}
-                      key={proveedor.id}
-                    >
+                    <option value={proveedor.id} key={proveedor.id}>
                       {proveedor.nombre}
                     </option>
                   ))}
@@ -300,7 +296,41 @@ export const FormOrdenCompra = ({ volver }) => {
               </div>
             </div>
           </div>
-          <div className="row mt-2">
+          {productosDeProveedor.length > 0 && (
+            <div className="row d-flex mt-2 justify-content-end">
+            <div className="col-md-3 d-flex flex-row gap-2">
+              <div className="d-flex justify-content-center align-items-center">
+                <div
+                  className="d-flex align-items-center justify-content-center rounded-circle bg-warning me-2 icono-info-proveedor-1"
+                  style={{ width: "35px", height: "35px", fontSize: "30px"}}
+                >
+                  <i className="bi bi-person-circle text-white"></i>
+                </div>
+                <p className="m-0">
+                  {productosDeProveedor[0]?.proveedor?.persona_contacto ??
+                    "Sin contacto"}
+                </p>
+              </div>
+            </div>
+            <div className="col-md-3 d-flex flex-row gap-2 mb-1">
+              <div className="d-flex justify-content-center align-items-center">
+                <div
+                  className="d-flex align-items-center justify-content-center rounded-circle bg-primary me-2 icono-info-proveedor"
+                  style={{ width: "35px", height: "35px", fontSize: "20px" }}
+                >
+                  <i className="bi bi-telephone-fill text-white"></i>
+                </div>
+                <p className="m-0">
+                  {productosDeProveedor[0]?.proveedor?.telefono ??
+                    "Sin teléfono"}
+                </p>
+              </div>
+            </div>
+           
+          </div>
+          )}
+          
+          <div className="row">
             <h3 className="colorLabel">Producto</h3>
             <div className="col-md-4">
               <div className="form-group">
@@ -315,10 +345,10 @@ export const FormOrdenCompra = ({ volver }) => {
                 >
                   {productosDeProveedor.length === 0 ? (
                     <option value="" disabled={true}>
-                      Seleccione un proveedor Primero
+                      Seleccióne un proveedor Primero
                     </option>
                   ) : (
-                    <option value="">Seleccione un producto</option>
+                    <option value="">Seleccióne un producto</option>
                   )}
                   {productosDeProveedor.map((producto) => (
                     <option value={producto.id} key={producto.id}>
@@ -357,6 +387,7 @@ export const FormOrdenCompra = ({ volver }) => {
         </form>
       )}
       <br />
+
       <form action="" onSubmit={crearPedido}>
         <table className="table">
           <thead className=" table table-dark text-white">
@@ -464,9 +495,10 @@ export const FormOrdenCompra = ({ volver }) => {
         <div className="row gap-3">
           <div className="col-md-6 row">
             <label htmlFor="observacion" className="colorLabel">
-              Observaciones
+              Observaciones <small>(opcinal)</small>
             </label>
             <textarea
+              placeholder="Ej: Los productos deben estar en buen estado..."
               name="observacion"
               id="observacion"
               cols="30"
