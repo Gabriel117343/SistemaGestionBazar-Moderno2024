@@ -6,4 +6,18 @@
     background-color: #f5f5f5;
    
 }
+.pedido-detalle > h2 {
+    color: #1baedb;
+    font-weight: bold;
+    padding: 5px;
+}
+.pedido-detalle > article {
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: 10px;
+}
+.card-detalle-pedido {
+    margin-top: 10px;
+    padding: 5px;
 
+}

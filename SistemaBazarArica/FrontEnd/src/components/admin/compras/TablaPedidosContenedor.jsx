@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect, useRef } from "react";
 import { PedidosContext } from "../../../context/PedidosContext";
+import { ProductosPedidosContext } from '../../../context/ProductosPedidosContext';
 import { toast } from "react-hot-toast";
 import CargaDeDatos from '../../../views/CargaDeDatos'
 import { ValidarPedidos } from "./TablaPedidos";
@@ -24,6 +25,7 @@ export const TablaPedidosContenedor = () => {
 
   useEffect(() => {
     const cargar = async() => {
+      
       const { success, message } = await getPedidosContext();
       if (success) {
         toast.success(message ?? "Pedidos cargados");
@@ -34,6 +36,19 @@ export const TablaPedidosContenedor = () => {
     };
     cargar();
   }, [formularioActivo]); // se ejecuta la funcion cargar al renderizar el componente
+  useEffect(() => {
+    async function cargar() {
+      const { success, message } = await getAllProductosPedidosContext();
+      if (success) {
+        toast.success(message ?? "Productos de pedidos cargados");
+        setIsLoading(false);
+      } else {
+        toast.error(message ?? "Ha ocurrido un error inesperado al cargar los productos de pedidos");
+      }
+    }
+    cargar();
+  }, [])
+  
   const cambiarFiltro = (event) => {
     const texto = event.target.value.toLowerCase().trim();
     if (texto.length === 0) return setPedidosFiltrados(pedidos); // si el input esta vacio no se filtra nada y se muestra la lista completa

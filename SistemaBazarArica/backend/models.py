@@ -114,6 +114,7 @@ class ProductoRecibido(models.Model):
 class ProductoPedido(models.Model):
     pedido = models.ForeignKey(Pedido, related_name='productos', on_delete=models.CASCADE) # related_name es el nombre que se usa para acceder a los productos de un pedido, es una relación inversa
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=100, default='Sin nombre')
     cantidad = models.PositiveIntegerField()
     precio = models.DecimalField(max_digits=10, decimal_places=2)
 

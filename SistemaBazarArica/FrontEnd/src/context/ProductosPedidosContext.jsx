@@ -13,8 +13,10 @@ export const ProductosPedidosProvider = ({ children }) => {
   }
   const [productosPedidosState, dispatch] = useReducer(ProductosPedidosReducer, initialState)
   const getAllProductosPedidosContext = async () => {
+    
     try {
       const res = await getAllProductosPedidos(token)
+      console.log(res)
       if (res.status === 200 || res.status === 201) {
         console.log(res.data.data)
         dispatch({

@@ -23,7 +23,6 @@ export const TablaProductosContenedor = () => {
     }
     cargar()
   }, [])
-  console.log(productos)
   const borrarProducto = (id) => {
     async function confirmar () {
       const aceptar = await Swal.fire({
@@ -37,15 +36,17 @@ export const TablaProductosContenedor = () => {
         cancelButtonColor: '#d33'
       })
       if (aceptar.isConfirmed) {
-        toast.loading('Eliminando...', { duration: 2000 })
+        const toastId = toast.loading('Eliminando...', { id: 'loading' })
         setTimeout(async () => {
+          toast.dismiss(toastId, { id: 'loading' })
           const { success, message } = await eliminarProductoContext(id)
           if (success) {
+            console.log('fd')
             toast.success(message)
           } else {
             toast.error(message)
           }
-        }, 2000)
+        }, 1000)
       }
     }
     confirmar()

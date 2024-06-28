@@ -29,6 +29,8 @@ export const FormRegistroProductos = ({ cerrarModal }) => {
     const formulario = new FormData(event.target)
     // convertir el estado a booleano
     const estado = formulario.get('estado') === 'true'
+    const nombre = formulario.get('nombre').replace(/\b\w/g, l => l.toUpperCase()) // convertir la primera letra en mayuscula
+    formulario.set('nombre', nombre)
     formulario.set('estado', estado)
 
     const { success, message } = await crearProductoContext(formulario)  // se envia el formulario al contexto
@@ -106,7 +108,7 @@ export const FormRegistroProductos = ({ cerrarModal }) => {
         </select>
       </div>
       <div className="form-group">
-        <label htmlFor="imagen">Imagen (opcional)</label>
+        <label htmlFor="imagen">Imagen <small>(opcional)</small></label>
         <input className='form-control' type="file" name='imagen' onChange={cambiarVistaImagen}/>
       </div>
       <div className="d-flex justify-content-between pt-3">

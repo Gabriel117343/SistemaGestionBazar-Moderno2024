@@ -200,7 +200,7 @@ export const FormOrdenCompra = ({ volver }) => {
         const formProductoPedido = new FormData();
         formProductoPedido.append("producto", productoAgregado.producto.id);
         formProductoPedido.append("cantidad", productoAgregado.cantidad);
-
+        formProductoPedido.append("nombre", productoAgregado.producto.nombre);
         formProductoPedido.append("precio", productoAgregado.subtotal);
         formProductoPedido.append("pedido", pedidoId);
         const mostrarForm = Object.fromEntries(formProductoPedido);
@@ -254,7 +254,6 @@ export const FormOrdenCompra = ({ volver }) => {
           <div style={{ borderBottom: "2px solid #0011 " }}>
             <h3>Crear Nueva Orden de Compra</h3>
           </div>
-
           <div className="row">
             <div className="col-md-6">
               <div className="form-group">
@@ -276,7 +275,6 @@ export const FormOrdenCompra = ({ volver }) => {
                 <label htmlFor="proveedor" className="colorLabel">
                   Proveedor
                 </label>
-
                 <select
                   disabled={productosAgregados.length === 0 ? false : true}
                   className="form-control fondoSelect"

@@ -48,10 +48,10 @@ class ClienteSerializer(serializers.ModelSerializer):
 class ProductoPedidoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductoPedido
-        fields =  'id', 'pedido', 'producto', 'cantidad', 'precio'
+        fields =  'id', 'pedido', 'producto', 'nombre', 'cantidad', 'precio'
 class PedidoSerializer(serializers.ModelSerializer):
     productos = ProductoPedidoSerializer(read_only=True, many=True)  # Añade esta línea
-
+    # many = True indica que se serializará una lista de objetos
     proveedor = ProveedorSerializer(read_only=True)
 
     class Meta:
