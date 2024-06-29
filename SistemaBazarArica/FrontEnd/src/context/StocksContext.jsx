@@ -49,6 +49,7 @@ export const StocksProvider = ({ children }) => {
     }
   }
   const updateStockContext = async (id, data) => {
+    console.log(id)
     try {
       const res = await updateStock(id, data, token) // res para referenciarse al response del servidor
       console.log(res)
@@ -65,6 +66,7 @@ export const StocksProvider = ({ children }) => {
     }
   }
   const recibirStockContext = async (id, cantidad) => {
+    console.log(id)
     try {
       const res = await recibirStock(id, cantidad, token) // res para referenciarse al response del servidor
       console.log(res)

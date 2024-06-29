@@ -1,13 +1,10 @@
 import { useContext, useState, useEffect, useRef } from "react";
 import { PedidosContext } from "../../../context/PedidosContext";
-import { ProductosPedidosContext } from '../../../context/ProductosPedidosContext';
 import { toast } from "react-hot-toast";
-import CargaDeDatos from '../../../views/CargaDeDatos'
+import CargaDeDatos from "../../../views/CargaDeDatos";
 import { ValidarPedidos } from "./TablaPedidos";
 import { debounce } from "lodash";
 import { FormOrdenCompra } from "./FormOrdenCompra";
-
-// Para la UI
 import { ButtonNew } from "../../shared/ButtonNew";
 import ReactToPrint from "react-to-print";
 
@@ -24,54 +21,50 @@ export const TablaPedidosContenedor = () => {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    const cargar = async() => {
-      
+    const cargar = async () => {
       const { success, message } = await getPedidosContext();
       if (success) {
         toast.success(message ?? "Pedidos cargados");
         setIsLoading(false);
       } else {
-        toast.error(message ?? "Ha ocurrido un error inesperado al cargar los pedidos");
+        toast.error(
+          message ?? "Ha ocurrido un error inesperado al cargar los pedidos"
+        );
       }
     };
     cargar();
   }, [formularioActivo]); // se ejecuta la funcion cargar al renderizar el componente
-  useEffect(() => {
-    async function cargar() {
-      const { success, message } = await getAllProductosPedidosContext();
-      if (success) {
-        toast.success(message ?? "Productos de pedidos cargados");
-        setIsLoading(false);
-      } else {
-        toast.error(message ?? "Ha ocurrido un error inesperado al cargar los productos de pedidos");
-      }
-    }
-    cargar();
-  }, [])
-  
+
   const cambiarFiltro = (event) => {
     const texto = event.target.value.toLowerCase().trim();
     if (texto.length === 0) return setPedidosFiltrados(pedidos); // si el input esta vacio no se filtra nada y se muestra la lista completa
-    const nuevaLista = pedidos.filter((pedido) => pedido.proveedor.nombre.toLowerCase().includes(texto) || pedido.codigo.toLowerCase().includes(texto));
+    const nuevaLista = pedidos.filter(
+      (pedido) =>
+        pedido.proveedor.nombre.toLowerCase().includes(texto) ||
+        pedido.codigo.toLowerCase().includes(texto)
+    );
 
     setPedidosFiltrados(nuevaLista);
   };
-  const debounceCambiarFiltro = debounce(cambiarFiltro, 300); // se crea una funcion debounced para no hacer tantas peticiones al servidor
-  const cambiarSeleccionForm = () => {
-    setFormularioActivo(!formularioActivo);
-  };
-
   const refrescarTabla = async () => {
     const toastId = toast.loading("Refrescando", { id: "toastId" });
-    const { success } = await getPedidosContext();
+    const { success, message } = await getPedidosContext();
     if (success) {
       toast.dismiss(toastId, { id: "toastId" });
       toast.success("Tabla refrescada");
     } else {
       toast.dismiss(toastId, { id: "toastId" });
-      toast.error("error al refrescar la Tabla");
+      toast.error(message ?? "error al refrescar la Tabla");
     }
   };
+  const debounceCambiarFiltro = debounce(cambiarFiltro, 300); // se crea una funcion debounced para no hacer tantas peticiones al servidor
+  const debounceRefrescarTabla = debounce(refrescarTabla, 300);
+  const cambiarSeleccionForm = () => {
+    setFormularioActivo(!formularioActivo);
+  };
+
+  
+
   return formularioActivo ? (
     <FormOrdenCompra volver={cambiarSeleccionForm} />
   ) : (
@@ -91,7 +84,7 @@ export const TablaPedidosContenedor = () => {
           />
           <button
             className="btn btn-outline-primary btn-nuevo-animacion"
-            onClick={refrescarTabla}
+            onClick={debounceRefrescarTabla}
           >
             <i className="bi bi-arrow-repeat"></i>
           </button>
@@ -106,10 +99,15 @@ export const TablaPedidosContenedor = () => {
           />
         </div>
       </div>
-      {
-        isLoading ? <CargaDeDatos />
-        : <ValidarPedidos pedidos={inputRef?.current?.value?.length > 0 ? pedidosFiltrados : pedidos} />
-      }
+      {isLoading ? (
+        <CargaDeDatos />
+      ) : (
+        <ValidarPedidos refrescar={refrescarTabla}
+          pedidos={
+            inputRef?.current?.value?.length > 0 ? pedidosFiltrados : pedidos
+          }
+        />
+      )}
     </>
   );
 };

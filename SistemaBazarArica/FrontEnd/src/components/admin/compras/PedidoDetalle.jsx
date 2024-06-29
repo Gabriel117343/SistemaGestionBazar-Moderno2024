@@ -1,13 +1,11 @@
 
 export const PedidoDetalle = ({ pedido }) => {
-  console.log(pedido)
   return (
     <section className="pedido-detalle">
-      <h2>Pedido {pedido.codigo}</h2>
+      <h3>Pedido {pedido.codigo}</h3>
       <article>
         <div
-          className="card-detalle-pedido"
-      
+          className="p-2"
         >
           <div>
             <p>
@@ -25,6 +23,15 @@ export const PedidoDetalle = ({ pedido }) => {
             </p>
             <p>
               <strong>Estado:</strong> {pedido.estado}
+            </p>
+            <p>
+              <strong>Subtotal:</strong> ${pedido.subtotal}
+            </p>
+            <p>
+              <strong>IVA:</strong> ${pedido.impuesto}
+            </p>
+            <p>
+              <strong>Descuento:</strong> ${pedido.descuento}
             </p>
             <p>
               <strong>Total:</strong> ${pedido.total}

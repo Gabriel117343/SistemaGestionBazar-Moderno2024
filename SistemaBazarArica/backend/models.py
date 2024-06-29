@@ -95,6 +95,9 @@ class Pedido(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, default=1)
     fecha_pedido = models.DateTimeField(auto_now_add=True)
     estado = models.CharField(max_length=20, choices=ESTADOS_PEDIDO, default='pendiente')
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    descuento = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    impuesto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=10, decimal_places=2)
     observacion = models.TextField(blank=True, null=True, default='Sin observaciones')
 

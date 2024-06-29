@@ -15,10 +15,10 @@ export const ProductosProvider = ({ children }) => {
   // ASI TENGO TODO EL CODIGO DE LOS USUARIOS EN UN SOLO LUGAR Y NO TENGO QUE IMPORTAR LAS FUNCIONES EN CADA COMPONENTE QUE LAS NECESITE
   // UNICAMENTE SE PASAN LOS PARAMETROS QUE NECESITAN LAS FUNCIONES
 
-  const getProductosContext = async () => {
+  const getProductosContext = async (incluirInactivos) => {
 
     try {
-      const res = await getAllProductos(token) // res para referenciarse al response del servidor
+      const res = await getAllProductos(token, incluirInactivos) // res para referenciarse al response del servidor
       if (res.status === 200 || res.status === 201) {
         dispatch({
           type: 'GET_PRODUCTOS',

@@ -6,7 +6,7 @@ const MostrarProductos = ({ listaProductos, borrarProducto, edicionProducto, fil
   if (filtro) {
 
     listaProductos = listaProductos.filter(producto => {
-      return producto.nombre.toLowerCase().includes(filtro.toLowerCase()) || producto.codigo.toLowerCase().includes(filtro.toLowerCase()) || producto.precio.toLowerCase().includes(filtro.toLowerCase() || producto.tipo.toLowerCase().includes(filtro.toLowerCase())) || producto.estado.toString().toLowerCase().includes(filtro.toLowerCase()) || producto.tipo.toLowerCase().includes(filtro.toLowerCase()) || producto.seccion.nombre.toLowerCase().includes(filtro.toLowerCase()) || producto.proveedor.nombre.toLowerCase().includes(filtro.toLowerCase())
+      return producto.nombre.toLowerCase().includes(filtro.toLowerCase()) || producto.codigo.toLowerCase().includes(filtro.toLowerCase()) || producto.precio.toLowerCase().includes(filtro.toLowerCase() || producto.tipo.toLowerCase().includes(filtro.toLowerCase())) || producto.tipo.toLowerCase().includes(filtro.toLowerCase()) || producto.seccion.nombre.toLowerCase().includes(filtro.toLowerCase()) || producto.proveedor.nombre.toLowerCase().includes(filtro.toLowerCase())
     })
   }
   if (listaProductos.length === 0) {

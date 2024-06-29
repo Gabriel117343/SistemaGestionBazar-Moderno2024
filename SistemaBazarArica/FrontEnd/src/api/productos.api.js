@@ -4,8 +4,11 @@ const productosApi = axios.create({
   baseURL: 'http://localhost:8000/usuarios/datos/v1/productos' // la urls por defectos
 })
 
-export const getAllProductos = (token) => {
+export const getAllProductos = (token, incluirInactivos) => {
   return productosApi.get('/', {
+    params: {
+      incluir_inactivos: incluirInactivos ? 'si' : 'no'
+    },
     headers: {
       Authorization: `Token ${token}`
     }

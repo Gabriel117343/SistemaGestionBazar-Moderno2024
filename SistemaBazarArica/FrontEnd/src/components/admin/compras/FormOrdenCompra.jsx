@@ -82,12 +82,10 @@ export const FormOrdenCompra = ({ volver }) => {
       (producto) => producto.proveedor.id === idProveedor
     );
     setProductosDeProveedor(productosDelProveedor);
-    console.log(productosDelProveedor);
   };
   const agregarProducto = (event) => {
     event.preventDefault();
     const datosOrden = Object.fromEntries(new FormData(event.target));
-    console.log(datosOrden);
     if (
       datosOrden.producto === "" ||
       datosOrden.cantidad === "" ||
@@ -102,19 +100,29 @@ export const FormOrdenCompra = ({ volver }) => {
       const producto = productosDeProveedor.find(
         (producto) => producto.id === parseInt(datosOrden.producto)
       );
-      console.log(producto);
-      const productoAgregado = {
-        cantidad: parseInt(datosOrden.cantidad),
-        producto: producto,
-        precioUnitario: producto.precio,
-        subtotal: producto.precio * parseInt(datosOrden.cantidad),
-      };
-      setProductosAgregados([...productosAgregados, productoAgregado]);
-
-      console.log(productosAgregados);
+ 
+      console.log(productosAgregados)
+      const indexProductoExistente = productosAgregados.findIndex(orden => orden.producto.id === parseInt(datosOrden.producto))
+      // si el producto ya esta en la lista de productos agregados, se actualiza la cantidad y el subtotal
+      if (indexProductoExistente !== -1) {
+        const newProductosAgregados = [...productosAgregados]
+        newProductosAgregados[indexProductoExistente].cantidad += parseInt(datosOrden.cantidad)
+        newProductosAgregados[indexProductoExistente].subtotal += producto.precio * parseInt(datosOrden.cantidad)
+        setProductosAgregados(newProductosAgregados)
+        toast.success("Producto agregado correctamente");
+        // si no esta en la lista de productos agregados, se agrega a la lista
+      } else {
+        const productoAgregado = {
+          cantidad: parseInt(datosOrden.cantidad),
+          producto: producto,
+          precioUnitario: producto.precio,
+          subtotal: producto.precio * parseInt(datosOrden.cantidad),
+        };
+        setProductosAgregados([...productosAgregados, productoAgregado]);
+        toast.success("Producto agregado correctamente");
+      }
       productoRef.current.value = "";
       cantidadRef.current.value = ""; // limpiando los inputs de producto y cantidad
-      toast.success("Producto agregado correctamente");
     }
   };
   const calcularDescuento = (event) => {
@@ -178,6 +186,9 @@ export const FormOrdenCompra = ({ volver }) => {
     formPedido.append("codigo", codigoPedido); // se agrega el código generado en el useEffect al form
     // codigo del proveedor a traves del primero producto de la lista de productos agregados
     formPedido.append("proveedor", productosAgregados[0].producto.proveedor.id);
+    formPedido.append("subtotal", subtotal);
+    formPedido.append("descuento", descuento);
+    formPedido.append("impuesto", impuesto);
 
     formPedido.append("total", total);
     if (datosOrden.observacion.length > 0) {
@@ -213,7 +224,7 @@ export const FormOrdenCompra = ({ volver }) => {
           swal.fire({
             icon: "error",
             title: "Error",
-            text: message,
+            text: message ?? "Ha ocurrido un error inesperado al añadir un producto al pedido",
           });
           break;
         }
@@ -412,6 +423,7 @@ export const FormOrdenCompra = ({ volver }) => {
                 <td className="p-0">
                   <button
                     className="btn"
+                    type="button"
                     onClick={() =>
                       setProductosAgregados(
                         productosAgregados.filter(

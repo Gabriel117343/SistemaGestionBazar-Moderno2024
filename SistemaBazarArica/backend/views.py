@@ -292,12 +292,26 @@ class ProductoView(viewsets.ModelViewSet):
     serializer_class = ProductoSerializer
     queryset = Producto.objects.all() # Esto indica que todas las instancias del modelo Producto son el conjunto de datos sobre el que operará esta vista.
     authentication_classes = [TokenAuthentication]  # Utiliza la autenticación basada en tokens
-    # uso de try exept para capturar errores
+    def get_queryset(self):
+        """
+        Sobrescribe el método get_queryset para retornar productos basados en el estado de activación
+        solo cuando se listan los productos. Para otras acciones, retorna todos los productos.
+        """
+        queryset = Producto.objects.select_related('proveedor', 'seccion', 'stock')
+        
+        # Aplica la lógica de incluir_inactivos solo para la acción 'list'
+        if self.action == 'list':
+            incluir_inactivos = self.request.query_params.get('incluir_inactivos', 'no').lower() == 'si'
+            if not incluir_inactivos:
+                queryset = queryset.filter(estado=True)
+        # utilizar select_related para obtener los datos relacionados con el proveedor y la sección, evitando así consultas adicionales a la base de datos y el problema de N + 1 
+        return queryset
+   
     def list(self, request, *args, **kwargs):
         print("Obteniendo Productos")
         try: 
-            queryset = self.get_queryset().select_related('proveedor', 'seccion', 'stock')
-            # utilizar select_related para obtener los datos relacionados con el proveedor y la sección, evitando así consultas adicionales a la base de datos y el problema de N + 1.
+            queryset = self.get_queryset()
+            
             serializer = self.get_serializer(queryset, many=True)
             return Response({'data': serializer.data, 'message': 'Productos obtenidos!'}, status=status.HTTP_200_OK)
         except Exception as e:
@@ -487,7 +501,7 @@ class PedidoView(viewsets.ModelViewSet):
                 # Busca el producto en el stock
                 stock_item = Stock.objects.get(producto=producto_pedido.producto)
 
-                # Aumenta el stock
+                # Aumenta el stock de cada uno de los productos pedidos dentro de la orden de compra
                 stock_item.cantidad = F('cantidad') + producto_pedido.cantidad
                 stock_item.save()
 

@@ -18,14 +18,14 @@ export const FiltroProductos = () => {
   } = useContext(ProductosContext);
   const [isLoading, setIsLoading] = useState(true);
   const [productosFiltrados, setProductosFiltrados] = useState(productos);
-
+  const [filtroPorSeccionActivo, setFiltroPorSeccionActivo] = useState(false);
+  const INCLUIR_INACTIVOS = false // no se incluyen los productos inactivos
   const tipoRef = useRef(null);
   const buscadorRef = useRef(null);
-  const seccionRef = useRef(null);
 
   useEffect(() => {
     const cargarProductos = async () => {
-      const { success, message } = await getProductosContext();
+      const { success, message } = await getProductosContext(INCLUIR_INACTIVOS);
       if (success) {
         toast.success(message ?? "Productos cargados");
         setIsLoading(false);
@@ -46,6 +46,10 @@ export const FiltroProductos = () => {
     cargarProductos();
     cargarSecciones();
   }, []);
+
+  // useEffect(() => {
+  //   setProductosFiltrados(productos);
+  // }, [])
   const filtrarPorSeccion = (id) => {
     // se resetea el input de busqueda y el select de tipo
     toast.dismiss({ id: "loading" }); // se cierra el toast de cargando
@@ -59,9 +63,11 @@ export const FiltroProductos = () => {
         id: "loading",
         duration: 1500,
       });
-
+      // usar 2 set dentro de una función no renderiza el componente 2 veces gracias a la reconciliación de react
+    setFiltroPorSeccionActivo(true);
     setProductosFiltrados(productosFiltrados);
   };
+  
   const filtroNombre = (event) => {
     // se setea el select de tipo en all
     tipoRef.current.value = "all";
@@ -77,7 +83,7 @@ export const FiltroProductos = () => {
     // se setea el input de busqueda en vacio
     buscadorRef.current.value = "";
     const tipo = event.target.value;
-
+    if (tipo === "all") return setProductosFiltrados(productos);
     const productosFilt = productos.filter(
       (producto) => producto.tipo === tipo
     );
@@ -87,11 +93,9 @@ export const FiltroProductos = () => {
     setProductosFiltrados(productos);
   };
   // Si hay un filtro activo se activa la busqueda activa para mostrar los productos filtrados
-  const busquedaActiva =
-    tipoRef?.current?.value !== "all" ||
-    buscadorRef?.current?.value?.length > 0;
-  console.log(busquedaActiva);
+
   const debounceFiltroNombre = debounce(filtroNombre, 300); // se le pasa la funcion y el tiempo de espera
+
   return (
     <>
       <div className="col-md-8">
@@ -140,7 +144,6 @@ export const FiltroProductos = () => {
           {secciones?.map((seccion) => (
             <div key={seccion.id} className="seccion">
               <button
-                ref={seccionRef}
                 onClick={() => filtrarPorSeccion(seccion.id)}
                 className={`border rounded btn-seleccion ${productosFiltrados?.some((producto) => producto?.seccion?.numero === seccion?.numero) ? "btn-filtro" : ""}`}
               >
@@ -153,8 +156,7 @@ export const FiltroProductos = () => {
           <CargaDeDatos />
         ) : (
           <ValidarProductos
-            productos={
-              productosFiltrados?.length > 0 || busquedaActiva
+            productos={productosFiltrados.length > 0 && filtroPorSeccionActivo
                 ? productosFiltrados
                 : productos
             }
