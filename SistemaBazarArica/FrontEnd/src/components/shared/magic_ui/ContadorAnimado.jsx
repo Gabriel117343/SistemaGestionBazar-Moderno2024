@@ -10,7 +10,7 @@ export default function ContadorAnimado({
   delay = 0,
   className,
 }) {
-  
+
   const ref = useRef(null); // Cambiado aquí
   const motionValue = useMotionValue(direction === "down" ? value : 0);
   const springValue = useSpring(motionValue, {
@@ -37,7 +37,7 @@ export default function ContadorAnimado({
       }),
     [springValue],
   );
-
+ 
   return (
     <span
       className={cn(

@@ -38,7 +38,7 @@ export const Menu = ({ children }) => {
     },
     {
       path: "/admin/stocks",
-      name: "Stocks",
+      name: "Stock",
       icon: <i className="bi bi-box"></i>,
     },
     {

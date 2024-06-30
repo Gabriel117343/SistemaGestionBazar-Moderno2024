@@ -1,4 +1,5 @@
-import { ListaVentas } from '../../components/admin/ventas/ListaVentas'
+import { FiltroVentas } from '../../components/admin/ventas/FiltroVentas'
+
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
 export const Ventas = () => {
   return (
@@ -9,10 +10,7 @@ export const Ventas = () => {
           </div>
           <GradualSpacing text="Ventas Realizadas" className='m-0' type='h2'/>
         </div>
-        <ListaVentas />
-        
-        
-
+          <FiltroVentas />
       </section>
   )
 }

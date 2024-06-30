@@ -53,7 +53,7 @@ export const MostrarTabla = ({
 
   return (
     <section>
-      <table className="table table-striped mb-0" id="tabla-usuarios">
+      <table className="table table-striped table-hover mb-0" id="tabla-usuarios">
         <thead className="border-bottom">
           <tr>
             {/* <th>Imagen</th> */}

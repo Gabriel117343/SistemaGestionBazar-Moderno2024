@@ -3,8 +3,9 @@ import { Modal, Button } from "react-bootstrap";
 import { PedidosContext } from "../../../context/PedidosContext";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
-import { useState, useContext, useEffect, forwardRef } from "react";
+import { useState, useContext, forwardRef } from "react";
 import { PedidoDetalle } from "./PedidoDetalle";
+
 import ReactToPrint from "react-to-print";
 import { useNavigate } from 'react-router-dom'
 // forwardRef es esencial para pasar referencias a componentes funcionales en React, en este caso se pasa la referencia de la tabla para poder imprimir, basicamente envuelve el componente
@@ -14,6 +15,7 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
   const [showModal, setShowModal] = useState(false); // estado para mostrar la modal
   const [currentPage, setCurrentPage] = useState(1); // estado para la pagina actual
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
+
   const navigate = useNavigate();
   const handleShow = () => setShowModal(true); // funcion para mostrar la modal
   const handleClose = () => setShowModal(false); // funcion para cerrar la modal
@@ -21,7 +23,6 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
     setPedidoSeleccionado(pedido); // aqui se guardara el pedido seleccionado para que pueda mostrarse en la modal
     handleShow();
   };
-
   const recibirPedido = async (pedido) => {
     if (pedido.estado === "recibido") {
       Swal.fire({
@@ -46,6 +47,7 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
     if (!aceptar.isConfirmed) return; // si no se confirma la accion se cancela la funcion
     // al recibir el pedido se aumenta el stock de los productos del pedido automaticamente desde el backend
     const { success, message } = await recibirPedidoContext(pedido.id);
+    
     if (success) {
       Swal.fire({
         title: "Pedido Recibido",
@@ -53,9 +55,12 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
         icon: "success",
         confirmButtonText: "Aceptar",
         confirmButtonColor: "#3085d6", //
-      });
-      refrescar(); // se refresca la tabla para mostrar el cambio
-      navigate('/admin/stocks')
+      }).finally(() => {
+        refrescar(); // se refresca la tabla para mostrar el cambio
+        setTimeout(() => {
+          navigate(`/admin/stocks/${pedido.proveedor.id}`)
+        }, 1000)
+      })
     } else {
       Swal.fire({
         title: "Error",
@@ -107,10 +112,9 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
   const totalBotones = Math.ceil(
     listaPedidos.reverse().length / cantidadPedidos
   ); // reverse para que la tabla muestre desde el ultimo usuario creado al primero
-  console.log(pedidosMostrar);
   return (
     <section ref={ref}>
-      <table className="table table-striped">
+      <table className="table table-striped table-hover">
         <thead>
           <tr>
             <th>#</th>
@@ -126,7 +130,7 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
           <MagicMotion>
             {pedidosMostrar?.map((pedido, index) => {
               return (
-                <tr key={pedido?.id}>
+                <tr key={pedido.id}>
                   <td>{index + 1}</td>
                   <td>{pedido?.fecha_pedido.slice(0, 10)}</td>
                   <td>{pedido?.codigo}</td>
@@ -258,31 +262,24 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
 const SinPedidos = () => {
   return (
     <section>
-      <table>
+      <table className="table table-striped">
         <thead>
-          <tr>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
+        <tr>
+            <th>#</th>
+            <th>Fecha Creacion</th>
+            <th>Codigo</th>
+            <th>Proveedor</th>
+            <th>Productos</th>
+            <th>Estado</th>
+            <th>Opciones</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-          </tr>
-        </tbody>
+        
+        
       </table>
-      <h1 className="text-center">No se han encontrado Ordenes</h1>
+      <div className="alert alert-warning mt-3" role="alert">
+        No se han encontrado Ordenes de compra
+      </div>
     </section>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { MagicMotion } from "react-magic-motion";
 import "./styles.css";
 
@@ -45,7 +45,7 @@ const MostrarTabla = ({
   let contador = startIndex + 1; // para numerar los usuarios en la tabla comenzando por el starIndex aumentado en uno
   return (
     <section>
-      <table className="table table-striped mb-0" id="tabla-proveedores">
+      <table className="table table-striped table-hover mb-0" id="tabla-proveedores">
         <thead className="border-bottom">
           <tr>
             <th>#</th>
@@ -62,9 +62,9 @@ const MostrarTabla = ({
         </thead>
         <tbody>
           <MagicMotion>
-            {proveedoresMostrar.map((proveedor) => (
+            {proveedoresMostrar.map((proveedor, index) => (
               <tr key={proveedor.id}>
-                <td>{contador++}</td>
+                <td>{index + 1}</td>
                 <td>{proveedor.fecha_creacion.substring(0, 10)}</td>
                 <td>{proveedor.nombre}</td>
                 <td>{proveedor.persona_contacto}</td>

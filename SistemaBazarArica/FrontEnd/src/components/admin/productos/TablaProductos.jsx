@@ -30,7 +30,7 @@ const MostrarProductos = ({ listaProductos, borrarProducto, edicionProducto, fil
 
   return (
     <section>
-      <table className="table table-striped mb-0" id='tabla-productos'>
+      <table className="table table-striped table-hover mb-0" id='tabla-productos'>
         <thead>
           <tr>
             <th>#</th>

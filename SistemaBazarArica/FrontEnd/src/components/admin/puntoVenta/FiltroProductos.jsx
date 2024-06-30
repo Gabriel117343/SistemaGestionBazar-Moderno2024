@@ -19,10 +19,10 @@ export const FiltroProductos = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [productosFiltrados, setProductosFiltrados] = useState(productos);
   const [filtroPorSeccionActivo, setFiltroPorSeccionActivo] = useState(false);
-  const INCLUIR_INACTIVOS = false // no se incluyen los productos inactivos
+  
   const tipoRef = useRef(null);
   const buscadorRef = useRef(null);
-
+  const INCLUIR_INACTIVOS = false // no se incluyen los productos inactivos
   useEffect(() => {
     const cargarProductos = async () => {
       const { success, message } = await getProductosContext(INCLUIR_INACTIVOS);
@@ -45,11 +45,9 @@ export const FiltroProductos = () => {
     };
     cargarProductos();
     cargarSecciones();
+    
   }, []);
 
-  // useEffect(() => {
-  //   setProductosFiltrados(productos);
-  // }, [])
   const filtrarPorSeccion = (id) => {
     // se resetea el input de busqueda y el select de tipo
     toast.dismiss({ id: "loading" }); // se cierra el toast de cargando
@@ -67,6 +65,7 @@ export const FiltroProductos = () => {
     setFiltroPorSeccionActivo(true);
     setProductosFiltrados(productosFiltrados);
   };
+  
   
   const filtroNombre = (event) => {
     // se setea el select de tipo en all
@@ -93,8 +92,21 @@ export const FiltroProductos = () => {
     setProductosFiltrados(productos);
   };
   // Si hay un filtro activo se activa la busqueda activa para mostrar los productos filtrados
-
+  const refrescarProductos = async () => {
+    const { success, message } = await getProductosContext(INCLUIR_INACTIVOS);
+    if (!success) {
+      toast.error(
+        message ?? "Ha ocurrido un error inesperado al cargar los productos"
+      );
+    } else {
+      toast.success(message ?? "Productos actualizados correctamente");
+    }
+  }
   const debounceFiltroNombre = debounce(filtroNombre, 300); // se le pasa la funcion y el tiempo de espera
+  // en caso haya un filtro activo se activa la busqueda activa
+  const busquedaActiva =
+    tipoRef?.current?.value !== "all" ||
+    buscadorRef?.current?.value?.length > 0 || filtroPorSeccionActivo;
 
   return (
     <>
@@ -156,7 +168,7 @@ export const FiltroProductos = () => {
           <CargaDeDatos />
         ) : (
           <ValidarProductos
-            productos={productosFiltrados.length > 0 && filtroPorSeccionActivo
+            productos={ busquedaActiva 
                 ? productosFiltrados
                 : productos
             }

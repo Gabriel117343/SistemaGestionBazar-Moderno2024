@@ -1,88 +1,90 @@
-import { useContext, useEffect, useState } from 'react'
-import { VentasContext } from '../../../context/VentasContext'
-import { ClientesContext } from '../../../context/ClientesContext'
-import { toast } from 'react-hot-toast'
-export const ListaVentas = () => {
-  const { stateVenta: { ventas }, getVentasContext } = useContext(VentasContext)
-  const { stateCliente: { clientes }, getClientesContext } = useContext(ClientesContext)
-  const [ventasFiltradas, setVentasFiltradas] = useState(ventas)
-  useEffect(() => {
-    const cargar = async () => {
-      getVentasContext()
-      getClientesContext()
-    }
-    cargar()
-  }, [])
-
-  const filtroCliente = (event) => {
-    const cliente = event.target.value
-    if (cliente === 'all') {
-      setVentasFiltradas(ventas)
-      return
-    } else {
-      const ventasFiltradas = ventas.filter(venta => {
-        const clienteVenta = clientes.find(cliente => cliente.nombre === venta.cliente.nombre)
-        return clienteVenta.nombre.toLowerCase().includes(cliente.toLowerCase())
-      })
-      setVentasFiltradas(ventasFiltradas)
-    }
-    
-  }
-  const refrescarTabla = () => {
-    setVentasFiltradas(ventas)
-    toast.success('Tabla actualizada')
-  }
-  const imprimirTabla = () => {
-    print()
-  }
+import { MagicMotion as Animar } from "react-magic-motion";
+import { useState } from 'react'
+const ListaVentas = ({ ventas }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const cantidadVentas = 12;
+  const startIndex = (currentPage - 1) * cantidadVentas;
+  const endIndex = startIndex + cantidadVentas;
+  const ventasMostrar = ventas.slice(startIndex, endIndex);
+  const totalBotones = Math.ceil(ventas.reverse().length / cantidadVentas);
+  console.log(ventas)
   return (
-    <div>
-      <div className="d-flex align-items-center gap-2">
-        
-        <i className="bi bi-search"></i>
-        <input type="text" onChange={filtroCliente} className='form-control mb-2' placeholder='Buscar por cliente' />
-        <button className='btn btn-outline-primary' onClick={refrescarTabla}><i className="bi bi-arrow-repeat"></i></button>
-        <button className='btn btn-outline-primary' onClick={imprimirTabla}><i class="bi bi-printer"></i></button>
-      </div>
-      <table className='table table-striped'>
+    <article>
+      <table className="table table-striped table-hover">
         <thead>
           <tr>
             <th>Venta ID</th>
-            <th>Total</th>
+            <th>Vendedor</th>
             <th>Fecha de Venta</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Email</th>
-            <th>RUT</th>
+            <th>Hora</th>
+            <th>Cliente</th>
+            <th>Rut</th>
             <th>Teléfono</th>
-            <th>Dirección</th>
+            <th>Total</th>
           </tr>
         </thead>
         <tbody>
-          {ventas?.map(venta => {
-            const cliente = clientes.find(cliente => cliente.id === venta.cliente);
-            return (
-              <tr key={venta.id}>
-                <td>{venta.id}</td>
-                <td>{venta.total}</td>
-                <td>{new Date(venta.fecha_venta).toLocaleDateString()}</td>
-                {cliente ? (
-                  <>
-                    <td>{cliente.nombre}</td>
-                    <td>{cliente.apellido}</td>
-                    <td>{cliente.email}</td>
-                    <td>{cliente.rut}</td>
-                    <td>{cliente.telefono}</td>
-                    <td>{cliente.direccion}</td>
-                  </>
-                ) : (
-                  <td colSpan="6">No se encontró información del cliente</td>
-                )}
-              </tr>
-            );
-          })}
+          <Animar>
+            {ventasMostrar?.map((venta) => {
+              return (
+                <tr key={venta.id}>
+                  <td>{venta.id}</td>
+                  <td>
+                    {venta.vendedor.nombre} {venta.vendedor.apellido}
+                  </td>
+                  <td>{new Date(venta.fecha_venta).toLocaleDateString()} </td>
+                  <td>{new Date(venta.fecha_venta).toLocaleTimeString()}</td>
+                  <td>
+                    {venta.cliente.nombre} {venta.cliente.apellido}
+                  </td>
+                  <td>{venta.cliente.rut}</td>
+                  <td>{venta.cliente.telefono}</td>
+                  <td>{venta.total}</td>
+                </tr>
+              );
+            })}
+          </Animar>
         </tbody>
       </table>
-    </div>
-  )
-}
+      <div className="pagination-buttons mb-3 mt-1 animacion-numeros">
+        {/* bucle Array.from() para generar botones según la cantidad de páginas necesarias, solo se usara el indice del array */}
+        {Array.from({ length: totalBotones }, (_, index) => (
+          <button
+            key={index + 1}
+            className={`btn ${currentPage === index + 1 ? "btn-info" : "btn-secondary"}`}
+            onClick={() => setCurrentPage(index + 1)}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
+    </article>
+  );
+};
+const SinVentas = () => {
+  return (
+    <article>
+      <table className="table table-striped">
+        <thead>
+          <tr>
+            <th>Venta ID</th>
+            <th>Vendedor</th>
+            <th>Fecha de Venta</th>
+            <th>Hora</th>
+            <th>Cliente</th>
+            <th>Rut</th>
+            <th>Teléfono</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+      </table>
+      <div className="alert alert-warning mt-3" role="alert">
+        No se han encontrado Ventas
+      </div>
+    </article>
+  );
+};
+export const ValidarVentas = ({ ventas }) => {
+  const hayVentas = ventas.length > 0;
+  return hayVentas ? <ListaVentas ventas={ventas} /> : <SinVentas />;
+};

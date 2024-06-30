@@ -1,4 +1,5 @@
 import { ProductosProvider } from '../../context/ProductosContext'
+import { ProveedoresProvider } from '../../context/ProveedoresContext'
 import { StockSmart } from '../../components/admin/stocks/StockSmart'
 import { FaBoxes } from "react-icons/fa";
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
@@ -11,9 +12,11 @@ export const Stocks = () => {
           </div>
           <GradualSpacing text="Stock en Tienda" className='m-0' type='h2'/>
         </div>
-        <ProductosProvider>
-          <StockSmart />
-        </ProductosProvider>
+        <ProveedoresProvider>
+          <ProductosProvider>
+            <StockSmart />
+          </ProductosProvider>
+        </ProveedoresProvider>
       </section>
   )
 }

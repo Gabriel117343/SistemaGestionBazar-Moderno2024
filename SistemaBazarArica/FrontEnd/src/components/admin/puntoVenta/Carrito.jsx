@@ -33,7 +33,7 @@ export const Carrito = () => {
     actualizarCantidadCarrito,
   } = useContext(CarritoContext);
   const {
-    stateProducto: { productos },
+    stateProducto: { productos }, getProductosContext
   } = useContext(ProductosContext);
 
   useEffect(() => {
@@ -78,6 +78,12 @@ export const Carrito = () => {
       actualizarCantidadCarrito(idProducto, cantidad);
     }
   };
+  const refrescarProductos = async () => {
+    const { success, message } = await getProductosContext();
+    if (!success) {
+      toast.error(message ?? "Error al cargar los productos");
+    }
+  }
   const realizarVenta = async () => {
     const formVenta = new FormData();
     formVenta.append("cliente", clienteSeleccionado.id);
@@ -104,6 +110,7 @@ export const Carrito = () => {
 
     if (success) {
       vaciarCarrito();
+      refrescarProductos();
       Swal.fire({
         title: "Venta realizada",
         text: message,

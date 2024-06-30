@@ -18,7 +18,7 @@ export const ProveedoresProvider = ({ children }) => {
   const getProveedoresContext = async () => {
     try {
       const res = await getAllProveedores(token) // res para referenciarse al response del servidor
-      console.log(res)
+
       if (res.status === 200 || res.status === 201) {
         dispatch({
           type: 'GET_PROVEEDORES',
@@ -36,12 +36,14 @@ export const ProveedoresProvider = ({ children }) => {
   const getProveedorContext = async (id) => {
     try {
       const res = await getProveedor(id, token)
-      console.log(res)
+    
+      console.log(res.status)
       if (res.status === 200 || res.status === 201) {
         dispatch({
           type: 'GET_PROVEEDOR',
           payload: res.data
         }) // si la peticion es exitosa se ejecuta el dispatch para actualizar el estado global de los proveedores
+        console.log(stateProveedor.proveedorSeleccionado)
         return ({ success: true, message: res.data.message })
         // return ({ success: true, message: 'Usuario obtenido' }) > Asi se puede retornar un mensaje de exito sin necesidad de obtenerlo del response del servidor
       }

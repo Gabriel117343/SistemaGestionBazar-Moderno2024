@@ -577,27 +577,46 @@ class ClienteView(viewsets.ModelViewSet):
             return Response({'error': 'Error al crear el Cliente'}, status=status.HTTP_400_BAD_REQUEST)
 class VentaView(viewsets.ModelViewSet):
     serializer_class = VentaSerializer
-    queryset = Venta.objects.all() # Esto indica que todas las instancias del modelo Venta son el conjunto de datos sobre el que operará esta vista.
-    permission_classes = [AllowAny]# Utiliza la autenticación basada en tokens
-    # uso de try exept para capturar errores
-    
-    def create(self, request, *args, **kwargss):
+    queryset = Venta.objects.all()
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             cliente_id = request.data.get('cliente')
-            total  = request.data.get('total')
+            total = request.data.get('total')
             info_venta_tipo = request.data.get('info_venta_tipo')
-       
             info_venta_producto_id = request.data.get('info_venta_producto_id')
+
             try:
                 cliente = Cliente.objects.get(id=cliente_id)
                 vendedor = Usuario.objects.get(id=request.user.id)
                 venta = serializer.save(cliente=cliente, vendedor=vendedor, total=total, info_venta_tipo=info_venta_tipo, info_venta_producto_id=info_venta_producto_id)
+
+                # Decodificar info_venta_producto_id
+                productos_vendidos = json.loads(info_venta_producto_id)
+
+                # Actualizar el stock de cada producto vendido
+                for producto_id, datos in productos_vendidos.items():
+                    cantidad_vendida = datos[0]['cantidad']
+                    stock = Stock.objects.get(producto_id=producto_id)
+                    if stock.cantidad >= cantidad_vendida:
+                        stock.cantidad -= cantidad_vendida
+                        stock.save()
+                    else:
+                        # Manejar el caso en que no haya suficiente stock
+                        return Response({'message': f'No hay suficiente stock para el producto {producto_id}'}, status=status.HTTP_400_BAD_REQUEST)
+
                 venta.save()
                 return Response({'message': 'Venta realizada exitosamente!'}, status=status.HTTP_201_CREATED)
             except Cliente.DoesNotExist:
-                return Response({'error': 'Cliente no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message': 'Cliente no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
             except Usuario.DoesNotExist:
-                return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message': 'Usuario no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+            except Stock.DoesNotExist:
+                return Response({'message': 'Stock no encontrado para uno de los productos'}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                # Capturar cualquier otro error no anticipado
+                return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'error': 'No se ha podido realizar la venta'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

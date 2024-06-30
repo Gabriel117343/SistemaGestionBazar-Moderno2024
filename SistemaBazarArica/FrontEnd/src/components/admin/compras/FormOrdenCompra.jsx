@@ -197,7 +197,6 @@ export const FormOrdenCompra = ({ volver }) => {
     }
 
     const { success, message, pedidoId } = await crearPedidoContext(formPedido);
-    console.log(pedidoId);
     if (success) {
       swal.fire({
         icon: "success",

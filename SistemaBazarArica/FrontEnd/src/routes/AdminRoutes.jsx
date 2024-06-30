@@ -42,7 +42,7 @@ export const AdminRoutes = () => {
                     <Route path="/compras" element={<Compras />} />
                     <Route path="/recibos" element={<Recibos />} />
                     <Route path="/devoluciones" element={<Devoluciones />} />
-                    <Route path="/stocks" element={<Stocks />} />
+                    <Route path="/stocks/:proveedorId?" element={<Stocks />} />
                     <Route path="/ventas" element={<Ventas />} />
                     <Route path="/punto-venta" element={<PuntoVenta />} />
                     <Route path="/proveedores" element={<Proveedores />} />
