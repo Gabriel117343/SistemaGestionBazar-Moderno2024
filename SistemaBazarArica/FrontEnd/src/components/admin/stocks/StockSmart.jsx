@@ -6,6 +6,7 @@ import { ValidarStocks } from "./TablaStocks";
 import { toast } from "react-hot-toast";
 import CargaDeDatos from "../../../views/CargaDeDatos";
 import { debounce } from "lodash";
+import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 export const StockSmart = () => {
   const {
     stateProducto: { productos },
@@ -99,11 +100,13 @@ export const StockSmart = () => {
       toast.error("error al refrescar la Tabla");
     }
   };
+  // Este hook hará que la primera vez que se llame la función se ejecute inmediatamente, pero las siguientes veces se retrase 2 segundos
+  const debounceRefrescarTabla = useRefreshDebounce(refrescarTabla, 2000);
   const imprimirTabla = () => {
     print();
   };
-  const debounceCambiarFiltroNombre = debounce(cambiarFiltroNombre, 300); // Debounce para retrazar la ejecucion de la funcion cambiarFiltro
-  const debounceRefrescarTabla = debounce(refrescarTabla, 300);
+  const debounceCambiarFiltroNombre = useRefreshDebounce(cambiarFiltroNombre, 300); // Debounce para retrazar la ejecucion de la funcion cambiarFiltro
+  
 
   const filtroActivo =
     inputRef.current?.value != "" || selectRef.current?.value != "all";

@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import CargaDeDatos from "../../../views/CargaDeDatos";
 import { ValidarPedidos } from "./TablaPedidos";
 import { debounce } from "lodash";
+import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 import { FormOrdenCompra } from "./FormOrdenCompra";
 import { ButtonNew } from "../../shared/ButtonNew";
 import ReactToPrint from "react-to-print";
@@ -58,12 +59,11 @@ export const TablaPedidosContenedor = () => {
     }
   };
   const debounceCambiarFiltro = debounce(cambiarFiltro, 300); // se crea una funcion debounced para no hacer tantas peticiones al servidor
-  const debounceRefrescarTabla = debounce(refrescarTabla, 300);
+  // Este hook hará que la primera vez se llame a la función inmediatamente y luego se llame cada 2 segundos.
+  const debounceRefrescarTabla = useRefreshDebounce(refrescarTabla, 2000);
   const cambiarSeleccionForm = () => {
     setFormularioActivo(!formularioActivo);
   };
-
-  
 
   return formularioActivo ? (
     <FormOrdenCompra volver={cambiarSeleccionForm} />

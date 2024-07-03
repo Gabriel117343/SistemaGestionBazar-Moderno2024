@@ -8,6 +8,7 @@ import { Modal } from "react-bootstrap";
 import { FormEdicion } from "./FormEdicion";
 import { FormRegistroProductos } from "./FormRegistroProductos";
 import { debounce } from "lodash";
+import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 // Para la UI
 import CargaDeDatos from "../../../views/CargaDeDatos";
 import { ButtonNew } from "../../shared/ButtonNew";
@@ -95,6 +96,7 @@ export const TablaProductosContenedor = () => {
       toast.error(message ?? "Error inesperado al refrescar la tabla");
     }
   };
+  const debounceRefrescarTabla = useRefreshDebounce(refrescarTabla, 2000);
   const imprimirTabla = () => {
     print();
   };
@@ -116,7 +118,7 @@ export const TablaProductosContenedor = () => {
           />
           <button
             className="btn btn-outline-primary btn-nuevo-animacion"
-            onClick={refrescarTabla}
+            onClick={debounceRefrescarTabla}
           >
             <i className="bi bi-arrow-repeat"></i>
           </button>

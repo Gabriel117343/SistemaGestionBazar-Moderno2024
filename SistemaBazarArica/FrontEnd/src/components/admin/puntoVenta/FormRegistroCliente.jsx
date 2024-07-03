@@ -29,7 +29,7 @@ export const FormRegistroCliente = ({ cerrarModal }) => {
     <form action="" onSubmit={enviarFormulario}>
       <div className="form-group">
         <label htmlFor="nombre">Nombre</label>
-        <input type="text" className="form-control" name="nombre" id="nombre" placeholder="Ej: Juan Perez" />
+        <input type="text" className="form-control" name="nombre" id="nombre" placeholder="Ej: Juan Perez" autoFocus/>
       </div>
       <div className="form-group">
         <label htmlFor="apellido">Apellido</label>
