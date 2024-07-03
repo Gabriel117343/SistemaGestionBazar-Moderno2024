@@ -64,7 +64,7 @@ const ListaVentas = ({ ventas }) => {
 const SinVentas = () => {
   return (
     <article>
-      <table className="table table-striped">
+      <table className="table table-striped table-hover">
         <thead>
           <tr>
             <th>Venta ID</th>
