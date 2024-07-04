@@ -9,21 +9,21 @@ export const createCliente = async (cliente, token) => {
     return clienteApi.post('/', cliente, {
         headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Token ${token}`
+            Authorization: `Bearer ${token}`
         }
     })
 }
 export const getAllClientes = (token) => {
   return clienteApi.get('/', {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
 export const getCliente = (id, token) => {
   return clienteApi.get(`/${id}/`, {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }

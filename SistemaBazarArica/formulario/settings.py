@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',  # Asegúrate de que esto está incluido, esto es para poder hacer la autenticacion con tokens en la api
     'coreapi',
     'backend',
+    'rest_framework_simplejwt.token_blacklist', # para poder hacer la lista negra de tokens
 ]
 
 
@@ -138,11 +140,43 @@ CORS_ORIGIN_WHITELIST = [
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',  # Habilita la autenticación de tokens
+      # 1 forma estandard de autenticacion JWT token mas firma de rest_framework_simplejwt mediante token de autenticacion(mas seguro)
+      'rest_framework_simplejwt.authentication.JWTAuthentication',
+      # 2 forma de autenticacion con token de rest_framework(menos seguros) - ya no se usa en el proyecto
+    #    'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',  # Configura los permisos por defecto
     ]
+}
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    
+    # Configuraciones adicionales recomendadas
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,  # Firma los tokens JWT (JSON Web Tokens)
+    'VERIFYING_KEY': None,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'JTI_CLAIM': 'jti',
+    
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+    
+    # Para manejar errores de token expirado
+    'TOKEN_OBTAIN_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenObtainPairSerializer',
+    'TOKEN_REFRESH_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenRefreshSerializer',
+    'TOKEN_VERIFY_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenVerifySerializer',
+    
+    # Para permitir la actualización del token
+    'UPDATE_LAST_LOGIN': True,
 }
 AUTH_USER_MODEL = 'backend.Usuario'
 CSRF_COOKIE_DOMAIN = 'localhost' # esto es para que el token csrf se envíe a la api en React desde el servidor de Django

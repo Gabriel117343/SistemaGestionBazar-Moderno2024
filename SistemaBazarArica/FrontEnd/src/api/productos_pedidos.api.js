@@ -7,7 +7,7 @@ const productosPedidosApi = axios.create({
 export const getAllProductosPedidos = (token) => {
   return productosPedidosApi.get('/', {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
@@ -15,14 +15,14 @@ export const createProductoPedido = async (productoPedido, token) => {
   return productosPedidosApi.post('/', productoPedido, {
     headers: {
       'Content-Type': 'multipart/form-data',
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
 export const deleteProductoPedido = (id, token) => {
   return productosPedidosApi.delete(`/${id}`, {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
@@ -30,14 +30,14 @@ export const updateProductoPedido = (id, productoPedido, token) => {
   return productosPedidosApi.put(`/${id}/`, productoPedido, {
     headers: {
       'Content-Type': 'multipart/form-data',
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
 export const getProductoPedido = (id, token) => {
   return productosPedidosApi.get(`/${id}/`, {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }

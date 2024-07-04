@@ -38,16 +38,25 @@ from django.contrib.sites.shortcuts import get_current_site # para obtener el do
 from datetime import datetime, time # para saber la fecha actual
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action
+from rest_framework.exceptions import AuthenticationFailed
 from django.db.models import F
+
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.tokens import RefreshToken # para obtener el token de autenticación JWT
+# importando JWTAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
+# lista negra de tokens para bloquear tokens de acceso y actualización que se han utilizado
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 
 import blurhash # para generar blurhash para las imagenes
 
 
 User = get_user_model() # esto es para obtener el modelo de usuario que se está utilizando en el proyecto
 
-@api_view(['GET'])
-def get_csrf_token(request):
-    return Response({'csrftoken': get_token(request)}) # esto es para obtener el token csrf desde la api en React
+# @api_view(['GET'])
+# def get_csrf_token(request):
+#     return Response({'csrftoken': get_token(request)}) # esto es para obtener el token csrf desde la api en React
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny] # esto es para permitir cualquier usuario porque el usuario no está autenticado cuando se restablece la contraseña
     def post(self, request):
@@ -82,7 +91,7 @@ class LoginView(APIView):
             return Response({'error': 'Credenciales Invalidas', 'tipo': 'credenciales'}, status=status.HTTP_400_BAD_REQUEST)
 
         if not user.is_active:
-            return Response({'error': 'Su cuenta se encuentra inactiva', 'tipo': 'cuenta'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Su cuenta se encuentra Inactiva, contacte con el Administrador', 'tipo': 'cuenta'}, status=status.HTTP_400_BAD_REQUEST)
 
         #---------------------------------
         # 1 valida si el usuario esta dentro del horario laboral
@@ -96,22 +105,40 @@ class LoginView(APIView):
         user = authenticate(request, email=email, password=password) # autentica al usuario
 
         if user is not None:
-            
-            auth_login(request, user) # logea al usuario en el sistema
-            try:
-                Token.objects.filter(user=user).delete()  # Elimina cualquier token existente
-                token, created = Token.objects.get_or_create(user=user)
-                print(token.key) # Imprime el token
-            except Exception as e:
+            auth_login(request, user)  # Logea al usuario en el sistema
 
+            try:
+                # Genera tokens de acceso y actualización para el usuario
+                refresh = RefreshToken.for_user(user)
+                access_token = refresh.access_token
+
+                current_site = get_current_site(request)  # Obteniendo el dominio actual
+                domain = current_site.domain
+                user_data = {
+                    'nombre': user.nombre,
+                    'rol': user.rol,
+                    'apellido': user.apellido,
+                    'jornada': user.jornada,
+                    'is_active': user.is_active,
+                    'imagen': f'http://{domain}{user.imagen.url}' if user.imagen else None,
+                    'email': user.email,
+                    'id': user.id
+                }
+
+                return Response({
+                    'refresh': str(refresh),
+                    'access': str(access_token),
+                    'message': 'Se ha logeado Exitosamente',
+                    'usuario': user_data
+                }, status=status.HTTP_200_OK)
+
+            except Exception as e:
                 return Response({'error': 'Cannot create token'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            current_site = get_current_site(request) # Obteniedo el dominio actual http://localhost:8000  para que la imagen se pueda mostrar en el front End de React
-            domain = current_site.domain
-            return Response({'token': token.key,'message': 'Se ha logeado Exitosamente', 'usuario':{'nombre':user.nombre, 'rol': user.rol, 'apellido': user.apellido, 'jornada':user.jornada, 'is_active': user.is_active, 'imagen': f'http://{domain}{user.imagen.url}' if user.imagen else None, 'email': user.email, 'id':user.id}}, status=status.HTTP_200_OK)
+
         else:
             return Response({'error': 'Credenciales Invalidas', 'tipo': 'credenciales'}, status=status.HTTP_400_BAD_REQUEST)
 class GeneratePasswordResetLinkView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [JWTAuthentication]
     print('Generando passowrd reset link')
     def post(self, request):
         email = request.data.get('email')
@@ -122,20 +149,30 @@ class GeneratePasswordResetLinkView(APIView):
             print('uid_----____', uid)
             return Response({'uid': uid, 'token': token})  # return 'uid' and 'token' instead of 'reset_link
         else:
-            return Response({'error': 'Usuario no encontrado'}, status=404)      
+            return Response({'error': 'Usuario no encontrado'}, status=404) 
+
 class LogoutView(APIView):
-    # solo autenticados
     permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]  # Utiliza la autenticación basada en tokens
+    authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
     def post(self, request):
         try:
+            refresh_token = request.data.get('refresh')
+            if not refresh_token:
+                return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Elimina el token del usuario
-            Token.objects.filter(user=request.user).delete()
-            auth_logout(request)  # desloguea al usuario
-            return Response({'message': 'Ha cerrado Sesion Correctamente'}, status=status.HTTP_200_OK) 
+            try:
+                token = RefreshToken(refresh_token)
+            except TokenError as e:
+                raise AuthenticationFailed('Invalid refresh token')
+
+            # Aquí continúa el manejo de la invalidación del token como antes
+            
+            return Response({'message': 'Ha cerrado sesión correctamente'}, status=status.HTTP_200_OK)
+        except AuthenticationFailed as e:
+            return Response({'error': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
-            return Response({'error': 'Ha ocurrido un error al cerrar Sesion'}, status=status.HTTP_400_BAD_REQUEST)
+            print(f"Error al cerrar sesión: {str(e)}")
+            return Response({'error': 'Ha ocurrido un error al cerrar sesión'}, status=status.HTTP_400_BAD_REQUEST)
 class SendPasswordResetEmailView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
@@ -155,20 +192,30 @@ class SendPasswordResetEmailView(APIView):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
 class GetUsuarioLogeado(APIView):
-    
-    authentication_classes = [TokenAuthentication]  # Utiliza la autenticación basada en tokens
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
     def get(self, request):
-        token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
-        try:
-            user = Token.objects.get(key=token).user 
-        except Token.DoesNotExist:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        user = request.user  # JWTAuthentication ya habrá autenticado al usuario
+        if user.is_anonymous:
+            return Response({'error': 'No autorizado. Por favor, inicie sesión.'},status=status.HTTP_401_UNAUTHORIZED)
         
-        # Aquí puedes devolver los datos del usuario que quieras
         # Obtén el dominio actual
         current_site = get_current_site(request)
         domain = current_site.domain
-        return Response({'token': token, 'usuario':{'nombre':user.nombre, 'rol': user.rol, 'apellido': user.apellido, 'jornada':user.jornada, 'is_active': user.is_active, 'imagen': f'http://{domain}{user.imagen.url}' if user.imagen else None, 'email':user.email, 'id': user.id}}, status=status.HTTP_200_OK)   
+        
+        # Prepara y envía la respuesta
+        user_data = {
+            'nombre': user.nombre,
+            'rol': user.rol,
+            'apellido': user.apellido,
+            'jornada': user.jornada,
+            'is_active': user.is_active,
+            'imagen': f'http://{domain}{user.imagen.url}' if user.imagen else None,
+            'email': user.email,
+            'id': user.id
+        }
+        
+        return Response({'usuario': user_data}, status=status.HTTP_200_OK)
 class SendPasswordResetEmailView(APIView):
     permission_classes = [AllowAny]
     print('YYYYYYYYYY')
@@ -190,8 +237,9 @@ class SendPasswordResetEmailView(APIView):
 class UsuarioView(viewsets.ModelViewSet): # este método es para listar, crear, actualizar y eliminar usuarios desde la api en React
     serializer_class = UsuarioSerializer #Esto indica que UsuarioSerializer se utilizará para serializar y deserializar instancias del modelo Usuario.
     queryset = Usuario.objects.all() # Esto indica que todas las instancias del modelo Usuario son el conjunto de datos sobre el que operará esta vista.
-
-    authentication_classes = [TokenAuthentication]  # Utiliza la autenticación basada en tokens
+    
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
@@ -252,8 +300,8 @@ class UsuarioView(viewsets.ModelViewSet): # este método es para listar, crear, 
 class ProveedorView(viewsets.ModelViewSet):
     serializer_class = ProveedorSerializer
     queryset = Proveedor.objects.all() # Esto indica que todas las instancias del modelo Proveedor son el conjunto de datos sobre el que operará esta vista.
-    authentication_classes = [TokenAuthentication]  # Utiliza la autenticación basada en tokens
-    # uso de try exept para capturar errores
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
     def list(self, request, *args, **kwargs):
         try:
             queryset = self.get_queryset()
@@ -291,7 +339,8 @@ class ProveedorView(viewsets.ModelViewSet):
 class ProductoView(viewsets.ModelViewSet):
     serializer_class = ProductoSerializer
     queryset = Producto.objects.all() # Esto indica que todas las instancias del modelo Producto son el conjunto de datos sobre el que operará esta vista.
-    authentication_classes = [TokenAuthentication]  # Utiliza la autenticación basada en tokens
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
     def get_queryset(self):
         """
         Sobrescribe el método get_queryset para retornar productos basados en el estado de activación
@@ -359,8 +408,8 @@ class ProductoView(viewsets.ModelViewSet):
 class SeccionView(viewsets.ModelViewSet):
     serializer_class = SeccionSerializer
     queryset = Seccion.objects.all() # Esto indica que todas las instancias del modelo Seccion son el conjunto de datos sobre el que operará esta vista.
-    authentication_classes = [TokenAuthentication]  # Utiliza la autenticación basada en tokens
-    # uso de try exept para capturar errores
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
     def list(self, request, *args, **kwargs):
         try:
             queryset = self.get_queryset()
@@ -397,8 +446,8 @@ class SeccionView(viewsets.ModelViewSet):
 class StockView(viewsets.ModelViewSet):
     serializer_class = StockSerializer
     queryset = Stock.objects.all() # Esto indica que todas las instancias del modelo Stock son el conjunto de datos sobre el que operará esta vista.
-    authentication_classes = [TokenAuthentication]  # Utiliza la autenticación basada en tokens
-    # uso de try exept para capturar errores
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
 
     @action(detail=True, methods=['post'])
     def recibir(self, request, pk=None):
@@ -436,8 +485,8 @@ class StockView(viewsets.ModelViewSet):
 class PedidoView(viewsets.ModelViewSet):
     serializer_class = PedidoSerializer
     queryset = Pedido.objects.all() # Esto indica que todas las instancias del modelo Pedido son el conjunto de datos sobre el que operará esta vista.
-    permission_classes = [AllowAny]
-    # uso de try exept para capturar errores
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
     def list(self, request, *args, **kwargs):
         try:
             queryset = self.get_queryset()
@@ -511,8 +560,8 @@ class PedidoView(viewsets.ModelViewSet):
 class ProductoPedidoView(viewsets.ModelViewSet):
     serializer_class = ProductoPedidoSerializer
     queryset = ProductoPedido.objects.all() # Esto indica que todas las instancias del modelo ProductoPedido son el conjunto de datos sobre el que operará esta vista.
-    authentication_classes = [TokenAuthentication]  # Utiliza la autenticación basada en tokens
-    # uso de try exept para capturar errores
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
     def create(self, request, *args, **kwargs):
         try:
             pedido_id = request.data.get('pedido')
@@ -557,8 +606,8 @@ class ProductoPedidoView(viewsets.ModelViewSet):
 class ClienteView(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
     queryset = Cliente.objects.all() # Esto indica que todas las instancias del modelo Cliente son el conjunto de datos sobre el que operará esta vista.
-    authentication_classes = [TokenAuthentication]  # Utiliza la autenticación basada en tokens
-    # uso de try exept para capturar errores
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
     def list(self, request, *args, **kwargs):
         try:
             queryset = self.get_queryset()
@@ -578,7 +627,8 @@ class ClienteView(viewsets.ModelViewSet):
 class VentaView(viewsets.ModelViewSet):
     serializer_class = VentaSerializer
     queryset = Venta.objects.all()
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -604,7 +654,7 @@ class VentaView(viewsets.ModelViewSet):
                         stock.cantidad -= cantidad_vendida
                         stock.save()
                     else:
-                        # Manejar el caso en que no haya suficiente stock
+                        # Manejar el caso en que no haya suficiente stock, util cuando desde una sesión un vendedor intenta vender un producto que ya fue vendido por otro vendedor y en casos donde ambos vendedores tengan el productos en el mismo carro de compras y uno de ellos lo venda primero.
                         return Response({'message': f'No hay suficiente stock para el producto {producto_id}'}, status=status.HTTP_400_BAD_REQUEST)
 
                 venta.save()

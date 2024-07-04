@@ -7,7 +7,7 @@ const ventasApi = axios.create({
 export const getAllVentas = (token) => {
   return ventasApi.get('/', {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
@@ -18,7 +18,7 @@ export const createVenta = async (venta, token) => {
   return ventasApi.post('/', venta, {
     headers: {
       'Content-Type': 'multipart/form-data',
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }

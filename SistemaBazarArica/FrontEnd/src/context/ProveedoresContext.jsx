@@ -1,4 +1,4 @@
-import { createContext, useReducer, useContext } from 'react'
+import { createContext, useReducer } from 'react'
 import { getAllProveedores, getProveedor, createProveedor, deleteProveedor, updateProveedor } from '../api/proveedores.api'
 import { ProveedoresReducer } from './reducers/ProveedoresReducer'
 import { LoginContext } from './LoginContext'
@@ -6,7 +6,7 @@ export const ProveedoresContext = createContext() // creando el contexto de los 
 
 export const ProveedoresProvider = ({ children }) => {
   
-  const { stateLogin: { token } } = useContext(LoginContext) // destructuring del token del estado global
+
   const initialState = {
     proveedores: [],
     proveedorSeleccionado: null
@@ -15,9 +15,11 @@ export const ProveedoresProvider = ({ children }) => {
   // ASI TENGO TODO EL CODIGO DE LOS USUARIOS EN UN SOLO LUGAR Y NO TENGO QUE IMPORTAR LAS FUNCIONES EN CADA COMPONENTE QUE LAS NECESITE
   // UNICAMENTE SE PASAN LOS PARAMETROS QUE NECESITAN LAS FUNCIONES
 
+  const TOKEN_ACCESO = localStorage.getItem('accessToken');
   const getProveedoresContext = async () => {
+    
     try {
-      const res = await getAllProveedores(token) // res para referenciarse al response del servidor
+      const res = await getAllProveedores(TOKEN_ACCESO) // res para referenciarse al response del servidor
 
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -35,7 +37,7 @@ export const ProveedoresProvider = ({ children }) => {
   }
   const getProveedorContext = async (id) => {
     try {
-      const res = await getProveedor(id, token)
+      const res = await getProveedor(id, TOKEN_ACCESO)
     
       console.log(res.status)
       if (res.status === 200 || res.status === 201) {
@@ -53,7 +55,7 @@ export const ProveedoresProvider = ({ children }) => {
   }
   const crearProveedor = async (proveedor) => {
     try {
-      const res = await createProveedor(proveedor, token)
+      const res = await createProveedor(proveedor, TOKEN_ACCESO)
       console.log(res)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
@@ -71,7 +73,7 @@ export const ProveedoresProvider = ({ children }) => {
   }
   const eliminarProveedor = async (id) => {
     try {
-      const res = await deleteProveedor(id, token)
+      const res = await deleteProveedor(id, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -87,7 +89,7 @@ export const ProveedoresProvider = ({ children }) => {
   }
   const actualizarProveedor = async (id, proveedor) => {
     try {
-      const res = await updateProveedor(id, proveedor, token)
+      const res = await updateProveedor(id, proveedor, TOKEN_ACCESO)
       if (res.status === 200 || res.status === 201) {
         dispatch({
           type: 'UPDATE_PROVEEDOR',

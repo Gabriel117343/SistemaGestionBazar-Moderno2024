@@ -1,4 +1,4 @@
-import { createContext, useReducer, useContext } from 'react'
+import { createContext, useReducer } from 'react'
 import { UsuariosReducer } from './reducers/UsuariosReducer'
 import { getAllUsers, getUser, createUser, deleteUser, updateUser } from '../api/usuarios.api'
 import { LoginContext } from './LoginContext'
@@ -11,16 +11,18 @@ export const UsuariosProvider = ({ children }) => {
     usuarios: [],
     usuarioSeleccionado: null
   } // estado inicial de los usuarios para el Reducer de los usuarios
-  const { stateLogin: { token } } = useContext(LoginContext) // destructuring del token del estado global
+
   const [stateUsuario, dispatch] = useReducer(UsuariosReducer, initialState) // creando el reducer de los usuarios
 
   // Funciones para los usuarios que se van a usar en los componentes que esten dentro del contexto de los usuarios (UsuariosProvider)
 
   // ASI TENGO TODO EL CODIGO DE LOS USUARIOS EN UN SOLO LUGAR Y NO TENGO QUE IMPORTAR LAS FUNCIONES EN CADA COMPONENTE QUE LAS NECESITE
   // UNICAMENTE SE PASAN LOS PARAMETROS QUE NECESITAN LAS FUNCIONES
+
+  const TOKEN_ACCESO = localStorage.getItem('accessToken');
   const getUsuarios = async () => {
     try {
-      const res = await getAllUsers(token) // res para referenciarse al response del servidor
+      const res = await getAllUsers(TOKEN_ACCESO) // res para referenciarse al response del servidor
       console.log(res)
       if (res.status === 200) {
         dispatch({
@@ -37,7 +39,7 @@ export const UsuariosProvider = ({ children }) => {
   }
   const getUsuario = async (id) => {
     try {
-      const res = await getUser(id, token)
+      const res = await getUser(id, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200) {
         dispatch({
@@ -53,7 +55,7 @@ export const UsuariosProvider = ({ children }) => {
   }
   const createUsuario = async (usuario) => {
     try {
-      const res = await createUser(usuario, token)
+      const res = await createUser(usuario, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -69,7 +71,7 @@ export const UsuariosProvider = ({ children }) => {
   }
   const deleteUsuario = async (id) => {
     try {
-      const res = await deleteUser(id, token)
+      const res = await deleteUser(id, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200) {
 
@@ -85,10 +87,10 @@ export const UsuariosProvider = ({ children }) => {
     }
   }
   const updateUsuario = async (id, usuario) => {
-    console.log(token)
+    console.log(TOKEN_ACCESO)
  
     try {
-      const res = await updateUser(id, usuario, token)
+      const res = await updateUser(id, usuario, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200) {
         dispatch({

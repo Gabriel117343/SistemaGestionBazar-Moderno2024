@@ -27,7 +27,7 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
 
     if (token) {
       // si esta en la ruta login o / y tiene el token, se redirige a la ruta admin

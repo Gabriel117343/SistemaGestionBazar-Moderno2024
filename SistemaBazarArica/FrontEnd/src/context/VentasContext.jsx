@@ -1,11 +1,11 @@
-import { createContext, useContext, useReducer } from 'react'
+import { createContext, useReducer } from 'react'
 import { VentasReducer } from './reducers/VentasReducer'
 import { LoginContext } from '../context/LoginContext'
 import { createVenta, getAllVentas } from '../api/ventas.api' // api de ventas
 export const VentasContext = createContext()
 
 export const VentasProvider = ({ children }) => {
-  const { stateLogin: { token } } = useContext(LoginContext)
+
   const initialState = {
     ventas: [],
     ventaSeleccionada: null,
@@ -17,10 +17,11 @@ export const VentasProvider = ({ children }) => {
   // ASI TENGO TODAS LAS FUNCIONES QUE SE USARAN EN EL CRUD
   // PARA USARLAS EN LOS COMPONENTES
 
+  const TOKEN_ACCESO = localStorage.getItem('accessToken')
   const createVentaContext = async (venta) => {
     
     try {
-      const res = await createVenta(venta, token)
+      const res = await createVenta(venta, TOKEN_ACCESO)
       
       if (res.status === 200 || res.status === 201) {
         dispatchVenta({ type: 'CREATE_VENTA', payload: res.data })
@@ -33,7 +34,7 @@ export const VentasProvider = ({ children }) => {
   }
   const getVentasContext = async () => {
     try {
-      const res = await getAllVentas(token)
+      const res = await getAllVentas(TOKEN_ACCESO)
       if (res.status === 200) {
         dispatchVenta({ type: 'GET_VENTAS', payload: res.data })
       }

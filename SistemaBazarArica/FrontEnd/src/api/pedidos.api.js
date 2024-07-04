@@ -7,14 +7,14 @@ const pedidosApi = axios.create({
 export const getAllPedidos = (token) => {
   return pedidosApi.get('/', {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
 export const getPedido = (id, token) => {
   return pedidosApi.get(`/${id}/`, {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
@@ -23,14 +23,14 @@ export const createPedido = async (pedido, token) => {
   return pedidosApi.post('/', pedido, {
     headers: {
       'Content-Type': 'multipart/form-data',
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
 export const deletePedido = (id, token) => {
   return pedidosApi.delete(`/${id}`, {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
@@ -38,7 +38,7 @@ export const updatePedido = (id, pedido, token) => {
   return pedidosApi.put(`/${id}/`, pedido, {
     headers: {
       'Content-Type': 'multipart/form-data',
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
@@ -47,7 +47,7 @@ export const recibirPedido = (id, token) => {
   
   return pedidosApi.put(`/${id}/recibir/`, {}, {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }

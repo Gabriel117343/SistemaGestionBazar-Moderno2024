@@ -4,7 +4,7 @@ export const HerramientaDesarrollo = () => {
   const {
     stateLogin: { isAuth, usuario },
   } = useContext(LoginContext);
-
+  console.log(usuario)
   return (
     <footer className="container">
       <section className="d-flex justify-content-center">

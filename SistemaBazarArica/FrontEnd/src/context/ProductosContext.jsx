@@ -1,11 +1,11 @@
-import { createContext, useContext, useReducer } from 'react'
-import { LoginContext } from './LoginContext'
+import { createContext, useReducer } from 'react'
+
 import { ProductosReducer } from './reducers/ProductosReducer'
 import { getAllProductos, getProducto, createProducto, deleteProducto, updateProducto } from '../api/productos.api'
 export const ProductosContext = createContext() // creando el contexto de los productos para poder usarlo en cualquier componente
 
 export const ProductosProvider = ({ children }) => {
-  const { stateLogin: { token } } = useContext(LoginContext) // destructuring del token del estado global
+
   const initialState = {
     productos: [],
     productoSeleccionado: null
@@ -15,10 +15,11 @@ export const ProductosProvider = ({ children }) => {
   // ASI TENGO TODO EL CODIGO DE LOS USUARIOS EN UN SOLO LUGAR Y NO TENGO QUE IMPORTAR LAS FUNCIONES EN CADA COMPONENTE QUE LAS NECESITE
   // UNICAMENTE SE PASAN LOS PARAMETROS QUE NECESITAN LAS FUNCIONES
 
+  const TOKEN_ACCESO = localStorage.getItem('accessToken');
   const getProductosContext = async (incluirInactivos) => {
 
     try {
-      const res = await getAllProductos(token, incluirInactivos) // res para referenciarse al response del servidor
+      const res = await getAllProductos(TOKEN_ACCESO, incluirInactivos) // res para referenciarse al response del servidor
       if (res.status === 200 || res.status === 201) {
         dispatch({
           type: 'GET_PRODUCTOS',
@@ -34,7 +35,7 @@ export const ProductosProvider = ({ children }) => {
   }
   const getProductoContext = async (id) => {
     try {
-      const res = await getProducto(id, token)
+      const res = await getProducto(id, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -50,7 +51,7 @@ export const ProductosProvider = ({ children }) => {
   }
   const crearProductoContext = async (producto) => {
     try {
-      const res = await createProducto(producto, token)
+      const res = await createProducto(producto, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -67,7 +68,7 @@ export const ProductosProvider = ({ children }) => {
   const eliminarProductoContext = async (id) => {
     console.log(id)
     try {
-      const res = await deleteProducto(id, token)
+      const res = await deleteProducto(id, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -83,7 +84,7 @@ export const ProductosProvider = ({ children }) => {
   }
   const actualizarProductoContext = async (id, producto) => {
     try {
-      const res = await updateProducto(id, producto, token)
+      const res = await updateProducto(id, producto, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({

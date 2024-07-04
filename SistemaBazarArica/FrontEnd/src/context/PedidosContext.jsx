@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from 'react'
+import { createContext, useReducer } from 'react'
 import { getAllPedidos, getPedido, createPedido, deletePedido, updatePedido, recibirPedido } from '../api/pedidos.api'
 import { LoginContext } from '../context/LoginContext'
 import { PedidosReducer } from './reducers/PedidosReducer'
@@ -7,7 +7,6 @@ export const PedidosContext = createContext()
 
 export const PedidosProvider = ({ children }) => {
 
-  const { stateLogin: { token } } = useContext(LoginContext)
   const initialState = {
     pedidos: [],
     pedidoSeleccionado: null
@@ -16,10 +15,11 @@ export const PedidosProvider = ({ children }) => {
   // ASI TENGO TODO EL CODIGO DE LOS USUARIOS EN UN SOLO LUGAR Y NO TENGO QUE IMPORTAR LAS FUNCIONES EN CADA COMPONENTE QUE LAS NECESITE
   // UNICAMENTE SE PASAN LOS PARAMETROS QUE NECESITAN LAS FUNCIONES
 
+  const TOKEN_ACCESO = localStorage.getItem('accessToken');
   const getPedidosContext = async () => {
       
       try {
-        const res = await getAllPedidos(token)
+        const res = await getAllPedidos(TOKEN_ACCESO)
         console.log(res)
         if (res.status === 200 || res.status === 201) {
           dispatch({
@@ -36,7 +36,7 @@ export const PedidosProvider = ({ children }) => {
   }
   const getPedidoContext = async (id) => {
     try {
-      const res = await getPedido(id, token)
+      const res = await getPedido(id, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -54,7 +54,7 @@ export const PedidosProvider = ({ children }) => {
     const p = Object.fromEntries(pedido)
     console.log(p)
     try {
-      const res = await createPedido(pedido, token)
+      const res = await createPedido(pedido, TOKEN_ACCESO)
   
       console.log(res)
       if (res.status === 200 || res.status === 201) {
@@ -71,7 +71,7 @@ export const PedidosProvider = ({ children }) => {
   }
   const eliminarPedidoContext = async (id) => {
     try {
-      const res = await deletePedido(id, token)
+      const res = await deletePedido(id, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -87,7 +87,7 @@ export const PedidosProvider = ({ children }) => {
   }
   const actualizarPedidoContext = async (id, pedido) => {
     try {
-      const res = await updatePedido(id, pedido, token)
+      const res = await updatePedido(id, pedido, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -104,7 +104,7 @@ export const PedidosProvider = ({ children }) => {
   // APi personalizada para recibir un pedido
   const recibirPedidoContext = async (id) => {
     try {
-      const res = await recibirPedido(id, token)
+      const res = await recibirPedido(id, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         // retorna el mensaje del servidor, esto es el controlador de la api

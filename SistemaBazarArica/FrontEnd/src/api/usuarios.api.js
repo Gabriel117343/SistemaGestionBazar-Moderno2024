@@ -9,14 +9,14 @@ export const getAllUsers = (token) => {
   // return axios.get("http://127.0.0.1:8000/usuarios/datos/v1/usuarios/") > anterior
   return usuariosApi.get('/', {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   }) // > nueva forma
 }
 export const getUser = (id, token) => {
   return usuariosApi.get(`/${id}/`, {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
@@ -26,14 +26,14 @@ export const createUser = async (usuario, token) => { // es necesario enviar la 
   return usuariosApi.post('/', usuario, {
     headers: {
       'Content-Type': 'multipart/form-data',
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
 export const deleteUser = (id, token) => {
   return usuariosApi.delete(`/${id}`, {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
@@ -44,7 +44,7 @@ export const updateUser = (id, usuario, token) => {
   return usuariosApi.put(`/${id}/`, usuario, {
     headers: {
       'Content-Type': 'multipart/form-data',
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }

@@ -6,14 +6,14 @@ const stocksApi = axios.create({
 export const getAllStocks = (token) => {
   return stocksApi.get('/', {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
 export const getStock = (id, token) => { // id del stock
   return stocksApi.get(`/${id}/`, {
     headers: {
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
@@ -21,7 +21,7 @@ export const updateStock = (id, stock, token) => {
   return stocksApi.put(`/${id}/`, stock, {
     headers: {
       'Content-Type': 'multipart/form-data',
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }
@@ -30,7 +30,7 @@ export const recibirStock = (id, cantidad, token) => {
   return stocksApi.put(`/${id}/recibir/`, cantidad, {
     headers: {
       'Content-Type': 'multipart/form-data',
-      Authorization: `Token ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
 }

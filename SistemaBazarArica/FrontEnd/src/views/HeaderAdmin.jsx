@@ -5,21 +5,21 @@ import { useNavigate } from "react-router-dom";
 import "./views.css";
 export const HeaderAdmin = () => {
   const {
-    cerrarSesion,
-    stateLogin: { token },
+    cerrarSesion
   } = useContext(LoginContext);
   const navigate = useNavigate();
 
   const cerrarSesionActual = async () => {
-    const { success, message } = await cerrarSesion(token);
-    console.log(success);
+    const { success, message } = await cerrarSesion();
+
     if (success) {
       toast.success(message);
-      localStorage.removeItem("token");
       setTimeout(() => {
         navigate("/login");
       }, 1500);
     } else {
+      // haún si hay un error, redirige al login para evitar que el usuario quede en un estado no deseado
+      navigate("/login");
       toast.error(message);
     }
   };

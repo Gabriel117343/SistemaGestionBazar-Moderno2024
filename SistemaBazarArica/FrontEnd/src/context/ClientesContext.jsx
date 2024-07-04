@@ -1,19 +1,21 @@
-import { createContext, useContext, useReducer } from 'react'
+import { createContext, useReducer } from 'react'
 import { LoginContext } from './LoginContext'
 import { ClientesReducer } from './reducers/ClientesReducer'
 import { getAllClientes, createCliente, getCliente } from '../api/clientes.api'
 export const ClientesContext = createContext() // crear el contexto
 
 export const ClientesProvider = ({ children }) => {
-  const { stateLogin: { token } } = useContext(LoginContext)
+
   const initialState = {
     clientes: [],
     clienteSeleccionado: ''
   }
   const [stateCliente, dispatch] = useReducer(ClientesReducer, initialState)
+
+  const TOKEN_ACCESO = localStorage.getItem('accessToken');
   const getClientesContext = async () => {
     try {
-      const res = await getAllClientes(token)
+      const res = await getAllClientes(TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({ type: 'GET_CLIENTES', payload: res.data.data })
@@ -27,7 +29,7 @@ export const ClientesProvider = ({ children }) => {
   }
   const crearClienteContext = async (cliente) => {
     try {
-      const res = await createCliente(cliente, token)
+      const res = await createCliente(cliente, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({ type: 'CREATE_CLIENTE', payload: res.data.data })
@@ -41,7 +43,7 @@ export const ClientesProvider = ({ children }) => {
   }
   const getClienteContext = async (id) => {
     try {
-      const res = await getCliente(id, token)
+      const res = await getCliente(id, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({ type: 'GET_CLIENTE', payload: res.data })

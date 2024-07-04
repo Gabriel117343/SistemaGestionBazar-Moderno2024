@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from 'react'
+import { createContext, useReducer } from 'react'
 import { LoginContext } from './LoginContext'
 import { SeccionesReducer } from './reducers/SeccionesReducer'
 import { getAllSecciones, getSeccion, createSeccion, deleteSeccion, updateSeccion } from '../api/secciones.api'
@@ -7,7 +7,6 @@ export const SeccionesContext = createContext() // creando el contexto de los se
 
 export const SeccionesProvider = ({ children }) => {
 
-  const { stateLogin: { token } } = useContext(LoginContext) // destructuring del token del estado global
   const initialState = {
     secciones: [],
     seccionSeleccionada: null
@@ -15,9 +14,11 @@ export const SeccionesProvider = ({ children }) => {
   const [stateSeccion, dispatch] = useReducer(SeccionesReducer, initialState) // creando el reducer de los secciones
   // ASI TENGO TODO EL CODIGO DE LOS USUARIOS EN UN SOLO LUGAR Y NO TENGO QUE IMPORTAR LAS FUNCIONES EN CADA COMPONENTE QUE LAS NECESITE
   // UNICAMENTE SE PASAN LOS PARAMETROS QUE NECESITAN LAS FUNCIONES
+
+  const TOKEN_ACCESO = localStorage.getItem('accessToken'); 
   const getSeccionesContext = async () => {
       try {
-        const res = await getAllSecciones(token) // res para referenciarse al response del servidor
+        const res = await getAllSecciones(TOKEN_ACCESO) // res para referenciarse al response del servidor
         console.log(res)
         if (res.status === 200 || res.status === 201) {
           dispatch({
@@ -34,7 +35,7 @@ export const SeccionesProvider = ({ children }) => {
   }
   const getSeccionContext = async (id) => {
     try {
-      const res = await getSeccion(id, token)
+      const res = await getSeccion(id, TOKEN_ACCESO)
       if (res.status === 200 || res.status === 201) {
         dispatch({
           type: 'GET_SECCION',
@@ -49,7 +50,7 @@ export const SeccionesProvider = ({ children }) => {
   }
   const crearSeccionContext = async (seccion) => {
     try {
-      const res = await createSeccion(seccion, token)
+      const res = await createSeccion(seccion, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -64,7 +65,7 @@ export const SeccionesProvider = ({ children }) => {
   }
   const eliminarSeccionContext = async (id) => {
     try {
-      const res = await deleteSeccion(id, token)
+      const res = await deleteSeccion(id, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -79,7 +80,7 @@ export const SeccionesProvider = ({ children }) => {
   }
   const actualizarSeccionContext = async (id, seccion) => {
     try {
-      const res = await updateSeccion(id, seccion, token)
+      const res = await updateSeccion(id, seccion, TOKEN_ACCESO)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
