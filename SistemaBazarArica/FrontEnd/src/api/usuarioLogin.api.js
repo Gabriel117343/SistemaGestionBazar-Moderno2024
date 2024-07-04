@@ -28,7 +28,7 @@ export const logout = async (accessToken, refreshToken) => {
   console.log(`-- Access Token: ${accessToken}, Refresh Token: ${refreshToken} --`);
 
   return usuarioLogoutApi.post('/', 
-    { refresh: refreshToken }, // Cuerpo de la solicitud
+    { "refresh": refreshToken }, // Cuerpo de la solicitud
     {
       headers: {
         'Authorization': `Bearer ${accessToken}`
@@ -48,5 +48,9 @@ export const getUser = async (token) => {
 }
 export const refreshAccessToken = async (refreshToken) => {
   console.log(refreshToken)
-  return usuarioRefreshTokenApi.post('/', {refresh: refreshToken})
+  return usuarioRefreshTokenApi.post('/', { "refresh": refreshToken }, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
 }

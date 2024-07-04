@@ -3,11 +3,11 @@
 }
 
 body {
+
   background: var(--fondo-pagina) !important;
   scroll-behavior: smooth !important; /** Activa el desplazamiento suave **/
+
 }
-
-
 
 header {
   background: rgb(11, 11, 189);

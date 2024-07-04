@@ -1,12 +1,30 @@
 
 .fondo-carga {
   background-color: #150916;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  padding-top: 3rem;
+  min-height: 100vh;
+  min-width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
 
+.fondo-carga > div {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  padding-bottom: 10rem;
+  justify-content: center;
+  margin-top: 10rem;
+  
+}
+.texto-espera {
+  margin-top: 3rem;
 }
 .tamaño-header  {
   height: 75px;
