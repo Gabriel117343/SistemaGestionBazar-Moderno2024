@@ -4,6 +4,7 @@ const seccionesApi = axios.create({
 })
 // ESTE ES EL CRUD DE SECCIONES
 export const getAllSecciones = (token) => {
+
   return seccionesApi.get('/', {
     headers: {
       Authorization: `Bearer ${token}`

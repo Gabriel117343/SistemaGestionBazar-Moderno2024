@@ -1,10 +1,10 @@
 from django.urls import path, include
-from rest_framework.documentation import include_docs_urls 
 from rest_framework import routers
 from backend import views
 from .views import *
 from django.contrib.auth import views as auth_views
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView # permite obtener y renovar el token con el estandard JWT
+
 router = routers.DefaultRouter() # tiene el crud de los usuarios"""
 router.register(r'usuarios', views.UsuarioView, 'usuarios')
 # proveedores
@@ -25,7 +25,7 @@ router.register(r'clientes', views.ClienteView, 'clientes')
 router.register(r'ventas', views.VentaView, 'ventas')
 urlpatterns = [
     path('datos/v1/', include(router.urls)),
-    path('docs/', include_docs_urls(title="Usuarios Api")),
+    path('docs/', get_docs_view()), 
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('login/', views.LoginView.as_view()), 

@@ -11,7 +11,7 @@ const usuarioGetApi = axios.create({
   baseURL: 'http://127.0.0.1:8000/usuarios/get_usuario_logeado'
 })
 const usuarioRefreshTokenApi = axios.create({
-  baseURL: 'http://127.0.0.1:8000/usuarios/api/token/refresh/'
+  baseURL: 'http://127.0.0.1:8000/usuarios/api/token/refresh'
 })
 
 export const login = async (usuario) => {
@@ -47,5 +47,6 @@ export const getUser = async (token) => {
   })
 }
 export const refreshAccessToken = async (refreshToken) => {
+  console.log(refreshToken)
   return usuarioRefreshTokenApi.post('/', {refresh: refreshToken})
 }

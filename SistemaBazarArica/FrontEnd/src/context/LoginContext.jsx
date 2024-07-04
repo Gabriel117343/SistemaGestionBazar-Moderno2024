@@ -71,6 +71,7 @@ export const LoginProvider = ({ children }) => {
     console.log('first');
     let token = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
+    console.log(refreshToken)
   
     try {
       let res = await getUser(token);
@@ -82,10 +83,12 @@ export const LoginProvider = ({ children }) => {
         });
       }
     } catch (error) {
+      console.log(error)
       if (error.response && error.response.status === 401) { // Suponiendo que 401 indica token expirado
         try {
           // Intenta obtener un nuevo token de acceso usando el refresh token
           const refreshRes = await refreshAccessToken(refreshToken);
+          
           if (refreshRes.status === 200) {
             token = refreshRes.data.accessToken; // Actualiza el token de acceso
             localStorage.setItem('accessToken', token); // Guarda el nuevo token de acceso

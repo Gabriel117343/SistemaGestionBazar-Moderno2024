@@ -20,7 +20,7 @@ export const HeaderAdmin = () => {
     } else {
       // haún si hay un error, redirige al login para evitar que el usuario quede en un estado no deseado
       navigate("/login");
-      toast.error(message);
+      toast.error(message ?? "Ha ocurrido un error inesperado al cerrar sesión actual ");
     }
   };
   return (

@@ -50,13 +50,35 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 
 import blurhash # para generar blurhash para las imagenes
+from django.utils.deprecation import MiddlewareMixin
+from rest_framework.documentation import include_docs_urls
 
 
 User = get_user_model() # esto es para obtener el modelo de usuario que se está utilizando en el proyecto
 
-# @api_view(['GET'])
-# def get_csrf_token(request):
-#     return Response({'csrftoken': get_token(request)}) # esto es para obtener el token csrf desde la api en React
+
+# Middleware para fines de desarrollo, util para añadir el token JWT como un parámetro de consulta en lugar de en el encabezado de autorización ej http://localhost:8000/usuarios/datos/v1/productos/?jwt=token
+class JWTQueryParameterMiddleware(MiddlewareMixin):
+
+    # process_request intercepta cada solicitud entrante y agrega el token JWT del parámetro de consulta a los encabezados de autorización
+    def process_request(self, request):
+        token = request.GET.get('jwt')
+        if token:
+            request.META['HTTP_AUTHORIZATION'] = f'Bearer {token}'
+# Paso 1: Crear una clase de vista personalizada para la documentación
+class PublicDocsView:
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+# Paso 2: Crear una función que devuelva la vista de documentación con las clases de permisos y autenticación sobrescritas
+def get_docs_view():
+    # Importante - usar Authentication > Token y agregar el token de la sesión para poder realizar las pruebas en la documentación
+    # Uso Ej: http://localhost:8000/usuarios/docs/
+    return include_docs_urls(
+        title='API Documentation',
+        permission_classes=PublicDocsView.permission_classes,
+        authentication_classes=PublicDocsView.authentication_classes
+    )
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny] # esto es para permitir cualquier usuario porque el usuario no está autenticado cuando se restablece la contraseña
     def post(self, request):

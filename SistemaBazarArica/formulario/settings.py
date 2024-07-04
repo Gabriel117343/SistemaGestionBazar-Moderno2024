@@ -25,11 +25,9 @@ SECRET_KEY = 'django-insecure-osl4skyhoi3(k!+po&mupg(j0*$8qo+ch!0_y56v5*hg+dfl&q
 
 
 
-ALLOWED_HOSTS = []
-
-
 # Application definition
 
+# --- CÓMO IMPLEMENTAR JWT EN ESTE PROYECTO > https://www.youtube.com/watch?v=zzBO8qRq_K4&t=14s ---
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -55,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'backend.views.JWTQueryParameterMiddleware', # esto es para que se pueda enviar el token jwt por la url
 ]
 
 ROOT_URLCONF = 'formulario.urls'
@@ -136,14 +135,14 @@ CORS_ALLOWED_ORIGINS = ['http://localhost:5173', 'http://127.0.0.1:5500', 'https
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:5173","https://dwq9c4nw-5173.brs.devtunnels.ms"
 ]
-
+# 1 forma estandard de autenticacion JWT token mas firma de rest_framework_simplejwt mediante token de autenticacionmas seguro
+# 2 forma de autenticacion con token de rest_framework - menos seguro - ya no se usa en el proyecto
+#  'rest_framework.authentication.TokenAuthentication',
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': [
-      # 1 forma estandard de autenticacion JWT token mas firma de rest_framework_simplejwt mediante token de autenticacion(mas seguro)
+      
       'rest_framework_simplejwt.authentication.JWTAuthentication',
-      # 2 forma de autenticacion con token de rest_framework(menos seguros) - ya no se usa en el proyecto
-    #    'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',  # Configura los permisos por defecto
