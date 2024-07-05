@@ -15,8 +15,8 @@ const ListaVentas = ({ ventas }) => {
           <tr>
             <th>Venta ID</th>
             <th>Vendedor</th>
-            <th>Fecha de Venta</th>
-            <th>Hora</th>
+            <th >Fecha de Venta</th>
+            <th >Hora</th>
             <th>Cliente</th>
             <th>Rut</th>
             <th>Teléfono</th>
@@ -32,8 +32,8 @@ const ListaVentas = ({ ventas }) => {
                   <td>
                     {venta.vendedor.nombre} {venta.vendedor.apellido}
                   </td>
-                  <td>{new Date(venta.fecha_venta).toLocaleDateString()} </td>
-                  <td>{new Date(venta.fecha_venta).toLocaleTimeString()}</td>
+                  <td >{new Date(venta.fecha_venta).toLocaleDateString()} </td>
+                  <td ><i class="bi bi-clock-history"></i> {`${new Date(venta.fecha_venta).toLocaleTimeString()}`}</td>
                   <td>
                     {venta.cliente.nombre} {venta.cliente.apellido}
                   </td>

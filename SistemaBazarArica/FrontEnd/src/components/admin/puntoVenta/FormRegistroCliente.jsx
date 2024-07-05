@@ -1,13 +1,16 @@
 import React, { useContext } from 'react'
 import { ClientesContext } from '../../../context/ClientesContext'
 import swal from 'sweetalert2'
+import { toast } from 'react-hot-toast'
 export const FormRegistroCliente = ({ cerrarModal }) => {
   const { crearClienteContext } = useContext(ClientesContext)
   const enviarFormulario = async (event) => {
     event.preventDefault()
     const formData = new FormData(event.target)
     const cliente = Object.fromEntries(formData)
-    const { success, message } = await crearClienteContext(cliente)	
+    toast.loading('Creando cliente...', { id: 'loading' })
+    const { success, message } = await crearClienteContext(cliente)
+    toast.dismiss('loading')	
     if (success) {
       swal.fire({
         title: 'Cliente creado',

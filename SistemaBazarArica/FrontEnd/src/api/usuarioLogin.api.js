@@ -1,18 +1,12 @@
-import axios from 'axios'
-const usuarioLoginApi = axios.create({
-  baseURL: 'http://127.0.0.1:8000/usuarios/login'
+import { createApiInstance } from './config/axiosConfig';
 
-})
+const usuarioLoginApi = createApiInstance('usuarios/login')
 
-const usuarioLogoutApi = axios.create({
-  baseURL: 'http://127.0.0.1:8000/usuarios/logout'
-})
-const usuarioGetApi = axios.create({
-  baseURL: 'http://127.0.0.1:8000/usuarios/get_usuario_logeado'
-})
-const usuarioRefreshTokenApi = axios.create({
-  baseURL: 'http://127.0.0.1:8000/usuarios/api/token/refresh'
-})
+const usuarioLogoutApi = createApiInstance('usuarios/logout')
+
+const usuarioGetApi = createApiInstance('usuarios/get_usuario_logeado')
+
+const usuarioRefreshTokenApi = createApiInstance('usuarios/api/token/refresh')
 
 export const login = async (usuario) => {
   
@@ -37,7 +31,7 @@ export const logout = async (accessToken, refreshToken) => {
   );
 };
 export const getUser = async (token) => {
-  console.log('Oteniendo usuario actual...')
+  console.log('Obteniendo usuario actual...')
  
   return usuarioGetApi.get('/', {
     headers: {
@@ -47,7 +41,7 @@ export const getUser = async (token) => {
   })
 }
 export const refreshAccessToken = async (refreshToken) => {
-  console.log(refreshToken)
+
   return usuarioRefreshTokenApi.post('/', { "refresh": refreshToken }, {
     headers: {
       'Content-Type': 'application/json'

@@ -1,10 +1,7 @@
-import axios from 'axios'
+import { createApiInstance } from './config/axiosConfig';
 
-const clienteApi = axios.create({ // axios.create permite crear una instancia de axios con una configuración personalizada
-    baseURL: 'http://localhost:8000/usuarios/datos/v1/clientes'
-})
-
-// crud
+const clienteApi = createApiInstance('usuarios/datos/v1/clientes') // la urls por defectos
+// Este es el CRUD de clientes
 export const createCliente = async (cliente, token) => {
     return clienteApi.post('/', cliente, {
         headers: {

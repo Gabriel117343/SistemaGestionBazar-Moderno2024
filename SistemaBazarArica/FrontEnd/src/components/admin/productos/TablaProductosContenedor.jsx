@@ -26,14 +26,16 @@ export const TablaProductosContenedor = () => {
   const [isLoading, setIsLoading] = useState(true);
   const INCLUIR_INACTIVOS = true;
   useEffect(() => {
+    toast.dismiss({ id: "toastId" });
     async function cargar() {
+      toast.loading("Cargando productos...", { duration: 2000, id: "toastId"});
       const { success, message } = await getProductosContext(INCLUIR_INACTIVOS); // se ejecuta la funcion getProductos del contexto de los productos
       if (success) {
         setIsLoading(false);
-        toast.success(message);
+        toast.success(message, { id:"toastId"});
       } else {
         toast.error(
-          message ?? "Ha ocurrido un error inesperado al cargar los productos"
+          message ?? "Ha ocurrido un error inesperado al cargar los productos", { id: "toastId" }
         );
       }
     }
@@ -52,12 +54,12 @@ export const TablaProductosContenedor = () => {
         cancelButtonColor: "#d33",
       });
       if (aceptar.isConfirmed) {
-        const toastId = toast.loading("Eliminando...", { id: "loading" });
+        toast.loading("Eliminando...", { id: "toastId" });
         setTimeout(async () => {
-          toast.dismiss(toastId, { id: "loading" });
+          toast.dismiss({ id: "toastId" });
           const { success, message } = await eliminarProductoContext(id);
           if (success) {
-            console.log("fd");
+         
             toast.success(message);
           } else {
             toast.error(message);
@@ -86,14 +88,14 @@ export const TablaProductosContenedor = () => {
   const debounceCambiarFiltro = debounce(cambiarFiltro, 300); // Debounce para retrazar la ejecucion de la funcion cambiarFiltro
   // Acciones extra
   const refrescarTabla = async () => {
-    const toastId = toast.loading("Refrescando", { id: "toastId" });
+    toast.loading("Refrescando", { id: "toastId" });
     const { success, message } = await getProductosContext(INCLUIR_INACTIVOS);
     if (success) {
-      toast.dismiss(toastId, { id: "toastId" });
-      toast.success("Tabla refrescada");
+      toast.dismiss({ id: "toastId" });
+      toast.success("Tabla refrescada", { id: "toastId" });
     } else {
-      toast.dismiss(toastId, { id: "toastId" });
-      toast.error(message ?? "Error inesperado al refrescar la tabla");
+      toast.dismiss({ id: "toastId" });
+      toast.error(message ?? "Error inesperado al refrescar la tabla", { id: "toastId" });
     }
   };
   const debounceRefrescarTabla = useRefreshDebounce(refrescarTabla, 2000);

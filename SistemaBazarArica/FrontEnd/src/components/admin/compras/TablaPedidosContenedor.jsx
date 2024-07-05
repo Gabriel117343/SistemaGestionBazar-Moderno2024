@@ -23,13 +23,14 @@ export const TablaPedidosContenedor = () => {
 
   useEffect(() => {
     const cargar = async () => {
+      toast.loading("Cargando...", { id: 'loading' });
       const { success, message } = await getPedidosContext();
       if (success) {
-        toast.success(message ?? "Pedidos cargados");
+        toast.success(message ?? "Pedidos cargados", { id: 'loading' });
         setIsLoading(false);
       } else {
         toast.error(
-          message ?? "Ha ocurrido un error inesperado al cargar los pedidos"
+          message ?? "Ha ocurrido un error inesperado al cargar los pedidos", { id: 'loading', duration: 2000 }
         );
       }
     };

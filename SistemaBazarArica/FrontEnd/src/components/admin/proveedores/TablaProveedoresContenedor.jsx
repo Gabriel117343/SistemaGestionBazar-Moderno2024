@@ -25,8 +25,14 @@ export const TablaProveedoresContenedor = () => {
   } = useContext(ProveedoresContext);
 
   useEffect(() => {
-    const cargar = () => {
-      getProveedoresContext(); // se ejecuta la funcion getProveedores del contexto de los proveedores
+    async function cargar () {
+      toast.loading('Cargando...', { id: "loading" });
+      const { success, message } = await getProveedoresContext(); // se ejecuta la funcion getProveedores del contexto de los proveedores
+      if (success) {
+        toast.success(message, { id: 'loading' });
+      } else {
+        toast.error(message ?? 'Ha ocurrido un error inesperado al cargar los Proveedores', { id: 'loading' });
+      }
     };
     cargar();
   }, []);
@@ -44,13 +50,13 @@ export const TablaProveedoresContenedor = () => {
         cancelButtonColor: "#d33",
       });
       if (aceptar.isConfirmed) {
-        toast.loading("Eliminando...", { duration: 2000 });
+        toast.loading("Eliminando...", { id: "loading" });
         setTimeout(async () => {
           const { success, message } = await eliminarProveedor(id);
           if (success) {
-            toast.success(message);
+            toast.success(message, { id: "loading" });
           } else {
-            toast.error(message);
+            toast.error(message, { id: "loading", duration: 2000 });
           }
         }, 2000);
       }
@@ -58,12 +64,13 @@ export const TablaProveedoresContenedor = () => {
     confirmar();
   };
   const edicionProveedor = async (id) => {
+    toast.loading("Cargando...", { id: "loading" });
     const { success, message } = await getProveedorContext(id);
     if (success) {
-      console.log(proveedorSeleccionado);
+      toast.dismiss("loading")
       setShowModal(true);
     } else {
-      toast.error(message);
+      toast.error(message ?? 'Ha ocurrido un Error inesperado', { id: "loading" });
     }
   };
   const cerrarModal = () => {
@@ -76,14 +83,14 @@ export const TablaProveedoresContenedor = () => {
   const debounceCambiarFiltro = debounce(cambiarFiltro, 500); // Debounce para que no se ejecute la funcion cada vez que se escribe una letra
   // Acciones extra
   const refrescarTabla = async () => {
-    const toastId = toast.loading("Refrescando", { id: "toastId" });
-    const { success } = await getProveedoresContext();
+    const toastId = toast.loading("Refrescando...", { id: "toastId" });
+    const { success, message } = await getProveedoresContext();
     if (success) {
       toast.dismiss(toastId, { id: "toastId" });
-      toast.success("Tabla refrescada");
+      toast.success("Tabla refrescada", { id: "toastId" });
     } else {
       toast.dismiss(toastId, { id: "toastId" });
-      toast.error("error al refrescar la Tabla");
+      toast.error(message ?? "error al refrescar la Tabla", { id: "toastId", duration: 2000 });
     }
   };
   // La primera vez la funcion se ejecuta inmediatamente, luego se ejecuta cada 2 segundos

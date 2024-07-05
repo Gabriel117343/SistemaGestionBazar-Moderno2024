@@ -1,8 +1,6 @@
-import axios from 'axios'
+import { createApiInstance } from './config/axiosConfig';
 
-const productosPedidosApi = axios.create({
-  baseURL: 'http://localhost:8000/usuarios/datos/v1/productos_pedidos' // la urls por defectos
-})
+const productosPedidosApi = createApiInstance('usuarios/datos/v1/productos_pedidos') // la urls por defectos
 
 export const getAllProductosPedidos = (token) => {
   return productosPedidosApi.get('/', {

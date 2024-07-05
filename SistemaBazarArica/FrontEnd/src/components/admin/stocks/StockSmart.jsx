@@ -24,13 +24,14 @@ export const StockSmart = () => {
   const selectRef = useRef(null);
   useEffect(() => {
     async function cargarProductos() {
+      toast.loading("Cargando productos...", { id: "loading" });
       const { success, message } = await getProductosContext();
       if (!success) {
         toast.error(
-          message ?? "Ha ocurrido un error inesperado al cargar los productos"
+          message ?? "Ha ocurrido un error inesperado al cargar los productos", { id: "loading", duration: 2000 }
         );
       } else {
-        toast.success(message);
+        toast.success(message, { id: 'loading' });
         setIsLoading(false);
       }
     }

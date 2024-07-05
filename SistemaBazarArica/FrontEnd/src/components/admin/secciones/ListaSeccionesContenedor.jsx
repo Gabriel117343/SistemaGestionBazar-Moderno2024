@@ -24,8 +24,17 @@ export const ListaSeccionesContenedor = () => {
   } = useContext(SeccionesContext);
 
   useEffect(() => {
-    const cargar = () => {
-      getSeccionesContext(); // se ejecuta la funcion getProductos del contexto de los productos
+    toast.dismiss({ id: "loading" });
+    async function cargar () {
+      toast.loading('Cargando...', { duration: 2000, id: "loading" });
+      const { success, message} = await getSeccionesContext(); // se ejecuta la funcion getProductos del contexto de los productos
+
+      if (success) {
+        toast.success(message, { id: 'loading' });
+      } else {
+  
+        toast.error(message ?? 'Ha ocurrido un error inesperado al cargar las Secciones', { duration: 2000, id: 'loading' });
+      }
     };
     cargar();
   }, []);
@@ -43,13 +52,13 @@ export const ListaSeccionesContenedor = () => {
         cancelButtonColor: "#d33",
       });
       if (aceptar.isConfirmed) {
-        toast.loading("Eliminando...", { duration: 2000 });
+        toast.loading("Eliminando...", { duration: 2000, id: "loading" });
         setTimeout(async () => {
           const { success, message } = await eliminarSeccionContext(id);
           if (success) {
-            toast.success(message);
+            toast.success(message, { id: "loading" });
           } else {
-            toast.error(message);
+            toast.error(message ?? 'Ha ocurrido un error inesperado al eliminar la Sección', { id: "loading" });
           }
         }, 2000);
       }
@@ -57,11 +66,13 @@ export const ListaSeccionesContenedor = () => {
     confirmar();
   };
   const edicionSeccion = async (id) => {
+    toast.loading("Editando...", { id: "loading" });
     const { success, message } = await getSeccionContext(id);
     if (success) {
       setShowModal(true);
+      toast.dismiss("loading");
     } else {
-      toast.error(message);
+      toast.error(message, { id: "loading", duration: 2000 });
     }
   };
   const cerrarModal = () => {
@@ -76,13 +87,14 @@ export const ListaSeccionesContenedor = () => {
   const debounceCambiarFiltro = debounce(cambiarFiltro, 300); // retrasa la ejucion de la funcion cambiar filtro por 300 milisegundos
   // ACCIONES EXTRA ------------------
   const refrescarTabla = async () => {
-    const toastId = toast.loading("Actualizando tabla...", { id: "loading" });
-    const { success } = await getSeccionesContext();
+    
+    toast.loading("Actualizando tabla...", { id: "loading" });
+    const { success } = await getSeccionesContext()
+    toast.dismiss("loading");
+
     if (success) {
-      toast.dismiss(toastId, { id: "loading" });
       toast.success("Tabla actualizada");
     } else {
-      toast.dismiss(toastId, { id: "loading" });
       toast.error("Error al actualizar la tabla");
     }
   };

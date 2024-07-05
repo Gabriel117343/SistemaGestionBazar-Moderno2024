@@ -1,9 +1,6 @@
-import axios from 'axios'// para hacer peticiones al back end
-// crear una instancia con la direccion
-const usuariosApi = axios.create({
-  // la urls por defectos
-  baseURL: 'http://127.0.0.1:8000/usuarios/datos/v1/usuarios'
-})
+import { createApiInstance } from './config/axiosConfig';
+
+const usuariosApi = createApiInstance('usuarios/datos/v1/usuarios')
 // Este es el crud
 export const getAllUsers = (token) => {
   // return axios.get("http://127.0.0.1:8000/usuarios/datos/v1/usuarios/") > anterior
@@ -38,9 +35,6 @@ export const deleteUser = (id, token) => {
   })
 }
 export const updateUser = (id, usuario, token) => {
-  console.log(id)
-  console.log(usuario)
-  console.log(token)
   return usuariosApi.put(`/${id}/`, usuario, {
     headers: {
       'Content-Type': 'multipart/form-data',

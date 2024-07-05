@@ -10,12 +10,14 @@ import { FormRegistroUsuarios } from "./FormRegistroUsuarios";
 import { debounce } from "lodash";
 /** Para la UI */
 import { ButtonNew } from "../../shared/ButtonNew";
+import CargaDeDatos from '../../../views/CargaDeDatos'
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 export const TablaUsuariosContenedor = () => {
   const [showModal, setShowModal] = useState(false);
   const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
   const [usuarioBuscado, setUsuarioBuscado] = useState(""); // Nuevo estado para el input de busqueda
+  const [loading, setLoading] = useState(true);
 
   const {
     stateUsuario: { usuarios },
@@ -23,8 +25,21 @@ export const TablaUsuariosContenedor = () => {
     getUsuario,
     getUsuarios,
   } = useContext(UsuariosContext);
-  useEffect(() => {
-    getUsuarios();
+  useEffect(() => { 
+    toast.dismiss({ id: "toastId" });
+    
+    async function cargarUsuarios () {
+      toast.loading("Cargando Usuarios...", { duration: 2000, id: "toastId"});
+      const { success, message } = await getUsuarios();
+      if (success) {
+        setLoading(false);
+        toast.success(message, { id: "toastId" });
+        setLoading(false);
+      } else {
+        toast.error(message ?? "Ha ocurrido un error inesperado al cargar los Usuarios", { id: "toastId" });
+      }
+    }
+    cargarUsuarios()
   }, []);
 
   const borrarPersona = (id) => {
@@ -40,13 +55,13 @@ export const TablaUsuariosContenedor = () => {
         cancelButtonColor: "#d33",
       });
       if (aceptar.isConfirmed) {
-        toast.loading("Eliminando...", { duration: 2000 });
+        toast.loading("Eliminando...", { duration: 2000, id: 'loading' });
         setTimeout(async () => {
           const { success, message } = await deleteUsuario(id);
           if (success) {
-            toast.success(message);
+            toast.success(message, { id: 'loading'});
           } else {
-            toast.error(message);
+            toast.error(message, { id: 'loading', duration: 2000 });
           }
         }, 2000);
       }
@@ -115,13 +130,18 @@ export const TablaUsuariosContenedor = () => {
           </button>
         </div>
       </div>
-
-      <ValidarUsuarios
+      {loading ? (
+        <CargaDeDatos />
+      )
+      : (
+        <ValidarUsuarios
         listaPersonas={usuarios}
         borrarPersona={borrarPersona}
         edicionUsuario={edicionUsuario}
         filtro={usuarioBuscado}
       />
+      )}
+      
 
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton className="bg-info">

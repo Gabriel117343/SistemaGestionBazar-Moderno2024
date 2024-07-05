@@ -57,6 +57,19 @@ from rest_framework.documentation import include_docs_urls
 
 User = get_user_model() # esto es para obtener el modelo de usuario que se está utilizando en el proyecto
 
+# Middleware para rastrea la última actividad de los usuarios y actualiza la última actividad en cada solicitud de las vistas de la API
+class ActualizarUltimaActividadMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        if request.user.is_authenticated:
+            # Asegúrate de que request.user sea una instancia de tu modelo de usuario personalizado
+            print("Actualizando ultima actividad")
+            request.user.ultima_actividad = timezone.now()
+            request.user.save()
+        return response
 
 # Middleware para fines de desarrollo, util para añadir el token JWT como un parámetro de consulta en lugar de en el encabezado de autorización ej http://localhost:8000/usuarios/datos/v1/productos/?jwt=token
 class JWTQueryParameterMiddleware(MiddlewareMixin):
@@ -234,6 +247,11 @@ class GetUsuarioLogeado(APIView):
         # Obtén el dominio actual
         current_site = get_current_site(request)
         domain = current_site.domain
+
+        # Actualizar el último inicio de sesión del usuario
+        user = request.user
+        user.last_login = timezone.now()  # Actualiza la última vez que el usuario inició sesión
+        user.save()
         
         # Prepara y envía la respuesta
         user_data = {

@@ -24,7 +24,7 @@ class Usuario(AbstractUser):
     jornada = models.CharField(max_length=10, choices=[('duirno', 'Duirno'), ('vespertino', 'Vespertino'), ('mixto', 'Mixto')], default='duirno')
     rol = models.CharField(max_length=15, choices=ROLES, default='vendedor')
     imagen = models.ImageField(upload_to='imagenes/', null=True, blank=True)
-   
+    ultima_actividad = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.nombre
 

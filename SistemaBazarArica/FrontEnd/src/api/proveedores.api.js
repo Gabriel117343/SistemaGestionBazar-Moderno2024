@@ -1,8 +1,6 @@
-import axios from 'axios'
+import { createApiInstance } from './config/axiosConfig';
 
-const proveedoresApi = axios.create({
-  baseURL: 'http://127.0.0.1:8000/usuarios/datos/v1/proveedores' // la urls por defectos
-})
+const proveedoresApi = createApiInstance('usuarios/datos/v1/proveedores') // la urls por defectos
 // ESTE ES EL CRUD DE PROVEEDORES 
 
 export const getAllProveedores = (token) => {

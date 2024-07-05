@@ -17,15 +17,16 @@ export const FiltroVentas = () => {
   const selectRef = useRef(null);
 
   useEffect(() => {
+    toast.loading("Cargando ventas...", { id: "loading" });
     const cargarVentas = async () => {
       const { success, message } = await getVentasContext();
       if (!success) {
         toast.error(
-          message ?? "Ha ocurrido un error inesperado al cargar las ventas"
+          message ?? "Ha ocurrido un error inesperado al cargar las ventas", { id: "loading" }
         );
       } else {
         setIsLoading(false);
-        toast.success(message ?? "Ventas cargadas correctamente");
+        toast.success(message ?? "Ventas cargadas correctamente", { id: "loading", duration: 2000 });
       }
     };
     cargarVentas();

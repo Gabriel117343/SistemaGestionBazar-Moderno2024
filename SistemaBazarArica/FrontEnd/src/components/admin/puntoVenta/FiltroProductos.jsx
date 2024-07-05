@@ -25,13 +25,14 @@ export const FiltroProductos = () => {
   const INCLUIR_INACTIVOS = false // no se incluyen los productos inactivos
   useEffect(() => {
     const cargarProductos = async () => {
+      toast.loading("Cargando productos...", { id: "loading" });
       const { success, message } = await getProductosContext(INCLUIR_INACTIVOS);
       if (success) {
-        toast.success(message ?? "Productos cargados");
+        toast.success(message ?? "Productos cargados", { id: "loading" });
         setIsLoading(false);
       } else {
         toast.error(
-          message ?? "Ha ocurrido un error inesperado al cargar los productos"
+          message ?? "Ha ocurrido un error inesperado al cargar los productos", { id: "loading" }
         );
       }
     };

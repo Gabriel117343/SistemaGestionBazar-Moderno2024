@@ -1,8 +1,7 @@
-import axios from 'axios'
+import { createApiInstance } from './config/axiosConfig';
 
-const ventasApi = axios.create({
-    baseURL: 'http://127.0.0.1:8000/usuarios/datos/v1/ventas'
-})
+// Crear instancia de Axios para la API de ventas
+const ventasApi = createApiInstance('usuarios/datos/v1/ventas');
 
 export const getAllVentas = (token) => {
   return ventasApi.get('/', {

@@ -104,7 +104,7 @@ export const Menu = ({ children }) => {
                       }
                       alt={`imagen de ${usuario.nombre}`}
                     />
-                    <strong className="text-capitalizept-2">
+                    <strong className="text-capitalize pt-2">
                       {usuario.nombre} {usuario.apellido}
                     </strong>
                   </>

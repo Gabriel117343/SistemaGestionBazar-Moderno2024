@@ -53,6 +53,7 @@ export const ListaProductos = ({ productos }) => {
   const totalBotones = Math.ceil(productos.length / cantidadPorPagina);
 
   const agregarProducto = async (producto) => {
+    toast.loading("Agregando al carrito...", { id: "loading" });
     const { success, message } = await agregarProductoCarrito(producto);
     toast.dismiss({ id: "loading" }); // se cierra el toast de cargando
     if (success) {

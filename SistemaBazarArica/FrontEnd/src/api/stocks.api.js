@@ -1,7 +1,6 @@
-import axios from 'axios'
-const stocksApi = axios.create({
-  baseURL: 'http://localhost:8000/usuarios/datos/v1/stocks' // la urls por defectos
-})
+import { createApiInstance } from './config/axiosConfig';
+
+const stocksApi = createApiInstance('usuarios/datos/v1/stocks') // la urls por defectos
 
 export const getAllStocks = (token) => {
   return stocksApi.get('/', {

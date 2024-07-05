@@ -1,7 +1,6 @@
-import axios from 'axios'
-const seccionesApi = axios.create({
-  baseURL: 'http://localhost:8000/usuarios/datos/v1/secciones' // la urls por defectos
-})
+import { createApiInstance } from './config/axiosConfig';
+
+const seccionesApi = createApiInstance('usuarios/datos/v1/secciones') // la urls por defectos
 // ESTE ES EL CRUD DE SECCIONES
 export const getAllSecciones = (token) => {
 
