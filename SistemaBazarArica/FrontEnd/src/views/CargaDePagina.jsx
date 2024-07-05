@@ -17,7 +17,6 @@ export const CargaDePagina = () => {
         </div>
         <strong className="btn-shine texto-espera">Espere un momento porfavor...</strong>
       </div>
-      
     </section>
   );
 };

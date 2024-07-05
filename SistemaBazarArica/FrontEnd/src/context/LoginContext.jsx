@@ -24,7 +24,7 @@ export const LoginProvider = ({ children }) => {
       if (res.status === 200) {
         const { access, refresh } = res.data
         // ------------------------------
-        // token de acceso y token de refresco de JWT en el localStorage para mantener la sesion activa en el cliente y no perderla al recargar la pagina o cerrar el navegador(token de acceso expira en 15 minutos y el token de refresco en 7 dias en django)
+        // token de acceso y token de refresco de JWT en el localStorage para mantener la sesion activa en el cliente y no perderla al recargar la pagina o cerrar el navegador(token de acceso expira en 15 minutos y el token de refresco en 1 dias en django)
         // ------------------------------
         localStorage.setItem('accessToken', access)
         localStorage.setItem('refreshToken', refresh)

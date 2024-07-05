@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { MagicMotion } from "react-magic-motion";
 import "./styles.css";
-export const MostrarTabla = ({
-  listaPersonas,
-  borrarPersona,
-  edicionUsuario,
-  filtro,
-}) => {
+export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, filtro, }) => {
   // Definir el estado para manejar la página actual, por defecto se mostrara la pagina 1 de la tabla
   if (filtro) {
     // si el input de busqueda tiene algo se filtrara la lista de usuarios
@@ -17,12 +12,7 @@ export const MostrarTabla = ({
         persona.rut.toLowerCase().includes(filtro.toLowerCase()) ||
         persona.email.toLowerCase().includes(filtro.toLowerCase()) ||
         persona.telefono.toLowerCase().includes(filtro.toLowerCase()) ||
-        persona.rol.toLowerCase().includes(filtro.toLowerCase()) ||
-        persona.jornada.toLowerCase().includes(filtro.toLowerCase()) ||
-        persona.is_active
-          .toString()
-          .toLowerCase()
-          .includes(filtro.toLowerCase())
+        persona.rol.toLowerCase().includes(filtro.toLowerCase()) 
       );
     });
   }
@@ -34,7 +24,7 @@ export const MostrarTabla = ({
     );
   }
   const [currentPage, setCurrentPage] = useState(1);
-
+  console.log(listaPersonas)
   // Se define la cantidad de usuarios a mostrar por pagina
   const cantidadUsuarios = 10;
   // Calculando el índice de inicio y fin de la lista actual en función de la página actual y los elementos por página
@@ -107,20 +97,21 @@ export const MostrarTabla = ({
                     <i className="bi bi-building-fill-slash text-danger" />
                   )}
                 </td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-danger animacion-boton"
-                    onClick={() => borrarPersona(person.id)}
-                  >
-                    <i className="bi bi-person-x" /> Eliminar
-                  </button>
-                </td>
+                
                 <td>
                   <button
                     className="btn btn-sm btn-info animacion-boton"
                     onClick={() => edicionUsuario(person.id)}
                   >
                     Editar <i className="bi bi-pencil text-white" />
+                  </button>
+                </td>
+                <td>
+                  <button
+                    className="btn btn-sm btn-danger animacion-boton"
+                    onClick={() => borrarPersona(person.id)}
+                  >
+                    <i className="bi bi-person-x" /> Eliminar
                   </button>
                 </td>
               </tr>

@@ -1,6 +1,7 @@
 from cmath import e
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
+from django.utils import timezone
 from .serializer import UsuarioSerializer, ClienteSerializer, ProveedorSerializer, ProveedorSerializer, ProductoSerializer, PedidoSerializer, ProductoPedidoSerializer, DescuentoSerializer, VentaSerializer, SeccionSerializer, MovimientoSerializer, StockSerializer
 from .models import Usuario, Producto, Proveedor, Cliente, Pedido, ProductoPedido, Descuento, Venta, Seccion, Movimiento, Stock
 
@@ -134,6 +135,10 @@ class LoginView(APIView):
                 refresh = RefreshToken.for_user(user)
                 access_token = refresh.access_token
 
+                user = request.user
+                user.last_login = timezone.now()  # Actualiza la última vez que el usuario inició sesión
+                
+                user.save()
                 current_site = get_current_site(request)  # Obteniendo el dominio actual
                 domain = current_site.domain
                 user_data = {
@@ -181,13 +186,18 @@ class LogoutView(APIView):
             refresh_token = request.data.get('refresh')
             if not refresh_token:
                 return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
-
             try:
                 token = RefreshToken(refresh_token)
             except TokenError as e:
                 raise AuthenticationFailed('Invalid refresh token')
 
-            # Aquí continúa el manejo de la invalidación del token como antes
+             # Se añade el token a la lista de tokens pendientes de eliminación
+            token.blacklist()
+
+            # Actualizar el último inicio de sesión del usuario
+            user = request.user
+            user.last_login = timezone.now()  # Actualiza la última vez que el usuario inició sesión
+            user.save()
             
             return Response({'message': 'Ha cerrado sesión correctamente'}, status=status.HTTP_200_OK)
         except AuthenticationFailed as e:

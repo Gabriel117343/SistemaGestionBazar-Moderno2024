@@ -186,9 +186,17 @@ export const FormularioEdicion = ({ cerrarModal }) => {
   // Optimiza el rendimiento
   // eslint-disable-next-line camelcase
   const debounce_handleOnChange = debounce(handleOnChange, 500);
-
+  const fechaConexion = new Date(usuarioSeleccionado.last_login);
   return (
-    <form
+    <section>
+      <div className="d-flex flex-column align-items-center text-center">
+        <img width='210px' height='200px' className="imagen-usuario" src={usuarioSeleccionado.imagen ? usuarioSeleccionado.imagen : 'https://objetivoligar.com/wp-content/uploads/2017/03/blank-profile-picture-973460_1280-768x768.jpg'} alt={`imagen de ${usuarioSeleccionado.nombre}`} />
+        <h2 className="text-capitalize">{`${usuarioSeleccionado.nombre} ${usuarioSeleccionado.apellido}`}</h2>
+        <p className="ultima-conexion"><i class="bi bi-clock-history"></i> Última conexión: <small>{` ${fechaConexion.toLocaleDateString()} - ${fechaConexion.toLocaleTimeString()}`}</small></p>
+        
+      </div>
+      
+      <form
       onSubmit={actualizarUsuario}
       className="form formulario-datos"
       id={idEditAdmin}
@@ -329,5 +337,8 @@ export const FormularioEdicion = ({ cerrarModal }) => {
         </button>
       </div>
     </form>
+
+    </section>
+    
   );
 };
