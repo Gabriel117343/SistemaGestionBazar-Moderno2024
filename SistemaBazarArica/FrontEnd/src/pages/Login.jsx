@@ -8,7 +8,7 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { LoginContext } from "../context/LoginContext";
 import { CargaDePagina } from "../views/CargaDePagina";
 import Swal from "sweetalert2";
-import LOGIN_ERRORS from "../context/errors_messages/loginErrors"
+import LOGIN_ERRORS from "../context/error_messages/LOGIN_ERRORS"
 
 export const Login = () => {
   const { iniciarSesion } = useContext(LoginContext);
