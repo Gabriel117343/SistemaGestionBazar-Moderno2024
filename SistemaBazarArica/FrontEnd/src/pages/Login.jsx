@@ -8,7 +8,7 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { LoginContext } from "../context/LoginContext";
 import { CargaDePagina } from "../views/CargaDePagina";
 import Swal from "sweetalert2";
-import loginErrors from "../context/errors/loginErrors"
+import LOGIN_ERRORS from "../context/errors_messages/loginErrors"
 
 export const Login = () => {
   const { iniciarSesion } = useContext(LoginContext);
@@ -28,9 +28,9 @@ export const Login = () => {
   const mostrarError = (tipo, mensaje) => {
     // Se muestra un mensaje de error dependiendo del tipo de error
     Swal.fire({
-      icon: loginErrors[tipo]?.icono,
-      title: loginErrors[tipo]?.titulo,
-      text: mensaje ?? loginErrors.defaultErrorMessage,
+      icon: LOGIN_ERRORS[tipo]?.icono,
+      title: LOGIN_ERRORS[tipo]?.titulo,
+      text: mensaje ?? LOGIN_ERRORS.defaultErrorMessage,
       confirmButtonText: "Ok",
       confirmButtonColor: "#3085d6",
     });
