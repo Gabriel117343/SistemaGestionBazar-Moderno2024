@@ -15,7 +15,8 @@ export const login = async (usuario) => {
     headers: {
       'Content-Type': 'multipart/form-data'
       
-    }
+    },
+    timeout: 5000
   })
 }
 export const logout = async (accessToken, refreshToken) => {

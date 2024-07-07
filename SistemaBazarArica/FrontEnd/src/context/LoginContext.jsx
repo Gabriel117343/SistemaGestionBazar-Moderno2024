@@ -36,9 +36,9 @@ export const LoginProvider = ({ children }) => {
       }
 
       return ({ success: true, message: res.data.message, rol: res.data.usuario.rol })
-    } catch (error) { // si hay un error en la peticion se ejecuta este bloque que captura el response del servidor
+    } catch (error) { // si hay un error en la peticion se ejecuta este   bloque que captura el response del servidor
       console.error(error)
-      return ({ success: false, message: error.response.data.error, tipo: error.response.data.tipo })
+      return ({ success: false, message: error?.response?.data?.error, tipo: error?.response?.data?.tipo ?? 'default'})
     }
   }
   const cerrarSesion  = async () => {
@@ -68,13 +68,12 @@ export const LoginProvider = ({ children }) => {
     }
   }
   const obtenerUsuarioLogeado = async () => {
-    console.log('first');
     const tokenAcceso = localStorage.getItem('accessToken');
     const tokenRefresco = localStorage.getItem('refreshToken');
   
     try {
+
       let res = await getUser(tokenAcceso);
-   
       if (res.status === 200) {
         dispatch({
           type: 'LOGIN',
@@ -112,7 +111,7 @@ export const LoginProvider = ({ children }) => {
         }
       } else {
         console.error(error);
-        return ({ success: false, message: error.response.data.error });
+        return ({ success: false, message: error?.response?.data?.error });
       }
     }
   };

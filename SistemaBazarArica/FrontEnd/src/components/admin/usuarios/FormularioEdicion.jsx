@@ -191,7 +191,7 @@ export const FormularioEdicion = ({ cerrarModal }) => {
     <section>
       <div className="d-flex flex-column align-items-center text-center ">
         <div className="container-img-usuario">
-          <img src={usuarioSeleccionado.imagen ? usuarioSeleccionado.imagen : 'https://objetivoligar.com/wp-content/uploads/2017/03/blank-profile-picture-973460_1280-768x768.jpg'} alt={`imagen de ${usuarioSeleccionado.nombre}`} />
+          <img src={usuarioSeleccionado.imagen ? usuarioSeleccionado.imagen.replace('http://localhost:8000/', 'https://dwq9c4nw-8000.brs.devtunnels.ms/') : 'https://objetivoligar.com/wp-content/uploads/2017/03/blank-profile-picture-973460_1280-768x768.jpg'} alt={`imagen de ${usuarioSeleccionado.nombre}`} />
         </div>
         
         <h2 className="text-capitalize">{`${usuarioSeleccionado.nombre} ${usuarioSeleccionado.apellido}`}</h2>

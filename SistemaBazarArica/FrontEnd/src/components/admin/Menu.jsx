@@ -123,7 +123,7 @@ export const Menu = ({ children }) => {
                     className="logo "
                     src={
                       usuario.imagen
-                        ? usuario.imagen
+                        ? usuario.imagen.replace('http://localhost:8000/', 'https://dwq9c4nw-8000.brs.devtunnels.ms/')
                         : "https://cdn-icons-png.flaticon.com/512/6073/6073873.png"
                     }
                     alt={`imagen de ${usuario.nombre.split(' ')[0]}`}

@@ -19,6 +19,24 @@ function App() {
   const { obtenerUsuarioLogeado, stateLogin: { isAuth, usuario } } = useContext(LoginContext);
   const [loading, setLoading] = useState(true);
   
+  const redireccionarUsuario = (rol) => {
+    
+    switch(rol) {
+      case "administrador":
+        console.log("Usuario administrador logeado");
+        window.location.replace("/admin/dashboard");
+        break;
+      case "vendedor":
+        window.location.replace("/admin/vendedor");
+        console.log("Usuario vendedor logeado");
+        break;
+      default:
+        console.log("Usuario no tiene rol asignado");
+        window.location.replace("/login");
+        break;
+      // acción que siempre se ejecuta en switch
+    } 
+  }
   async function validarSesion () {
   
     const { success, message } = await obtenerUsuarioLogeado().finally(() => {
@@ -28,21 +46,22 @@ function App() {
       }, 1000);
     })
     if (!success) {
+      
       toast.error(message ?? "Ha ocurrido un Error inesperado", { id: "loading", duration: 2000 });
       if (window.location.pathname !== "/login") {
         setTimeout(()=> {
           window.location.replace("/login");
-        }, 2000)
+        }, 1000)
       }
-    }
+    } 
   }
   useEffect(() => {
-    if (isAuth) return // si el usuario ya esta logeado no continua con la validación
-    
+   
     const tokenAcceso = localStorage.getItem("accessToken");
     const tokenRefresco = localStorage.getItem("refreshToken");
     const { pathname } = window.location;
 
+   
     if (!tokenAcceso &&  !tokenRefresco && window.location.pathname !== "/login") {
       console.log("No hay token disponible");
       setTimeout(()=> {
@@ -54,21 +73,7 @@ function App() {
     } else if (( pathname === "/login" || pathname === "/")  && isAuth === true) {
       console.log("Usuario ya logeado")
 
-      switch(usuario?.rol) {
-        case "administrador":
-          console.log("Usuario administrador logeado");
-          window.location.replace("/admin/dashboard");
-          break;
-        case "vendedor":
-          window.location.replace("/admin/vendedor");
-          console.log("Usuario vendedor logeado");
-          break;
-        default:
-          console.log("Usuario no tiene rol asignado");
-          window.location.replace("/login");
-          break;
-        // acción que siempre se ejecuta en switch
-      } 
+      redireccionarUsuario(usuario.rol)
     } else if (!tokenRefresco && tokenAcceso === null) {
       console.log("No hay token de refresco");
       if(pathname !== "/login") {
@@ -85,7 +90,6 @@ function App() {
           setLoading(false);
         
         }, 1000)
-      
       }
     }
     

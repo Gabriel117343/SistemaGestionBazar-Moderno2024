@@ -10,7 +10,7 @@ export const InformacionUsuario = ({usuario, usuarioImagen}) => {
         <div className="img-perfil">
           {usuarioImagen ?
           (
-            <img  src={usuarioImagen} alt="Imagen del usuario" />
+            <img  src={usuarioImagen.replace('http://localhost:8000/', 'https://dwq9c4nw-8000.brs.devtunnels.ms/')} alt="Imagen del usuario" />
 
           )
           :

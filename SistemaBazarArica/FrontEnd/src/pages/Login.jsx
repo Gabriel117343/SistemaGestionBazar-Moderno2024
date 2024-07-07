@@ -8,6 +8,7 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { LoginContext } from "../context/LoginContext";
 import { CargaDePagina } from "../views/CargaDePagina";
 import Swal from "sweetalert2";
+import LoginErrors from "../context/errors/LoginErrors"
 
 export const Login = () => {
   const { iniciarSesion } = useContext(LoginContext);
@@ -19,79 +20,45 @@ export const Login = () => {
   const [isLoading, setIsLoading] = useState(false); // estado de carga de la pagina
 
   const navigate = useNavigate();
+
+  const limpiarFormularioYReactivarBoton = () => {
+    formLoginRef.current.reset();
+    setBtnisDisabled(false);
+  };
+  const mostrarError = (tipo, mensaje) => {
+    // Se muestra un mensaje de error dependiendo del tipo de error
+    Swal.fire({
+      icon: LoginErrors[tipo]?.icono,
+      title: LoginErrors[tipo]?.titulo,
+      text: mensaje ?? LoginErrors.defaultErrorMessage,
+      confirmButtonText: "Ok",
+      confirmButtonColor: "#3085d6",
+    });
+  }
   const enviarFormLogin = async (event) => {
     event.preventDefault();
     setBtnisDisabled(true);
     const usuario = Object.fromEntries(new FormData(event.target));
-    const toastId = toast.loading("Cargando...", { id: "loading" });
+    toast.loading("Cargando...", { id: "loading" });
 
     const { success, message, tipo, rol } = await iniciarSesion(usuario);
-    toast.dismiss(toastId, { id: 'loading'}); // cerrar el toast de cargando
+
     if (success) {
       setIsLoading(true);
       setBtnisDisabled(false);
-      toast.dismiss(toastId, { id: "loading" }); // cerrar el toast de cargando
-      toast.success(message);
+      toast.success(message, { id: "loading" });
       setTimeout(() => {
         if (rol === "administrador") {
-          toast.dismiss(toastId); // cerrar el toast de cargando
           navigate("/admin/dashboard");
         } else if (rol === "vendedor") {
           navigate("/vendedor");
         }
         setIsLoading(false);
       }, 1500);
-    } else if (tipo === "credenciales") {
-      // limpiar formulario
-      formLoginRef.current.reset();
-      toast.dismiss(toastId, { id: "loading" }); // cerrar el toast de cargando
-      setBtnisDisabled(false);
-      Swal.fire({
-        icon: "error",
-        title: "Credenciales Invalidas",
-        text: message,
-        confirmButtonText: "Ok",
-        confirmButtonColor: "#3085d6",
-      });
-    } else if (tipo === "cuenta") {
-      // limpiar formulario
-      formLoginRef.current.reset();
-      setBtnisDisabled(false);
-      toast.dismiss(toastId, { id: "loading" }); // cerrar el toast de cargando
-      setBtnisDisabled(false);
-      Swal.fire({
-        icon: "error",
-        title: "Cuenta Inactiva",
-        text: message,
-        confirmButtonText: "Ok",
-        confirmButtonColor: "#3085d6",
-      });
-    } else if (tipo === "horario") {
-      // limpiar formulario
-      formLoginRef.current.reset();
-      setBtnisDisabled(false);
-      toast.dismiss(toastId, { id: "loading" }); // cerrar el toast de cargando
-      setBtnisDisabled(false);
-      Swal.fire({
-        icon: "error",
-        title: "Restriccion de Horario",
-        text: message,
-        confirmButtonText: "Ok",
-        confirmButtonColor: "#3085d6",
-      });
-    } else {
-      // limpiar formulario
-      formLoginRef.current.reset();
-      setBtnisDisabled(false);
-      toast.dismiss(toastId, { id: "loading" }); // cerrar el toast de cargando
-      setBtnisDisabled(false);
-      Swal.fire({
-        icon: "error",
-        title: "Error al iniciar sesion",
-        text: "Hubo un error al iniciar sesion, porfavor intentelo de nuevo.",
-        confirmButtonText: "Ok",
-        confirmButtonColor: "#3085d6",
-      });
+    } else  {
+      toast.dismiss("loading");
+      limpiarFormularioYReactivarBoton();
+      mostrarError(tipo, message);
     }
   };
 

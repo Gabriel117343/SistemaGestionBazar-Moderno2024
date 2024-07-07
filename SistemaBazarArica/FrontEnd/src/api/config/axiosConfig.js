@@ -10,7 +10,7 @@ const API_URL = Object.freeze({
 });
 export const createApiInstance = (path='') => {
   const apiInstance = axios.create({
-    baseURL: `${API_URL.desarrollo}/${path}`
+    baseURL: `${API_URL.despliegue_local}/${path}`
   });
 
   // Interceptor de solicitud para incluir el token de acceso
@@ -30,7 +30,7 @@ export const createApiInstance = (path='') => {
   }, async error => {
     console.log('- Volviendo a obtener token de acceso...')
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error?.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const refreshToken = localStorage.getItem('refreshToken');
