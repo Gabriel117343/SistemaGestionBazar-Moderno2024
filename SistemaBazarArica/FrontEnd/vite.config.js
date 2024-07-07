@@ -13,6 +13,7 @@ export default defineConfig({
   build: {
     outDir: 'dist', // Especifica el directorio de salida para la construcción
     assetsDir: 'assets', // Especifica el directorio de salida para los activos (relativo al directorio de salida)
-  }
+  },
+  publicDir: 'public' // El directorio publico para servir archivos estáticos - uso para netlify
   
 })
