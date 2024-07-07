@@ -86,7 +86,7 @@ export const Login = () => {
                   <div className="mb-3">
                     <img
                       style={{ width: "100%" }}
-                      src="../public/images/login-imagen.png"
+                      src="/images/login-imagen.png"
                       alt=""
                     />
                   </div>
