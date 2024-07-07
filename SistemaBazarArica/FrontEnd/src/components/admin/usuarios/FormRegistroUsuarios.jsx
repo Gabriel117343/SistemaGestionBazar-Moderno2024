@@ -1,6 +1,5 @@
 import { useState, useRef, useId, useContext } from 'react'
 
-
 import { useClasesInput } from '../../../hooks/useClasesInput'// cutom hook para las clases - hook personalizado
 import { useFormatos } from '../../../hooks/useFormatos'// custom hook para los formatos - hook personalizado
 import './styles.css'// estilos del formulario

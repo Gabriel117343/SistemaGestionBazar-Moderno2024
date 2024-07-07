@@ -10,7 +10,7 @@ import { VentasContext } from "../../../context/VentasContext";
 import { toast } from "react-hot-toast";
 import useCarrito from "../../../hooks/useCarrito";
 
-import "./puntoVenta.css";
+import "./puntoventa.css";
 import { debounce } from "lodash";
 import Swal from "sweetalert2";
 export const Carrito = () => {
