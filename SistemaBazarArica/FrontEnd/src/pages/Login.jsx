@@ -1,5 +1,5 @@
 import { useState, useId, useContext, useRef } from "react";
-import "./Login.css";
+import "./login.css";
 import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +8,7 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { LoginContext } from "../context/LoginContext";
 import { CargaDePagina } from "../views/CargaDePagina";
 import Swal from "sweetalert2";
-import LoginErrors from "../context/errors/LoginErrors"
+import loginErrors from "../context/errors/loginErrors"
 
 export const Login = () => {
   const { iniciarSesion } = useContext(LoginContext);
@@ -28,9 +28,9 @@ export const Login = () => {
   const mostrarError = (tipo, mensaje) => {
     // Se muestra un mensaje de error dependiendo del tipo de error
     Swal.fire({
-      icon: LoginErrors[tipo]?.icono,
-      title: LoginErrors[tipo]?.titulo,
-      text: mensaje ?? LoginErrors.defaultErrorMessage,
+      icon: loginErrors[tipo]?.icono,
+      title: loginErrors[tipo]?.titulo,
+      text: mensaje ?? loginErrors.defaultErrorMessage,
       confirmButtonText: "Ok",
       confirmButtonColor: "#3085d6",
     });

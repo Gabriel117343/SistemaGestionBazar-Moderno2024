@@ -1,5 +1,5 @@
 import { BsInboxesFill } from "react-icons/bs";
-import "./Pages.css";
+import "./pages.css";
 import { PedidosProvider } from "../../context/PedidosContext";
 import { TablaPedidosContenedor } from "../../components/admin/compras/TablaPedidosContenedor";
 import { ProveedoresProvider } from "../../context/ProveedoresContext";
