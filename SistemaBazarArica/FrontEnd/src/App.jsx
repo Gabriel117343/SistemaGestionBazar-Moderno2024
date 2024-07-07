@@ -2,7 +2,7 @@ import { Login } from "./pages/Login";
 import { useContext, useEffect, useState } from "react";
 import { CargaDePagina } from "./views/CargaDePagina";
 import { Toaster } from "react-hot-toast";
-
+import { toast } from "react-hot-toast";
 import { LoginContext } from "./context/LoginContext";
 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -16,66 +16,83 @@ import { ClientesProvider } from "./context/ClientesContext";
 import { VentasProvider } from "./context/VentasContext";
 
 function App() {
-  const {
-    obtenerUsuarioLogeado,
-    stateLogin: { isAuth, usuario },
-  } = useContext(LoginContext);
+  const { obtenerUsuarioLogeado, stateLogin: { isAuth, usuario } } = useContext(LoginContext);
   const [loading, setLoading] = useState(true);
   
+  async function validarSesion () {
+  
+    const { success, message } = await obtenerUsuarioLogeado().finally(() => {
+      setTimeout(() => {
+        setLoading(false);
+        
+      }, 1000);
+    })
+    if (!success) {
+      toast.error(message ?? "Ha ocurrido un Error inesperado", { id: "loading", duration: 2000 });
+      if (window.location.pathname !== "/login") {
+        setTimeout(()=> {
+          window.location.replace("/login");
+        }, 2000)
+      }
+    }
+  }
   useEffect(() => {
+    if (isAuth) return // si el usuario ya esta logeado no continua con la validación
     
     const tokenAcceso = localStorage.getItem("accessToken");
     const tokenRefresco = localStorage.getItem("refreshToken");
-
     const { pathname } = window.location;
-    function validarSesion() {
-      if (
-        !tokenAcceso &&
-        !tokenRefresco &&
-        window.location.pathname !== "/login"
-      ) {
-        console.log("No hay token disponible");
-        setTimeout(()=> {
-          setLoading(false);
-          window.location.replace("/login");
-        }, 2000)
-        
-        return
-      }
-      if (tokenAcceso || tokenRefresco) {
-        // si esta en la ruta login o / y tiene el token, se redirige a la ruta admin
-        if (
-          pathname === "/" ||
-          (pathname === "/login" && usuario?.rol === "administrador")
-        ) {
-          console.log("Redirigiendo a /admin/dashboard");
-          return window.location.replace("/admin/dashboard");
-        } else if (
-          pathname === "/login" ||
-          (pathname === "/" && usuario?.rol === "vendedor")
-        ) {
-          console.log("Redirigiendo a /vendedor/dashboard");
-          // return window.location.replace('/vendedor/dashboard');
-        } else if (isAuth === false && (tokenAcceso || tokenRefresco)) {
-          console.log("Volviendo a obtener el usuario logeado");
-          obtenerUsuarioLogeado().finally(() => {
-            setTimeout(() => {
-              setLoading(false);
-            }, 1000); // finally se ejecuta cuando se resuelve la promesa o cuando se rechaza
-          });
-        } else {
-          setTimeout(() => {
-            setLoading(false);
-          }, 2000);
-        }
-      } else {
+
+    if (!tokenAcceso &&  !tokenRefresco && window.location.pathname !== "/login") {
+      console.log("No hay token disponible");
+      setTimeout(()=> {
         setLoading(false);
+        window.location.replace("/login");
+      }, 1000)
+      
+      return
+    } else if (( pathname === "/login" || pathname === "/")  && isAuth === true) {
+      console.log("Usuario ya logeado")
+
+      switch(usuario?.rol) {
+        case "administrador":
+          console.log("Usuario administrador logeado");
+          window.location.replace("/admin/dashboard");
+          break;
+        case "vendedor":
+          window.location.replace("/admin/vendedor");
+          console.log("Usuario vendedor logeado");
+          break;
+        default:
+          console.log("Usuario no tiene rol asignado");
+          window.location.replace("/login");
+          break;
+        // acción que siempre se ejecuta en switch
+      } 
+    } else if (!tokenRefresco && tokenAcceso === null) {
+      console.log("No hay token de refresco");
+      if(pathname !== "/login") {
+        window.location.replace("/login");
+      }
+      setTimeout(()=> {
+        setLoading(false);
+      }, 1000)
+    } else {
+      if (isAuth === false) {
+        validarSesion()
+      } else {
+        setTimeout(() => {
+          setLoading(false);
+        
+        }, 1000)
+      
       }
     }
-    validarSesion();
-  }, [isAuth, location.pathname]);
+    
+  }, [isAuth]);
 
   if (loading) {
+    
     return <CargaDePagina />; // si loading es true se muestra el componente CargaDePagina
   }
 

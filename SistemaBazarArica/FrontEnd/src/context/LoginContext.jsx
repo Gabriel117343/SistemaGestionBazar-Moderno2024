@@ -72,16 +72,16 @@ export const LoginProvider = ({ children }) => {
     const tokenAcceso = localStorage.getItem('accessToken');
     const tokenRefresco = localStorage.getItem('refreshToken');
   
-  
     try {
       let res = await getUser(tokenAcceso);
-      console.log(res.data);
+   
       if (res.status === 200) {
         dispatch({
           type: 'LOGIN',
           payload: res.data.usuario
         });
       }
+      return ({ success: true, message: res.data.message });
     } catch (error) {
 
       if (error.response && error.response.status === 401) { // Suponiendo que 401 indica token expirado

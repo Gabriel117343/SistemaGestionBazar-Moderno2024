@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { LoginContext } from "../context/LoginContext";
+import { CargaDePagina } from "../views/CargaDePagina";
 import Swal from "sweetalert2";
 
 export const Login = () => {
@@ -15,6 +16,7 @@ export const Login = () => {
   const idFormLogin = useId(); // id para el form de login
 
   const formLoginRef = useRef(); // referencia al form de login
+  const [isLoading, setIsLoading] = useState(false); // estado de carga de la pagina
 
   const navigate = useNavigate();
   const enviarFormLogin = async (event) => {
@@ -24,9 +26,9 @@ export const Login = () => {
     const toastId = toast.loading("Cargando...", { id: "loading" });
 
     const { success, message, tipo, rol } = await iniciarSesion(usuario);
-    toast.dismiss(toastId); // cerrar el toast de cargando
+    toast.dismiss(toastId, { id: 'loading'}); // cerrar el toast de cargando
     if (success) {
-      console.log("asdf");
+      setIsLoading(true);
       setBtnisDisabled(false);
       toast.dismiss(toastId, { id: "loading" }); // cerrar el toast de cargando
       toast.success(message);
@@ -37,6 +39,7 @@ export const Login = () => {
         } else if (rol === "vendedor") {
           navigate("/vendedor");
         }
+        setIsLoading(false);
       }, 1500);
     } else if (tipo === "credenciales") {
       // limpiar formulario
@@ -96,6 +99,9 @@ export const Login = () => {
   const estadoContraseña = () => {
     setMostrarContraseña((prevState) => !prevState);
   };
+  if (isLoading) {
+    return <CargaDePagina />;
+  } 
 
   return (
     <section className="gradient-custom">

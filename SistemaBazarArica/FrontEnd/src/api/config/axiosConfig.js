@@ -4,9 +4,9 @@ import axios from 'axios';
 
 // Object.freeze() es una función que evita que un objeto sea modificado, es decir, que no se le puedan agregar, eliminar o modificar propiedades.
 const API_URL = Object.freeze({
-  desarrollo: 'https://dwq9c4nw-8000.brs.devtunnels.ms/',
+  desarrollo: 'http://127.0.0.1:8000',
   produccion: 'https://api.sistemabazararica.com',
-  despliegue_local: 'http://127.0.0.1:8000'
+  despliegue_local: 'https://dwq9c4nw-8000.brs.devtunnels.ms/'
 });
 export const createApiInstance = (path='') => {
   const apiInstance = axios.create({

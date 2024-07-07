@@ -103,6 +103,7 @@ export const FiltroProductos = () => {
       toast.success(message ?? "Productos actualizados correctamente");
     }
   }
+  
   const debounceFiltroNombre = debounce(filtroNombre, 300); // se le pasa la funcion y el tiempo de espera
   // en caso haya un filtro activo se activa la busqueda activa
   const busquedaActiva =
@@ -153,12 +154,11 @@ export const FiltroProductos = () => {
           >
             Todos
           </button>
-
           {secciones?.map((seccion) => (
             <div key={seccion.id} className="seccion">
               <button
                 onClick={() => filtrarPorSeccion(seccion.id)}
-                className={`border rounded btn-seleccion ${productosFiltrados?.some((producto) => producto?.seccion?.numero === seccion?.numero) ? "btn-filtro" : ""}`}
+                className={`border rounded btn-seleccion ${(productosFiltrados !== productos && !!busquedaActiva)  && productosFiltrados?.some((producto) => producto?.seccion?.numero === seccion?.numero) ? "btn-filtro" : ""}`}
               >
                 {seccion.nombre}
               </button>

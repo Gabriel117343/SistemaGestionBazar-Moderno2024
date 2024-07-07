@@ -146,7 +146,7 @@ REST_FRAMEWORK = {
       'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # Configura los permisos por defecto
+        'rest_framework.permissions.IsAuthenticated',  # Configura los permisos por defecto en cada vista de la API en views.py (de otro modo se debe configurar en cada vista, hay que especificar que no se necesita autenticación cuando se quiere hacer Login o Registro de usuario)
     ]
 }
 SIMPLE_JWT = {
@@ -159,7 +159,7 @@ SIMPLE_JWT = {
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,  # Firma los tokens JWT (JSON Web Tokens)
     'VERIFYING_KEY': None,
-    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_TYPES': ('Bearer',), # Credencial de autenticación que se espera en la cabecera de la petición que se enviara desde React al servidor de Django 
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
@@ -178,11 +178,11 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
 }
 AUTH_USER_MODEL = 'backend.Usuario'
-CSRF_COOKIE_DOMAIN = 'localhost' # esto es para que el token csrf se envíe a la api en React desde el servidor de Django
+# CSRF_COOKIE_DOMAIN = 'localhost' # esto es para que el token csrf se envíe a la api en React desde el servidor de Django
 
-CSRF_COOKIE_NAME = "csrftoken" # esto es para que el token csrf se envíe a la api en React desde el servidor de Django
-CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN" # esto es para que el token csrf se envíe a la api en React desde el servidor de Django
-CSRF_USE_SESSIONS = False # esto es para que el token csrf se envíe a la api en React desde el servidor de Django
+# CSRF_COOKIE_NAME = "csrftoken" # esto es para que el token csrf se envíe a la api en React desde el servidor de Django
+# CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN" # esto es para que el token csrf se envíe a la api en React desde el servidor de Django
+# CSRF_USE_SESSIONS = False # esto es para que el token csrf se envíe a la api en React desde el servidor de Django
 
 DEBUG = True # Cambiar a False en producción
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # esto lo que hace es decirle a django que vamos a utilizar un servidor SMTP para enviar correos electrónicos

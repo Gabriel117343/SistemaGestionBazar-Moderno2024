@@ -61,11 +61,18 @@
   font-size: 16px; /* Ajusta el tamaño del ícono*/
   color: #888; /* Ajusta el color del ícono*/
 }
-/*--------------------ESTILOS DE EL PARA EL FORMULARIO-------------------*/
-.imagen-usuario {
-  
-  border-radius: 50%;
+/*--------------------ESTILOS DE EL PARA EL FORMULARIO Edición-------------------*/
+.container-img-usuario {
+  width: 210px;
+}
+
+.container-img-usuario > img {
+  aspect-ratio: 20 / 18;
+  width: 100%;
   object-fit: cover;
+  border-radius: 50%;
+  height: auto;
+  
 }
 .ultima-conexion {
   font-size: 13px;

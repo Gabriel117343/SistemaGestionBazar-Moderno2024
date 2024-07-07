@@ -23,7 +23,6 @@ const MostrarSecciones = ({listaSecciones, borrarSeccion, edicionSeccion, filtro
   const seccionesMostrar = listaSecciones.slice(startIndex, endIndex)
   // Servira para calcular el número total de paginas en función de la cantidad total de elementos y los elementos por página ej: el boton 1, 2, 3 etc..
   const totalBotones = Math.ceil(listaSecciones.reverse().length / cantidadSecciones)// reverse para que la tabla muestre desde el ultimo usuario creado al primero
-  let contador = startIndex + 1 // para numerar los usuarios en la tabla comenzando por el starIndex aumentado en uno
   return (
       <section>
         <table className="table table-striped table-hover table-bordered mt-2">
@@ -38,9 +37,9 @@ const MostrarSecciones = ({listaSecciones, borrarSeccion, edicionSeccion, filtro
         </thead>
         <tbody>
           <MagicMotion> {/* Cuando hay un cambio anima la tabla */}
-            {seccionesMostrar.map(seccion => (
+            {seccionesMostrar.map((seccion, index) => (
                 <tr key={seccion.id}>
-                  <th scope="row">{contador++}</th>
+                  <td scope="row">{index + 1}</td>
                   <td>{seccion.nombre}</td>
                   <td>{seccion.numero}</td>
                   <td>{seccion.descripcion}</td>
@@ -53,7 +52,6 @@ const MostrarSecciones = ({listaSecciones, borrarSeccion, edicionSeccion, filtro
                 </tr>
                 ))
               }
-
           </MagicMotion>
           
         </tbody>

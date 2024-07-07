@@ -20,6 +20,18 @@
   max-width: 270px;
   position: relative;
 }
+.producto-img {
+  width: 100%;
+  height: 150px;
+  padding-top: 5px;
+}
+.producto-img > img {
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  width: 100%;
+  height: inherit;
+
+}
 .producto:hover {
   box-shadow: 0 0 5px 5px rgba(231, 231, 231, 0.5);
   animation: zoomAnim3 0.3s forwards;
@@ -52,24 +64,30 @@
 
 
 }
-e
 .btn-agregar {
   flex-direction: column;
 }
 .btn-agregar > button {
-  background: #eeb20b;
+
+  background: #1bc4ee;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to bottom, #1bc4ee, #009FC7);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom, #1bc4ee, #0784a3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  opacity: 0.9;
+
   width: 100%;
   color: white;
   border: none;
   border-radius: 0 0 5px 5px;
   padding: 5px 10px;
-  font-weight: 500;
+  font-weight: 520;
   cursor: pointer;
   font-size: 15px;
   font-family: sans-serif;
  
 }
-
+.btn-agregar > button:hover {
+  opacity: 1;
+}
 /* animaciones personalizadas */
 @keyframes zoomAnim {
   from {
@@ -124,6 +142,14 @@ e
   position: relative;
   display: inline-block;
   box-shadow: 0 0 5px 1px #f8f8f8;
+  width: 30px;
+}
+.imagen-producto-mini > img {
+  aspect-ratio: 1 / 1; /* la imagen se mantiene cuadrada en relación al width del contenedor - buenas prácticas */
+  object-fit: container;
+  width: 100%;
+  height: auto;
+  
 }
 .imagen-producto-mini:hover {
   outline: 0.5px solid rgb(212, 20, 20);
@@ -184,14 +210,9 @@ input[type="number"]::-webkit-outer-spin-button {
   
 }
 .btn-filtro {
-  background:  #FFC107;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #f5dd70, #F7971E);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #FFD200, #F7971E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
+  background: #9ba3a8;  /* fallback for old browsers */
 
   color: white;
-  opacity: 0.9;
-
 }
 
 .btn-nuevo-animacion:hover {
@@ -221,7 +242,7 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-animation: pulse 2s infinite;
   animation: pulse11 1.5s infinite;
   animation: zoomAnim 0.3s forwards;
-  box-shadow: 0 0 5px 0 rgba(226, 180, 52, 0.829);
+  box-shadow: 0 0 5px 0 #b4b4b4;
 }
 /* Estilos para el carrito de compras*/
 .precio-num {

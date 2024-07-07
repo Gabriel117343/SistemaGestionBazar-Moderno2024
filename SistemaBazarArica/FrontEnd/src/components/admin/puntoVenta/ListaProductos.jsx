@@ -44,7 +44,6 @@ export const ListaProductos = ({ productos }) => {
   // calculando el índice y fin de la lista actual en función de la página actual y los elementos por página
 
   const startIndex = (currentPage - 1) * cantidadPorPagina;
-  console.log(startIndex);
   const endIndex = startIndex + cantidadPorPagina;
 
   // Obtengo los elementos a mostrar en la página actual, slice filtrara el inicio a fin
@@ -83,12 +82,10 @@ export const ListaProductos = ({ productos }) => {
                   </div>
                 )}
                 <div
-                  className={cantidadCalculada === 0 ? "img-blanco-negro" : ""}
+                  className={`producto-img ${cantidadCalculada === 0 ? "img-blanco-negro" : ""}`}
                 >
                   {producto.imagen ? (
                     <img
-                      width="100%"
-                      height="150px"
                       src={producto.imagen}
                       alt={`esto es una imagen de un ${producto.nombre}`}
                     />
@@ -123,7 +120,7 @@ export const ListaProductos = ({ productos }) => {
                 </div>
                 <div className="pt-0 mt-0 btn-agregar">
                   <button onClick={() => agregarProducto(producto)}>
-                    Agregar
+                   <i className="bi bi-cart-plus"></i> Agregar
                   </button>
                 </div>
               </li>

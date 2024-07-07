@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { FaBars } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { LoginContext } from "../../context/LoginContext";
@@ -7,14 +7,38 @@ import "./Menu.css";
 
 //MENU DE OPCIONES PARA EL ADMINISTRADOR
 export const Menu = ({ children }) => {
-  const accionSidebar = () => {
-    cambiarEstadoSidebar();
-  };
-
+  
   const {
     stateLogin: { usuario, isAuth },
   } = useContext(LoginContext);
   const { cambiarEstadoSidebar, sidebar } = useContext(SidebarContext);
+ 
+  const accionSidebar = () => {
+    cambiarEstadoSidebar();
+  };
+
+  useEffect(() => {
+    const sidebarMenu = document.querySelector('.sidebar');
+
+    if (sidebarMenu) {
+      const toggleAnimation = () => {
+        // Si el sidebar está abierto, aplicamos la animación de cierre
+        // se establece forwards para que la animación se quede en el último frame (abierto) o (cerrado) 
+        if (sidebar) {
+          sidebarMenu.style.animation = 'desplazar 0.8s forwards';
+        } else {
+          
+          sidebarMenu.style.animation = 'retroceder 0.5s forwards';
+        }
+      };
+
+      // Observamos el cambio de estado para aplicar la animación correspondiente
+      toggleAnimation();
+
+    }
+  }, [sidebar]); // Dependencia: el efecto se re-ejecuta cuando cambia el estado de sidebarAbierto
+  
+
   const menuItems = [
     {
       path: "/admin/dashboard",
@@ -82,56 +106,56 @@ export const Menu = ({ children }) => {
   ];
   return (
     <div className="contenedor">
-      <aside style={{ width: sidebar ? "350px" : "50px" }} className="sidebar">
+      <aside className={`sidebar `}>
         <div className="top_section pt-4">
           {sidebar ? (
-            <div className="d-flex align-items-center gap-3 pb-3 ps-1 justify-content-around">
+            <div className="d-flex align-items-center gap-1 pb-3 ps-2 justify-content-between informaciones-user">
               <div className="d-flex align-items-center gap-2">
                 {usuario && isAuth ? (
                   <>
+                  <div className="min-imagen-usuario">
                     <img
-                      width="50px"
-                      height="50px"
-                      style={{
-                        display: sidebar ? "block" : "none",
-                        borderRadius: "30px",
-                      }}
-                      className="logo "
-                      src={
-                        usuario.imagen
-                          ? usuario.imagen
-                          : "https://cdn-icons-png.flaticon.com/512/6073/6073873.png"
-                      }
-                      alt={`imagen de ${usuario.nombre}`}
-                    />
-                    <strong className="text-capitalize pt-2">
-                      {usuario.nombre} {usuario.apellido}
-                    </strong>
+                    loading="lazy"
+                    style={{
+                      display: sidebar ? "block" : "none",
+                    
+                    }}
+                    className="logo "
+                    src={
+                      usuario.imagen
+                        ? usuario.imagen
+                        : "https://cdn-icons-png.flaticon.com/512/6073/6073873.png"
+                    }
+                    alt={`imagen de ${usuario.nombre.split(' ')[0]}`}
+                  />
+                  </div>
+                  <strong className="text-capitalize pt-2 nombre-usuario">
+                    {usuario.nombre} {usuario.apellido.split(' ')[0]}
+                  </strong>
                   </>
                 ) : (
                   <>
-                    <img
-                      width="50px"
-                      height="50px"
-                      style={{
-                        display: sidebar ? "block" : "none",
-                        borderRadius: "30px",
-                      }}
-                      className="logo "
-                      src="https://cdn-icons-png.flaticon.com/512/6073/6073873.png"
-                      alt="Esta es una imagen por defecto"
-                    />
-                    <strong>Sin Nombre</strong>
+                    <div className="min-imagen-usuario">
+                      <img
+                        style={{
+                          display: sidebar ? "block" : "none"
+                        }}
+                        className="logo "
+                        src="https://cdn-icons-png.flaticon.com/512/6073/6073873.png"
+                        alt="Esta es una imagen por defecto"
+                      />
+                      <strong>Sin Nombre</strong>
+                    </div>
                   </>
                 )}
               </div>
 
-              <div className="bars ms-5 py-2 px-2">
+              <div className="bars py-2 pe-2 ms-1 btn-sidebar">
                 <FaBars onClick={accionSidebar} />
               </div>
             </div>
           ) : (
-            <div className="d-flex align-items-center justify-content-center py-2">
+            <div className="d-flex align-items-center justify-content-center py-2 btn-sidebar">
               <FaBars onClick={accionSidebar} />
             </div>
           )}

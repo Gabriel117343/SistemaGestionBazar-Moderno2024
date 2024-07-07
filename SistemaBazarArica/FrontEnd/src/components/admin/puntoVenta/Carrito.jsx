@@ -165,14 +165,15 @@ export const Carrito = () => {
                     onClick={() => eliminarProductoCarrito(producto.id)}
                   >
                     <img
+                      loading="lazy"
                       src={
                         producto.imagen ||
                         "https://ww.idelcosa.com/img/default.jpg"
                       }
-                      alt={producto.imagen ? "img" : "imagen por defecto"}
-                      style={{ width: "30px", height: "26px" }}
+                      alt={`imagen de ${producto.nombre}`}
                       className="img-min-producto"
                     />
+                    
                   </div>
                   <strong className="ps-1">{producto.nombre}</strong>
                   <div className="d-flex flex-column">

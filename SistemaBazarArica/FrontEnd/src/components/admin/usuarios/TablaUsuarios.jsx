@@ -68,7 +68,7 @@ export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, fil
                 {/* <th className=' pt-0 pb-0'><img className='usuario-imagen p-0 m-0' src={person.imagen ? person.imagen : 'https://w7.pngwing.com/pngs/807/180/png-transparent-user-account-resume-curriculum-vitae-europe-others-service-resume-logo-thumbnail.png'} alt='imagen' /></th> */}
                 <td>{contador++}</td>
                 <td>{person.rut}</td>
-                <td>{person.nombre}</td>
+                <td className="text-capitalize">{person.nombre}</td>
                 <td>{person.apellido}</td>
                 <td>{person.telefono}</td>
                 <td>{person.email}</td>

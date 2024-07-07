@@ -7,7 +7,7 @@ const ListaVentas = ({ ventas }) => {
   const endIndex = startIndex + cantidadVentas;
   const ventasMostrar = ventas.slice(startIndex, endIndex);
   const totalBotones = Math.ceil(ventas.reverse().length / cantidadVentas);
-  console.log(ventas)
+
   return (
     <article>
       <table className="table table-striped table-hover">
@@ -33,7 +33,7 @@ const ListaVentas = ({ ventas }) => {
                     {venta.vendedor.nombre} {venta.vendedor.apellido}
                   </td>
                   <td >{new Date(venta.fecha_venta).toLocaleDateString()} </td>
-                  <td ><i class="bi bi-clock-history"></i> {`${new Date(venta.fecha_venta).toLocaleTimeString()}`}</td>
+                  <td ><i className="bi bi-clock-history"></i> {`${new Date(venta.fecha_venta).toLocaleTimeString()}`}</td>
                   <td>
                     {venta.cliente.nombre} {venta.cliente.apellido}
                   </td>

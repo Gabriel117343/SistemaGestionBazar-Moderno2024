@@ -1,8 +1,13 @@
-.imagen-perfil {
+.img-perfil {
   width: 260px;
-  height: 250px;
-  border-radius: 50%;
+  
+}
+.img-perfil > img {
+  aspect-ratio: 21 / 20;
+  width: 100%;
   object-fit: cover;
+  border-radius: 50%;
+  height: auto;
 }
 /* Estilos para Cambiar la contraseña-------------------------------------- */
 .contraseña-cont {

@@ -189,8 +189,11 @@ export const FormularioEdicion = ({ cerrarModal }) => {
   const fechaUltimaActividad = new Date(usuarioSeleccionado.ultima_actividad);
   return (
     <section>
-      <div className="d-flex flex-column align-items-center text-center">
-        <img width='210px' height='200px' className="imagen-usuario" src={usuarioSeleccionado.imagen ? usuarioSeleccionado.imagen : 'https://objetivoligar.com/wp-content/uploads/2017/03/blank-profile-picture-973460_1280-768x768.jpg'} alt={`imagen de ${usuarioSeleccionado.nombre}`} />
+      <div className="d-flex flex-column align-items-center text-center ">
+        <div className="container-img-usuario">
+          <img src={usuarioSeleccionado.imagen ? usuarioSeleccionado.imagen : 'https://objetivoligar.com/wp-content/uploads/2017/03/blank-profile-picture-973460_1280-768x768.jpg'} alt={`imagen de ${usuarioSeleccionado.nombre}`} />
+        </div>
+        
         <h2 className="text-capitalize">{`${usuarioSeleccionado.nombre} ${usuarioSeleccionado.apellido}`}</h2>
         <p className="ultima-conexion"><i class="bi bi-clock-history"></i> Última actividad: <small>{` ${fechaUltimaActividad.toLocaleDateString()} - ${fechaUltimaActividad.toLocaleTimeString()}`}</small></p>
         
@@ -199,7 +202,7 @@ export const FormularioEdicion = ({ cerrarModal }) => {
       <form
       onSubmit={actualizarUsuario}
       className="form formulario-datos"
-      id={idEditAdmin}
+      id={`editar-${idEditAdmin}`}
     >
       <div className="form-group">
         <label htmlFor={`${idEditAdmin}-rut`}>Rut</label>

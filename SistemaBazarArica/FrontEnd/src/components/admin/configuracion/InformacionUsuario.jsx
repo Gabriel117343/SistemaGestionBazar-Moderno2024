@@ -7,18 +7,19 @@ export const InformacionUsuario = ({usuario, usuarioImagen}) => {
     <article className='row ps-5'>
       <div>
         
+        <div className="img-perfil">
+          {usuarioImagen ?
+          (
+            <img  src={usuarioImagen} alt="Imagen del usuario" />
 
-        {usuarioImagen ?
-        (
-          <img className='imagen-perfil' src={usuarioImagen} alt="Imagen del usuario" />
-
-        )
-        :
-        (
-          <img className='imagen-perfil' src='https://w7.pngwing.com/pngs/1000/665/png-transparent-computer-icons-profile-s-free-angle-sphere-profile-cliparts-free.png' alt='Imagen del usuario'/>
-        )
-        }
-     
+          )
+          :
+          (
+            <img src='https://w7.pngwing.com/pngs/1000/665/png-transparent-computer-icons-profile-s-free-angle-sphere-profile-cliparts-free.png' alt='Imagen del usuario'/>
+          )
+          }
+        </div>
+        
         <div className="pt-3">
           <h2 className='text-capitalize'>{usuario?.nombre} {usuario?.apellido}</h2>
           <div className="d-flex gap-2 pt-3">
