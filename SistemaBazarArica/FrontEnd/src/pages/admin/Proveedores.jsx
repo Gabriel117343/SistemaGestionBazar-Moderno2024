@@ -2,6 +2,7 @@ import { BsPersonVcardFill } from "react-icons/bs"
 import { TablaProveedoresContenedor } from '../../components/admin/proveedores/TablaProveedoresContenedor'
 import { ProveedoresProvider } from '../../context/ProveedoresContext'
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
+import "./stylepages.css";
 export const Proveedores = () => {
   return (
     <section className='container-fluid'>

@@ -1,5 +1,6 @@
 import { TablaUsuariosContenedor } from '../../components/admin/usuarios/TablaUsuariosContenedor'
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
+import "./stylepages.css";
 export const Usuarios = () => {
   return (
     <section className='container-fluid'>

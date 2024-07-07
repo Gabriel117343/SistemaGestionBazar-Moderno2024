@@ -1,5 +1,6 @@
 import { ImBoxRemove } from "react-icons/im";
 import GradualSpacing from "../../components/shared/magic_ui/GradualSpacing";
+import "./stylepages.css";
 export const Devoluciones = () => {
   return (
     <section className="container-fluid">

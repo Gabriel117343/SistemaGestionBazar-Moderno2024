@@ -4,7 +4,7 @@ import { StocksProvider } from "../../context/StocksContext";
 import { PedidosProvider } from "../../context/PedidosContext";
 import { Grafico } from "../../components/admin/dashboard/Grafico";
 import GradualSpacing from "../../components/shared/magic_ui/GradualSpacing";
-import "./Pages.css";
+import "./stylepages.css";
 export const Dashboard = () => {
   return (
     <>

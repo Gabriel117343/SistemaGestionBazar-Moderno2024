@@ -3,6 +3,7 @@ import { ProveedoresProvider } from '../../context/ProveedoresContext'
 import { StockSmart } from '../../components/admin/stocks/StockSmart'
 import { FaBoxes } from "react-icons/fa";
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
+import "./stylepages.css";
 export const Stocks = () => {
   return (
     <section className='container-fluid'>

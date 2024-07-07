@@ -1,5 +1,5 @@
 import { FormConfiguracionCuenta } from "../../components/admin/configuracion/FormConfiguracionCuenta";
-import "./pages.css";
+import "./stylepages.css";
 import GradualSpacing from "../../components/shared/magic_ui/GradualSpacing";
 export const Configuracion = () => {
   return (

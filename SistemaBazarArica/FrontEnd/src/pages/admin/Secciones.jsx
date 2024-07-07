@@ -1,5 +1,6 @@
 import { ListaSeccionesContenedor } from '../../components/admin/secciones/ListaSeccionesContenedor'
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
+import "./stylepages.css";
 export const Secciones = () => {
   return (
     <section className='container-fluid'>

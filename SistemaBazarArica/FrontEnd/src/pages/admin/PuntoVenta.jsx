@@ -1,7 +1,7 @@
 import { Carrito } from "../../components/admin/puntoVenta/Carrito";
 import { FiltroProductos } from "../..//components/admin/puntoVenta/FiltroProductos";
 import GradualSpacing from "../../components/shared/magic_ui/GradualSpacing";
-
+import "./stylepages.css";
 export const PuntoVenta = () => {
   return (
     <>

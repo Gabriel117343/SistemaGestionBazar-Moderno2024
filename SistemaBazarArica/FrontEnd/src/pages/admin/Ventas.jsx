@@ -1,6 +1,7 @@
 import { FiltroVentas } from '../../components/admin/ventas/FiltroVentas'
 
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
+import "./stylepages.css";
 export const Ventas = () => {
   return (
     <section className='container-fluid'>
