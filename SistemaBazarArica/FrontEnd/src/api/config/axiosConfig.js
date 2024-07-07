@@ -6,7 +6,7 @@ import axios from 'axios';
 const API_URL = Object.freeze({
   desarrollo: 'http://127.0.0.1:8000',
   produccion: 'https://api.sistemabazararica.com',
-  despliegue_local: 'https://dwq9c4nw-8000.brs.devtunnels.ms/'
+  despliegue_local: 'https://dwq9c4nw-8000.brs.devtunnels.ms'
 });
 export const createApiInstance = (path='') => {
   const apiInstance = axios.create({

@@ -132,9 +132,9 @@ MEDIA_URL = '/media/'
 CORS_ALLOW_CREDENTIALS = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #cors autorizacion! ; se debe cambiar en produccion ; Origenes permitidos
-CORS_ALLOWED_ORIGINS = ['http://localhost:5173', 'http://127.0.0.1:5500', 'https://dwq9c4nw-5173.brs.devtunnels.ms']
+CORS_ALLOWED_ORIGINS = ['http://localhost:5173', 'http://127.0.0.1:5500', 'https://dwq9c4nw-5173.brs.devtunnels.ms', 'https://sistema-bazar-arica-moderno.netlify.app']
 CORS_ORIGIN_WHITELIST = [
-    "http://localhost:5173","https://dwq9c4nw-5173.brs.devtunnels.ms"
+    "http://localhost:5173","https://dwq9c4nw-5173.brs.devtunnels.ms", 'https://sistema-bazar-arica-moderno.netlify.app'
 ]
 # 1 forma estandard de autenticacion JWT token mas firma de rest_framework_simplejwt mediante token de autenticacionmas seguro
 # 2 forma de autenticacion con token de rest_framework - menos seguro - ya no se usa en el proyecto
