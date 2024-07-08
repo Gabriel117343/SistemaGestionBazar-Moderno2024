@@ -1,26 +1,25 @@
 import { useContext, useEffect, useState } from "react";
 import swal from "sweetalert2";
-
 import { toast } from "react-hot-toast";
 import { ProveedoresContext } from "../../../context/ProveedoresContext";
-import { Modal, Button } from "react-bootstrap";
-import { FormEdicion } from "./FormEdicion";
+import { Modal } from "react-bootstrap";
 import { FormRegistroProveedores } from "./FormRegistroProveedores";
 import { ValidarProveedores } from "./TablaProveedores";
 import { debounce } from "lodash";
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
+import CargaDeDatos from '../../../views/CargaDeDatos'
 import "./styles.css";
 // Para la UI
 import { ButtonNew } from "../../shared/ButtonNew";
 export const TablaProveedoresContenedor = () => {
-  const [showModal, setShowModal] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(true); // Nuevo estado para la carga de la pagina
   const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
 
   const [proveedorBuscado, setProveedorBuscado] = useState(null); // Nuevo estado para el input de busqueda
   const {
-    stateProveedor: { proveedores, proveedorSeleccionado },
+    stateProveedor: { proveedores },
     eliminarProveedor,
-    getProveedorContext,
     getProveedoresContext,
   } = useContext(ProveedoresContext);
 
@@ -29,6 +28,7 @@ export const TablaProveedoresContenedor = () => {
       toast.loading('Cargando...', { id: "loading" });
       const { success, message } = await getProveedoresContext(); // se ejecuta la funcion getProveedores del contexto de los proveedores
       if (success) {
+        setIsLoading(false);
         toast.success(message, { id: 'loading' });
       } else {
         toast.error(message ?? 'Ha ocurrido un error inesperado al cargar los Proveedores', { id: 'loading' });
@@ -63,19 +63,9 @@ export const TablaProveedoresContenedor = () => {
     }
     confirmar();
   };
-  const edicionProveedor = async (id) => {
-    toast.loading("Cargando...", { id: "loading" });
-    const { success, message } = await getProveedorContext(id);
-    if (success) {
-      toast.dismiss("loading")
-      setShowModal(true);
-    } else {
-      toast.error(message ?? 'Ha ocurrido un Error inesperado', { id: "loading" });
-    }
-  };
+  
   const cerrarModal = () => {
     setShowRegistroModal(false); // Cerrar la modal de registro
-    setShowModal(false);
   };
   const cambiarFiltro = (event) => {
     setProveedorBuscado(event.target.value);
@@ -128,23 +118,14 @@ export const TablaProveedoresContenedor = () => {
           </button>
         </div>
       </div>
-      <ValidarProveedores
+      { isLoading ? <CargaDeDatos /> : (
+        <ValidarProveedores
         listaProveedores={proveedores}
         borrarProovedor={borrarProveedor}
-        edicionProveedor={edicionProveedor}
         filtro={proveedorBuscado}
       />
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton className="bg-info">
-          <Modal.Title>Editar Proveedor</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <FormEdicion
-            cerrarModal={cerrarModal}
-            proveedor={proveedorSeleccionado}
-          />
-        </Modal.Body>
-      </Modal>
+      )
+      }
       <Modal
         show={showRegistroModal}
         onHide={() => setShowRegistroModal(false)}

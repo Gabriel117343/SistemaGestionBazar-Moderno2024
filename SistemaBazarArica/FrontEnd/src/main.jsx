@@ -6,8 +6,8 @@ import { LoginProvider } from './context/LoginContext.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <LoginProvider>
-      <React.StrictMode>
+    
         <App />
-      </React.StrictMode>
+
   </LoginProvider>
 )

@@ -139,6 +139,7 @@ export const TablaUsuariosContenedor = () => {
         borrarPersona={borrarPersona}
         edicionUsuario={edicionUsuario}
         filtro={usuarioBuscado}
+        showModal={showModal}
       />
       )}
       

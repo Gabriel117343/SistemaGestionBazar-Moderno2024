@@ -1,9 +1,9 @@
-
+import { MagicMotion } from "react-magic-motion";
 import { Modal, Button } from "react-bootstrap";
 import { PedidosContext } from "../../../context/PedidosContext";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
-import { useState, useContext, forwardRef } from "react";
+import { useState, useContext, forwardRef, useId } from "react";
 import { PedidoDetalle } from "./PedidoDetalle";
 
 import ReactToPrint from "react-to-print";
@@ -23,6 +23,7 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
     setPedidoSeleccionado(pedido); // aqui se guardara el pedido seleccionado para que pueda mostrarse en la modal
     handleShow();
   };
+  const tableId = useId(); // id para la tabla de pedidos
   const recibirPedido = async (pedido) => {
     if (pedido.estado === "recibido") {
       Swal.fire({
@@ -113,31 +114,32 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
     listaPedidos.reverse().length / cantidadPedidos
   ); // reverse para que la tabla muestre desde el ultimo usuario creado al primero
   console.log('render')
+ 
   return (
     <section ref={ref}>
-      <table className="table table-striped table-hover">
+      <table className="table table-striped table-hover" style={{filter: showModal && 'blur(0.7px)'}}>
         <thead>
           <tr>
-            <th>#</th>
-            <th>Fecha Creacion</th>
-            <th>Codigo</th>
-            <th>Proveedor</th>
-            <th>Productos</th>
-            <th>Estado</th>
-            <th>Opciones</th>
+            <th id={`${tableId}-numero`}>#</th>
+            <th id={`${tableId}-fechaCreacion`}>Fecha Creacion</th>
+            <th id={`${tableId}-codigo`} >Codigo</th>
+            <th id={`${tableId}-proveedor`}>Proveedor</th>
+            <th id={`${tableId}-productos`}>Productos</th>
+            <th id={`${tableId}-estado`}>Estado</th>
+            <th id={`${tableId}-opciones`}>Opciones</th>
           </tr>
         </thead>
         <tbody>
-          
+          <MagicMotion>
             {pedidosMostrar?.map((pedido, index) => {
               return (
                 <tr key={pedido.id}>
-                  <td>{index + 1}</td>
-                  <td>{pedido?.fecha_pedido.slice(0, 10)}</td>
-                  <td>{pedido?.codigo}</td>
-                  <td>{pedido?.proveedor.nombre}</td>
-                  <td>{pedido?.productos.length}</td>
-                  <td>
+                  <td headers={`${tableId}-numero`}>{index + 1}</td>
+                  <td headers={`${tableId}-fechaCreacion`}>{pedido?.fecha_pedido.slice(0, 10)}</td>
+                  <td eaders={`${tableId}-codigo`}>{pedido?.codigo}</td>
+                  <td headers={`${tableId}-proveedor`}>{pedido?.proveedor.nombre}</td>
+                  <td headers={`${tableId}-productos`}>{pedido?.productos.length}</td>
+                  <td headers={`${tableId}-estado`}>
                     {pedido?.estado.toLowerCase() === "pendiente" && (
                       <p
                         style={{
@@ -199,7 +201,7 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
                       </p>
                     )}
                   </td>
-                  <td className="d-flex gap-1">
+                  <td className="d-flex gap-1" headers={`${tableId}-opciones`}>
                     <button
                       className="btn btn-dark"
                       onClick={() => recibirPedido(pedido)}
@@ -222,7 +224,7 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
                 </tr>
               );
             })}
-        
+          </MagicMotion>
         </tbody>
       </table>
       <Modal show={showModal} onHide={handleClose}>

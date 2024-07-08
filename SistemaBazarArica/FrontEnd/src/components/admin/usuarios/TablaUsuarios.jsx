@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { MagicMotion } from "react-magic-motion";
 import "./styles.css";
-export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, filtro, }) => {
+export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, filtro, showModal}) => {
   // Definir el estado para manejar la página actual, por defecto se mostrara la pagina 1 de la tabla
   if (filtro) {
     // si el input de busqueda tiene algo se filtrara la lista de usuarios
@@ -40,10 +40,9 @@ export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, fil
   ); // reverse para que la tabla muestre desde el ultimo usuario creado al primero
 
   let contador = startIndex + 1; // para numerar los usuarios en la tabla comenzando por el starIndex aumentado en uno
-
   return (
     <section>
-      <table className="table table-striped table-hover mb-0" id="tabla-usuarios">
+      <table className="table table-striped table-hover mb-0" id="tabla-usuarios" style={{filter: showModal && 'blur(0.7px)'}}>
         <thead className="border-bottom">
           <tr>
             {/* <th>Imagen</th> */}
@@ -176,6 +175,7 @@ export const ValidarUsuarios = ({
   borrarPersona,
   edicionUsuario,
   filtro,
+  showModal
 }) => {
 
   const persona = listaPersonas?.length > 0;
@@ -186,6 +186,7 @@ export const ValidarUsuarios = ({
       borrarPersona={borrarPersona}
       edicionUsuario={edicionUsuario}
       filtro={filtro}
+      showModal={showModal}
     />
   ) : (
     <SinUsuarios />

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { MagicMotion } from 'react-magic-motion'
 import './styles.css'
-const MostrarProductos = ({ listaProductos, borrarProducto, edicionProducto, filtro }) => {
+const MostrarProductos = ({ listaProductos, borrarProducto, edicionProducto, filtro, showModal }) => {
   // Definir el estado para manejar la página actual, por defecto se mostrara la pagina 1 de la tabla
   if (filtro) {
 
@@ -30,7 +30,7 @@ const MostrarProductos = ({ listaProductos, borrarProducto, edicionProducto, fil
 
   return (
     <section>
-      <table className="table table-striped table-hover mb-0" id='tabla-productos'>
+      <table className="table table-striped table-hover mb-0" id='tabla-productos' style={{filter: showModal && 'blur(0.7px)'}}>
         <thead>
           <tr>
             <th>#</th>
@@ -112,7 +112,7 @@ const SinProductos = () => {
       </section>
     )
 }
-export const ValidarProductos = ({ listaProductos, borrarProducto, edicionProducto, filtro}) => {
+export const ValidarProductos = ({ listaProductos, borrarProducto, edicionProducto, filtro, showModal}) => {
 
   const validacion = listaProductos.length > 0 // si listaProductos es mayor a 0
   // sera true o false
@@ -120,7 +120,7 @@ export const ValidarProductos = ({ listaProductos, borrarProducto, edicionProduc
   console.log(listaProductos)
   return (
     validacion
-    ? <MostrarProductos listaProductos={listaProductos} borrarProducto={borrarProducto} edicionProducto={edicionProducto} filtro={filtro}/>
+    ? <MostrarProductos listaProductos={listaProductos} borrarProducto={borrarProducto} edicionProducto={edicionProducto} filtro={filtro} showModal={showModal}/>
     : <SinProductos />
   )
 }

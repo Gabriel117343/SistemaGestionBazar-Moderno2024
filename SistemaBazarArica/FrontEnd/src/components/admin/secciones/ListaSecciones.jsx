@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { MagicMotion } from 'react-magic-motion'
 import './secciones.css'
-const MostrarSecciones = ({listaSecciones, borrarSeccion, edicionSeccion, filtro}) => {
+const MostrarSecciones = ({ listaSecciones, borrarSeccion, edicionSeccion, filtro,showModal }) => {
 
   if (filtro) { // si hay un filtro se filtra la lista de secciones sino se muestra la lista completa
     listaSecciones = listaSecciones.filter(seccion => seccion.nombre.toLowerCase().includes(filtro.toLowerCase()) || seccion.numero.toString().toLowerCase().includes(filtro.toLowerCase()) || seccion.descripcion.toLowerCase().includes(filtro.toLowerCase()))
@@ -23,9 +23,10 @@ const MostrarSecciones = ({listaSecciones, borrarSeccion, edicionSeccion, filtro
   const seccionesMostrar = listaSecciones.slice(startIndex, endIndex)
   // Servira para calcular el número total de paginas en función de la cantidad total de elementos y los elementos por página ej: el boton 1, 2, 3 etc..
   const totalBotones = Math.ceil(listaSecciones.reverse().length / cantidadSecciones)// reverse para que la tabla muestre desde el ultimo usuario creado al primero
+  console.log('render')
   return (
       <section>
-        <table className="table table-striped table-hover table-bordered mt-2">
+        <table className="table table-striped table-hover table-bordered mt-2" style={{filter: showModal && 'blur(0.7px)'}}>
         <thead>
           <tr>
             <th scope="col">#</th>
@@ -95,12 +96,12 @@ const SinSecciones = () => {
     </section>
   )
 }
-export const ValidarSecciones = ({listaSecciones, borrarSeccion, edicionSeccion, filtro}) => {
+export const ValidarSecciones = ({ listaSecciones, borrarSeccion, edicionSeccion, filtro, showModal }) => {
 
   const validacion = listaSecciones?.length > 0 // valida si hay secciones , el resultado sera true o false
   return (
     validacion ?
-    <MostrarSecciones listaSecciones={listaSecciones} borrarSeccion={borrarSeccion} edicionSeccion={edicionSeccion} filtro={filtro}/>
+    <MostrarSecciones listaSecciones={listaSecciones} borrarSeccion={borrarSeccion} edicionSeccion={edicionSeccion} filtro={filtro} showModal={showModal}/>
     :
     <SinSecciones />
   )

@@ -139,6 +139,7 @@ export const ListaSeccionesContenedor = () => {
         borrarSeccion={borrarSeccion}
         edicionSeccion={edicionSeccion}
         filtro={seccionBuscada}
+        showModal={showModal}
       />
       <Modal show={showModal} onHide={cerrarModal}>
         <Modal.Header closeButton>

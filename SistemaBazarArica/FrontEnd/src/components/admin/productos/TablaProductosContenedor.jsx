@@ -140,6 +140,7 @@ export const TablaProductosContenedor = () => {
           borrarProducto={borrarProducto}
           edicionProducto={edicionProducto}
           filtro={productoBuscado}
+          showModal={showModal}
         />
       )}
 

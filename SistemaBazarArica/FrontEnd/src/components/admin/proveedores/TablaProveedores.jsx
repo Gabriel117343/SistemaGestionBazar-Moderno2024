@@ -1,15 +1,23 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { MagicMotion } from "react-magic-motion";
+import { FormEdicion } from "./FormEdicion";
+import { Modal } from "react-bootstrap";
+import { toast } from "react-hot-toast";
 import "./styles.css";
-
+import { ProveedoresContext } from "../../../context/ProveedoresContext";
 const MostrarTabla = ({
   listaProveedores,
   borrarProovedor,
-  edicionProveedor,
+  seleccionarProveedor,
+  proveedor,
   filtro,
 }) => {
-  // Definir el estado para manejar la página actual, por defecto se mostrara la pagina 1 de la tabla
-
+  const { stateProveedor: { proveedorSeleccionado }, getProveedorContext } = useContext(ProveedoresContext);
+  const [showModal, setShowModal] = useState(false);
+  const cerrarModal = () => {
+    setShowModal(false);
+  };
+  
   if (filtro) {
     // si el input de busqueda tiene algo se filtrara la lista de usuarios
     listaProveedores = listaProveedores.filter((proveedor) => {
@@ -30,6 +38,16 @@ const MostrarTabla = ({
       </div>
     );
   }
+  const edicionProveedor = async (id) => {
+    toast.loading("Cargando...", { id: "loading" });
+    const { success, message } = await getProveedorContext(id);
+    if (success) {
+      toast.dismiss("loading")
+      setShowModal(true);
+    } else {
+      toast.error(message ?? 'Ha ocurrido un Error inesperado', { id: "loading" });
+    }
+  };
   const [currentPage, setCurrentPage] = useState(1);
   // Se define la cantidad de usuarios a mostrar por pagina
   const cantidadProveedores = 10;
@@ -42,10 +60,10 @@ const MostrarTabla = ({
   const totalBotones = Math.ceil(
     listaProveedores.reverse().length / cantidadProveedores
   ); // reverse para que la tabla muestre desde el ultimo usuario creado al primero
-  let contador = startIndex + 1; // para numerar los usuarios en la tabla comenzando por el starIndex aumentado en uno
+ 
   return (
     <section>
-      <table className="table table-striped table-hover mb-0" id="tabla-proveedores">
+      <table className="table table-striped table-hover mb-0" id="tabla-proveedores" style={{filter: showModal && 'blur(0.7px)'}}>
         <thead className="border-bottom">
           <tr>
             <th>#</th>
@@ -120,6 +138,17 @@ const MostrarTabla = ({
           </button>
         ))}
       </div>
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton className="bg-info">
+          <Modal.Title>Editar Proveedor</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <FormEdicion
+            cerrarModal={cerrarModal}
+            proveedor={proveedorSeleccionado}
+          />
+        </Modal.Body>
+      </Modal>
     </section>
   );
 };
@@ -158,7 +187,6 @@ const SinProveedores = () => {
 export const ValidarProveedores = ({
   listaProveedores,
   borrarProovedor,
-  edicionProveedor,
   filtro,
 }) => {
   const validacion = listaProveedores.length > 0; // si listaProveedores es mayor a 0
@@ -168,7 +196,6 @@ export const ValidarProveedores = ({
     <MostrarTabla
       listaProveedores={listaProveedores}
       borrarProovedor={borrarProovedor}
-      edicionProveedor={edicionProveedor}
       filtro={filtro}
     />
   ) : (
