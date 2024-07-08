@@ -1,6 +1,7 @@
 import { MagicMotion as Animar } from "react-magic-motion";
 import { useState } from 'react'
 const ListaVentas = ({ ventas }) => {
+  
   const [currentPage, setCurrentPage] = useState(1);
   const cantidadVentas = 12;
   const startIndex = (currentPage - 1) * cantidadVentas;

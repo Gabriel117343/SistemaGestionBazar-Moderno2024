@@ -177,7 +177,7 @@ export const ValidarUsuarios = ({
   edicionUsuario,
   filtro,
 }) => {
-  console.log(listaPersonas);
+
   const persona = listaPersonas?.length > 0;
   // si persona es igual a true o false
   return persona ? (

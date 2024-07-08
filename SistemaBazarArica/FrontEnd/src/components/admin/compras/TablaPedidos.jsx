@@ -1,4 +1,4 @@
-import { MagicMotion } from "react-magic-motion";
+
 import { Modal, Button } from "react-bootstrap";
 import { PedidosContext } from "../../../context/PedidosContext";
 import Swal from "sweetalert2";
@@ -112,6 +112,7 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
   const totalBotones = Math.ceil(
     listaPedidos.reverse().length / cantidadPedidos
   ); // reverse para que la tabla muestre desde el ultimo usuario creado al primero
+  console.log('render')
   return (
     <section ref={ref}>
       <table className="table table-striped table-hover">
@@ -127,7 +128,7 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
           </tr>
         </thead>
         <tbody>
-          <MagicMotion>
+          
             {pedidosMostrar?.map((pedido, index) => {
               return (
                 <tr key={pedido.id}>
@@ -221,7 +222,7 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
                 </tr>
               );
             })}
-          </MagicMotion>
+        
         </tbody>
       </table>
       <Modal show={showModal} onHide={handleClose}>
