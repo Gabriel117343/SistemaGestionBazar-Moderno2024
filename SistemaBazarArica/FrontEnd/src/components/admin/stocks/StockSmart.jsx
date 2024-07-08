@@ -62,6 +62,8 @@ export const StockSmart = () => {
 
   const cambiarFiltroNombre = (textoFiltro) => {
     // filtrar por nombre, proveedor o codigo
+    console.log(textoFiltro)
+    if (textoFiltro.trim().length === 0) return setStockFiltrado(productos);
     selectRef.current.value = "all";
     let nuevoFiltro = productos.filter((producto) => {
       return (
@@ -106,7 +108,7 @@ export const StockSmart = () => {
   const imprimirTabla = () => {
     print();
   };
-  const debounceCambiarFiltroNombre = useRefreshDebounce(cambiarFiltroNombre, 300); // Debounce para retrazar la ejecucion de la funcion cambiarFiltro
+  const debounceCambiarFiltroNombre = debounce(cambiarFiltroNombre, 300); // Debounce para retrazar la ejecucion de la funcion cambiarFiltro
   
 
   const filtroActivo =
@@ -141,7 +143,7 @@ export const StockSmart = () => {
               className="form-control"
               type="text"
               placeholder="Buscar por nombre, proveedor o codigo"
-              onChange={(e) => debounceCambiarFiltroNombre(e.target.value)}
+              onChange={e => debounceCambiarFiltroNombre(e.target.value)}
             />
           </div>
           

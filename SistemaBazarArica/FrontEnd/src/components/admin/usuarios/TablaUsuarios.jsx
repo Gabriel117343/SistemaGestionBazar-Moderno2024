@@ -1,29 +1,10 @@
 import { useState } from "react";
 import { MagicMotion } from "react-magic-motion";
 import "./styles.css";
-export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, filtro, showModal}) => {
-  // Definir el estado para manejar la página actual, por defecto se mostrara la pagina 1 de la tabla
-  if (filtro) {
-    // si el input de busqueda tiene algo se filtrara la lista de usuarios
-    listaPersonas = listaPersonas.filter((persona) => {
-      return (
-        persona.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
-        persona.apellido.toLowerCase().includes(filtro.toLowerCase()) ||
-        persona.rut.toLowerCase().includes(filtro.toLowerCase()) ||
-        persona.email.toLowerCase().includes(filtro.toLowerCase()) ||
-        persona.telefono.toLowerCase().includes(filtro.toLowerCase()) ||
-        persona.rol.toLowerCase().includes(filtro.toLowerCase()) 
-      );
-    });
-  }
-  if (listaPersonas.length === 0) {
-    return (
-      <div className="alert alert-warning mt-3" role="alert">
-        No se han encontrado usuarios con ese nombre
-      </div>
-    );
-  }
+export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, showModal}) => {
+ 
   const [currentPage, setCurrentPage] = useState(1);
+
   console.log(listaPersonas)
   // Se define la cantidad de usuarios a mostrar por pagina
   const cantidadUsuarios = 10;
@@ -36,10 +17,8 @@ export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, fil
 
   // Servira para calcular el número total de páginas en función de la cantidad total de elementos y los elementos por página ej: el boton 1, 2, 3 etc..
   const totalBotones = Math.ceil(
-    listaPersonas.reverse().length / cantidadUsuarios
-  ); // reverse para que la tabla muestre desde el ultimo usuario creado al primero
-
-  let contador = startIndex + 1; // para numerar los usuarios en la tabla comenzando por el starIndex aumentado en uno
+    listaPersonas.length / cantidadUsuarios
+  ); // toReversed crea una copia superficial del array y lo invierte, 
   return (
     <section>
       <table className="table table-striped table-hover mb-0" id="tabla-usuarios" style={{filter: showModal && 'blur(0.7px)'}}>
@@ -62,10 +41,10 @@ export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, fil
         </thead>
         <tbody>
           <MagicMotion>
-            {usuariosMostrar.map((person) => (
+            {usuariosMostrar.map((person, index) => (
               <tr key={person.id}>
                 {/* <th className=' pt-0 pb-0'><img className='usuario-imagen p-0 m-0' src={person.imagen ? person.imagen : 'https://w7.pngwing.com/pngs/807/180/png-transparent-user-account-resume-curriculum-vitae-europe-others-service-resume-logo-thumbnail.png'} alt='imagen' /></th> */}
-                <td>{contador++}</td>
+                <td>{index + 1}</td>
                 <td>{person.rut}</td>
                 <td className="text-capitalize">{person.nombre}</td>
                 <td>{person.apellido}</td>
@@ -152,21 +131,10 @@ export const SinUsuarios = () => {
             <th>Opciones</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-          </tr>
-        </tbody>
       </table>
-      <h1 className="text-center pt-5">No Hay Usuarios Registrados</h1>
+      <div className="alert alert-warning mt-3" role="alert">
+        <h5 className="text-center">No se han encontrado Usuarios</h5>
+      </div>
     </section>
   );
 };
@@ -174,7 +142,6 @@ export const ValidarUsuarios = ({
   listaPersonas,
   borrarPersona,
   edicionUsuario,
-  filtro,
   showModal
 }) => {
 
@@ -185,7 +152,6 @@ export const ValidarUsuarios = ({
       listaPersonas={listaPersonas}
       borrarPersona={borrarPersona}
       edicionUsuario={edicionUsuario}
-      filtro={filtro}
       showModal={showModal}
     />
   ) : (

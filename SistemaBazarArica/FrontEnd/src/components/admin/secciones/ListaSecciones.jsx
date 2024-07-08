@@ -22,7 +22,7 @@ const MostrarSecciones = ({ listaSecciones, borrarSeccion, edicionSeccion, filtr
   // Obtener los elementos a mostrar en la página actual, slice filtrara el inicio a fin
   const seccionesMostrar = listaSecciones.slice(startIndex, endIndex)
   // Servira para calcular el número total de paginas en función de la cantidad total de elementos y los elementos por página ej: el boton 1, 2, 3 etc..
-  const totalBotones = Math.ceil(listaSecciones.reverse().length / cantidadSecciones)// reverse para que la tabla muestre desde el ultimo usuario creado al primero
+  const totalBotones = Math.ceil(listaSecciones.length / cantidadSecciones)// reverse para que la tabla muestre desde el ultimo usuario creado al primero
   console.log('render')
   return (
       <section>
@@ -80,19 +80,11 @@ const SinSecciones = () => {
             <th scope="col">Descripción</th>
             <th scope="col">Acciones</th>
           </tr>
-
         </thead>
-        <tbody>
-          <tr>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-          </tr>
-        </tbody>
       </table>
-      <h1 className='text-center pt-5'>No Hay Secciones Registradas</h1>
+      <div className="alert alert-warning mt-3" role="alert">
+        <h5 className="text-center">No se han encontrado Secciónes</h5>
+      </div>
     </section>
   )
 }

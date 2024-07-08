@@ -70,11 +70,11 @@ export const TablaPedidosContenedor = () => {
     <FormOrdenCompra volver={cambiarSeleccionForm} />
   ) : (
     <>
-      <div className="row d-flex mb-2">
-        <div className="col-md-2">
+      <div className="column d-flex mb-2 gap-1">
+        <div className="col-md-2 col-sm-2 col-xs-2 ">
           <ButtonNew onClick={cambiarSeleccionForm}>Nuevo Pedido</ButtonNew>
         </div>
-        <div className="col-md-10 d-flex align-items-center justify-content-center gap-2">
+        <div className="col-md-10 col-sm-10 col-xs-11 d-flex align-items-center justify-content-center gap-2">
           <i className="bi bi-search"></i>
           <input
             ref={inputRef}

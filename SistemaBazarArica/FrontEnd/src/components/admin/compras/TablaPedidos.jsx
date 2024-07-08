@@ -111,7 +111,7 @@ const MostrarPedidos = forwardRef(({ refrescar, listaPedidos, componentRef }, re
   const pedidosMostrar = listaPedidos.slice(startIndex, endIndex);
   // para calcular el numero total de paginas en funcion de la cantidad total de elementos y los elementos por pagina ej: el boton 1, 2, 3 etc..
   const totalBotones = Math.ceil(
-    listaPedidos.reverse().length / cantidadPedidos
+    listaPedidos.length / cantidadPedidos
   ); // reverse para que la tabla muestre desde el ultimo usuario creado al primero
   console.log('render')
  
@@ -277,11 +277,9 @@ const SinPedidos = () => {
             <th>Opciones</th>
           </tr>
         </thead>
-        
-        
       </table>
       <div className="alert alert-warning mt-3" role="alert">
-        No se han encontrado Ordenes de compra
+        <h5 className="text-center">No se han encontrado Pedidos</h5>
       </div>
     </section>
   );

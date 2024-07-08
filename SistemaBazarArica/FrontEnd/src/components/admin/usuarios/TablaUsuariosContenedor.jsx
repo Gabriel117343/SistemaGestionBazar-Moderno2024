@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { ValidarUsuarios } from "./TablaUsuarios";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
@@ -13,11 +13,6 @@ import { ButtonNew } from "../../shared/ButtonNew";
 import CargaDeDatos from '../../../views/CargaDeDatos'
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 export const TablaUsuariosContenedor = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
-  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
-  const [usuarioBuscado, setUsuarioBuscado] = useState(""); // Nuevo estado para el input de busqueda
-  const [loading, setLoading] = useState(true);
 
   const {
     stateUsuario: { usuarios },
@@ -25,6 +20,15 @@ export const TablaUsuariosContenedor = () => {
     getUsuario,
     getUsuarios,
   } = useContext(UsuariosContext);
+  
+  const [showModal, setShowModal] = useState(false);
+  const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
+  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
+  
+  const [isLoading, setIsLoading] = useState(true);
+  const [usuariosFiltrados, setUsuariosFiltrados] = useState(usuarios); // Nuevo estado para el input de busqueda
+
+  const inputFiltroRef = useRef(null);
   useEffect(() => { 
     toast.dismiss({ id: "toastId" });
     
@@ -32,9 +36,9 @@ export const TablaUsuariosContenedor = () => {
       toast.loading("Cargando Usuarios...", { duration: 2000, id: "toastId"});
       const { success, message } = await getUsuarios();
       if (success) {
-        setLoading(false);
+        setIsLoading(false);
         toast.success(message, { id: "toastId" });
-        setLoading(false);
+        setIsLoading(false);
       } else {
         toast.error(message ?? "Ha ocurrido un error inesperado al cargar los Usuarios", { id: "toastId" });
       }
@@ -79,8 +83,21 @@ export const TablaUsuariosContenedor = () => {
     setShowRegistroModal(false); // Cerrar la modal de registro
     setShowModal(false); // Cerrar la modal de edicion
   };
-  const cambiarFiltro = (event) => {
-    setUsuarioBuscado(event.target.value);
+  const cambiarFiltro = (filtro) => {
+    if (filtro.trim().length === 0) {
+      setUsuariosFiltrados(usuarios);
+      return
+    }
+    const resultadoFiltro = usuarios.filter(usuario => {
+      return usuario.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
+        usuario.apellido.toLowerCase().includes(filtro.toLowerCase()) ||
+        usuario.rut.toLowerCase().includes(filtro.toLowerCase()) ||
+        usuario.email.toLowerCase().includes(filtro.toLowerCase()) ||
+        usuario.telefono.toLowerCase().includes(filtro.toLowerCase()) ||
+        usuario.rol.toLowerCase().includes(filtro.toLowerCase())
+    })
+    setUsuariosFiltrados(resultadoFiltro);
+
   };
   const debounceCambiarFiltro = debounce(cambiarFiltro, 300); // Debounce para retrazar la ejecucion de la funcion cambiarFiltro
   // Acciones
@@ -99,7 +116,7 @@ export const TablaUsuariosContenedor = () => {
   const imprimirTabla = () => {
     print();
   };
-
+  const filtroActivo = inputFiltroRef.current?.value.length > 0;
   return (
     <section>
       <div className="row d-flex mb-2">
@@ -111,10 +128,11 @@ export const TablaUsuariosContenedor = () => {
         <div className="col-md-10 d-flex gap-2 align-items-center">
           <i class="bi bi-search"></i>
           <input
+            ref={inputFiltroRef}
             className="form-control"
             type="text"
             placeholder="Buscar por nombre, apellido, edad, telefono, rut, email..."
-            onChange={debounceCambiarFiltro}
+            onChange={e => debounceCambiarFiltro(e.target.value)}
           />
           <button
             className="btn btn-outline-primary btn-nuevo-animacion"
@@ -130,20 +148,17 @@ export const TablaUsuariosContenedor = () => {
           </button>
         </div>
       </div>
-      {loading ? (
+      {isLoading ? (
         <CargaDeDatos />
       )
       : (
         <ValidarUsuarios
-        listaPersonas={usuarios}
+        listaPersonas={filtroActivo ? usuariosFiltrados : usuarios}
         borrarPersona={borrarPersona}
         edicionUsuario={edicionUsuario}
-        filtro={usuarioBuscado}
         showModal={showModal}
       />
       )}
-      
-
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton className="bg-info">
           <Modal.Title>Editar Usuario</Modal.Title>

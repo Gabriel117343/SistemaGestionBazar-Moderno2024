@@ -25,7 +25,7 @@ const MostrarProductos = ({ listaProductos, borrarProducto, edicionProducto, fil
   // Obtener los elementos a mostrar en la página actual, slice filtrara el inicio a fin
   const productosMostrar = listaProductos.slice(startIndex, endIndex)
   // para calcular el numero total de paginas en funcion de la cantidad total de elementos y los elementos por pagina ej: el boton 1, 2, 3 etc..
-  const totalBotones = Math.ceil(listaProductos.reverse().length / cantidadProductos)// reverse para que la tabla muestre desde el ultimo usuario creado al primero
+  const totalBotones = Math.ceil(listaProductos.length / cantidadProductos)// reverse para que la tabla muestre desde el ultimo usuario creado al primero
   let contador = startIndex + 1 // para numerar los usuarios en la tabla comenzando por el starIndex aumentado en uno
 
   return (
@@ -94,21 +94,12 @@ const SinProductos = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-            </tr>
           </tbody>
 
         </table>
-        <h1 className="text-center pt-4">No Hay Productos Registrados</h1>
+        <div className="alert alert-warning mt-3" role="alert">
+          <h4 className="text-center">No se han encontrado Productos</h4>
+        </div>
       </section>
     )
 }

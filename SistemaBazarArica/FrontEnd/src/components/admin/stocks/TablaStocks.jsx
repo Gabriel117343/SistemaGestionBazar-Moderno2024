@@ -104,12 +104,9 @@ const SinStocks = () => {
           </tr>
         </thead>
     </table>
-      
-      <section>
-      <div className="alert alert-warning mt-3" role="alert">
-        No se han encontrado stocks
-      </div>
-      </section>
+    <div className="alert alert-warning mt-3" role="alert">
+      <h5 className="text-center">No se han Stocks de Productos</h5>
+    </div>
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import swal from "sweetalert2";
 import { toast } from "react-hot-toast";
 import { ProveedoresContext } from "../../../context/ProveedoresContext";
@@ -13,15 +13,18 @@ import "./styles.css";
 import { ButtonNew } from "../../shared/ButtonNew";
 export const TablaProveedoresContenedor = () => {
 
-  const [isLoading, setIsLoading] = useState(true); // Nuevo estado para la carga de la pagina
-  const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
-
-  const [proveedorBuscado, setProveedorBuscado] = useState(null); // Nuevo estado para el input de busqueda
   const {
     stateProveedor: { proveedores },
     eliminarProveedor,
     getProveedoresContext,
   } = useContext(ProveedoresContext);
+
+  const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
+  const [proveedoresFiltrados, setProveedoresFiltrados] = useState(proveedores); // Nuevo estado para el input de busqueda
+
+  const [isLoading, setIsLoading] = useState(true); // Nuevo estado para la carga de la pagina
+
+  const inputFiltroRef = useRef(null); // Referencia al input de busqueda
 
   useEffect(() => {
     async function cargar () {
@@ -67,8 +70,19 @@ export const TablaProveedoresContenedor = () => {
   const cerrarModal = () => {
     setShowRegistroModal(false); // Cerrar la modal de registro
   };
-  const cambiarFiltro = (event) => {
-    setProveedorBuscado(event.target.value);
+  const cambiarFiltro = (filtro) => {
+    if (filtro.trim().length === 0) return setProveedoresFiltrados(proveedores); // si el input esta vacio no se filtra nada y se muestra la lista completa
+    const nuevaLista = proveedores.filter(proveedor => {
+      return (
+        proveedor.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
+        proveedor.persona_contacto
+          .toLowerCase()
+          .includes(filtro.toLowerCase()) ||
+        proveedor.telefono.toLowerCase().includes(filtro.toLowerCase()) ||
+        proveedor.direccion.toLowerCase().includes(filtro.toLowerCase())
+      );
+    })
+    setProveedoresFiltrados(nuevaLista);
   };
   const debounceCambiarFiltro = debounce(cambiarFiltro, 500); // Debounce para que no se ejecute la funcion cada vez que se escribe una letra
   // Acciones extra
@@ -88,6 +102,7 @@ export const TablaProveedoresContenedor = () => {
   const imprimirTabla = () => {
     print();
   };
+  const busquedaActiva = inputFiltroRef.current?.value.length > 0;
   return (
     <section className="pt-2">
       <div className="row d-flex mb-2">
@@ -99,10 +114,11 @@ export const TablaProveedoresContenedor = () => {
         <div className="col-md-10 d-flex gap-2 align-items-center">
           <i className="bi bi-search"></i>
           <input
+           ref={inputFiltroRef}
             className="form-control"
             type="text"
             placeholder="Buscar por nombre, persona de contacto, telefono..."
-            onChange={debounceCambiarFiltro}
+            onChange={e => debounceCambiarFiltro(e.target.value)}
           />
           <button
             className="btn btn-outline-primary btn-nuevo-animacion"
@@ -120,9 +136,8 @@ export const TablaProveedoresContenedor = () => {
       </div>
       { isLoading ? <CargaDeDatos /> : (
         <ValidarProveedores
-        listaProveedores={proveedores}
+        listaProveedores={busquedaActiva ? proveedoresFiltrados : proveedores}
         borrarProovedor={borrarProveedor}
-        filtro={proveedorBuscado}
       />
       )
       }

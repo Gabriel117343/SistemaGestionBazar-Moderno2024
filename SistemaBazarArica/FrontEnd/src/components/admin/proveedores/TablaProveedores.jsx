@@ -8,9 +8,6 @@ import { ProveedoresContext } from "../../../context/ProveedoresContext";
 const MostrarTabla = ({
   listaProveedores,
   borrarProovedor,
-  seleccionarProveedor,
-  proveedor,
-  filtro,
 }) => {
   const { stateProveedor: { proveedorSeleccionado }, getProveedorContext } = useContext(ProveedoresContext);
   const [showModal, setShowModal] = useState(false);
@@ -18,26 +15,7 @@ const MostrarTabla = ({
     setShowModal(false);
   };
   
-  if (filtro) {
-    // si el input de busqueda tiene algo se filtrara la lista de usuarios
-    listaProveedores = listaProveedores.filter((proveedor) => {
-      return (
-        proveedor.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
-        proveedor.persona_contacto
-          .toLowerCase()
-          .includes(filtro.toLowerCase()) ||
-        proveedor.telefono.toLowerCase().includes(filtro.toLowerCase()) ||
-        proveedor.direccion.toLowerCase().includes(filtro.toLowerCase())
-      );
-    });
-  }
-  if (listaProveedores.length === 0) {
-    return (
-      <div className="alert alert-warning mt-3" role="alert">
-        No se han encontrado proveedores con ese nombre
-      </div>
-    );
-  }
+
   const edicionProveedor = async (id) => {
     toast.loading("Cargando...", { id: "loading" });
     const { success, message } = await getProveedorContext(id);
@@ -58,7 +36,7 @@ const MostrarTabla = ({
   const proveedoresMostrar = listaProveedores.slice(startIndex, endIndex);
   // Servira para calcular el número total de páginas en función de la cantidad total de elementos y los elementos por página ej: el boton 1, 2, 3 etc..
   const totalBotones = Math.ceil(
-    listaProveedores.reverse().length / cantidadProveedores
+    listaProveedores.length / cantidadProveedores
   ); // reverse para que la tabla muestre desde el ultimo usuario creado al primero
  
   return (
@@ -168,19 +146,11 @@ const SinProveedores = () => {
             <th>Opciones</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-            <th>-</th>
-          </tr>
-        </tbody>
       </table>
-      <h1 className="text-center pt-5">No Hay Proveedores Registrados</h1>
+      
+      <div className="alert alert-warning mt-3" role="alert">
+        <h5 className="text-center">No se han encontrado Proveedores Registrados</h5>
+      </div>
     </section>
   );
 };

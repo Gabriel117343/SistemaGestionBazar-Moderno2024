@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { ValidarSecciones } from "./ListaSecciones";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
@@ -10,10 +10,9 @@ import { FormRegistroSecciones } from "./FormRegistroSecciones";
 import { debounce } from "lodash";
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 import { ButtonNew } from "../../shared/ButtonNew";
+import CargaDeDatos from '../../../views/CargaDeDatos'
 export const ListaSeccionesContenedor = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
-  const [seccionBuscada, setSeccionBuscada] = useState(null); // Nuevo estado para el input de busqueda
+
   const {
     stateSeccion: { secciones, seccionSeleccionada },
     eliminarSeccionContext,
@@ -22,6 +21,12 @@ export const ListaSeccionesContenedor = () => {
     actualizarSeccionContext,
     crearSeccionContext,
   } = useContext(SeccionesContext);
+  const [showModal, setShowModal] = useState(false);
+  const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
+  const [seccionBuscada, setSeccionBuscada] = useState(null); // Nuevo estado para el input de busqueda
+  const [isLoading, setIsLoading] = useState(true)
+  const [seccionesFiltradas, setSeccionesFiltradas] = useState(secciones);
+  const imputFiltroRef = useRef(null); // Referencia al input de busqueda
 
   useEffect(() => {
     toast.dismiss({ id: "loading" });
@@ -30,9 +35,9 @@ export const ListaSeccionesContenedor = () => {
       const { success, message} = await getSeccionesContext(); // se ejecuta la funcion getProductos del contexto de los productos
 
       if (success) {
+        setIsLoading(false);
         toast.success(message, { id: 'loading' });
       } else {
-  
         toast.error(message ?? 'Ha ocurrido un error inesperado al cargar las Secciones', { duration: 2000, id: 'loading' });
       }
     };
@@ -79,10 +84,12 @@ export const ListaSeccionesContenedor = () => {
     setShowModal(false);
     setShowRegistroModal(false); // Cerrar la modal de registro
   };
-  const cambiarFiltro = (event) => {
-    event.preventDefault();
-    const filtro = event.target.value;
-    setSeccionBuscada(filtro); // Guarda el nuevo filtro en el estado
+  const cambiarFiltro = (filtro) => {
+    if (filtro.trim().length === 0) return seccionesFiltradas(secciones); // si el input esta vacio no se filtra nada y se muestra la lista completa
+    const nuevaLista = secciones.filter(seccion => {
+      return seccion.nombre.toLowerCase().includes(filtro.toLowerCase()) || seccion.numero.toString().toLowerCase().includes(filtro.toLowerCase()) || seccion.descripcion.toLowerCase().includes(filtro.toLowerCase())
+    })
+    setSeccionesFiltradas(nuevaLista);
   };
   const debounceCambiarFiltro = debounce(cambiarFiltro, 300); // retrasa la ejucion de la funcion cambiar filtro por 300 milisegundos
   // ACCIONES EXTRA ------------------
@@ -102,7 +109,7 @@ export const ListaSeccionesContenedor = () => {
   const imprimirTabla = () => {
     print();
   };
-
+  const busquedaActiva = imputFiltroRef.current?.value.length > 0;
   return (
     <section className="pt-2">
       <div className="row">
@@ -115,7 +122,8 @@ export const ListaSeccionesContenedor = () => {
         <div className="col-md-10 d-flex align-items-center gap-3">
           <i className="bi bi-search"></i>
           <input
-            onChange={debounceCambiarFiltro}
+            ref={imputFiltroRef}
+            onChange={e => debounceCambiarFiltro(e.target.value)}
             className="form-control"
             type="text"
             placeholder="Buscar por nombre, numero, descripcion..."
@@ -134,13 +142,18 @@ export const ListaSeccionesContenedor = () => {
           </button>
         </div>
       </div>
-      <ValidarSecciones
-        listaSecciones={secciones}
-        borrarSeccion={borrarSeccion}
-        edicionSeccion={edicionSeccion}
-        filtro={seccionBuscada}
-        showModal={showModal}
-      />
+      {
+        isLoading ? <CargaDeDatos /> : (
+          <ValidarSecciones
+          listaSecciones={busquedaActiva ? seccionesFiltradas : secciones}
+          borrarSeccion={borrarSeccion}
+          edicionSeccion={edicionSeccion}
+          filtro={seccionBuscada}
+          showModal={showModal}
+        />
+        )
+      }
+      
       <Modal show={showModal} onHide={cerrarModal}>
         <Modal.Header closeButton>
           <Modal.Title>Editar Seccion</Modal.Title>
