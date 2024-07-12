@@ -8,14 +8,10 @@ import { debounce } from "lodash";
 import { ValidarProductos } from "./ListaProductos";
 // import { withLoadingImage } from '../../../hocs/withLoadingImage'
 export const FiltroProductos = () => {
-  const {
-    stateSeccion: { secciones },
-    getSeccionesContext,
-  } = useContext(SeccionesContext);
-  const {
-    stateProducto: { productos },
-    getProductosContext,
-  } = useContext(ProductosContext);
+  
+  const {stateSeccion: { secciones }, getSeccionesContext } = useContext(SeccionesContext);
+  const { stateProducto: { productos }, getProductosContext } = useContext(ProductosContext);
+  
   const [isLoading, setIsLoading] = useState(true);
   const [productosFiltrados, setProductosFiltrados] = useState(productos);
   const [filtroPorSeccionActivo, setFiltroPorSeccionActivo] = useState(false);
@@ -23,13 +19,14 @@ export const FiltroProductos = () => {
   const tipoRef = useRef(null);
   const buscadorRef = useRef(null);
   const INCLUIR_INACTIVOS = false // no se incluyen los productos inactivos
+
   useEffect(() => {
     const cargarProductos = async () => {
       toast.loading("Cargando productos...", { id: "loading" });
       const { success, message } = await getProductosContext(INCLUIR_INACTIVOS);
       if (success) {
         toast.success(message ?? "Productos cargados", { id: "loading" });
-        setIsLoading(false);
+        setIsLoading(false); // se desactiva el componente de carga
       } else {
         toast.error(
           message ?? "Ha ocurrido un error inesperado al cargar los productos", { id: "loading" }

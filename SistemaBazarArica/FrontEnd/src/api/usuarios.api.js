@@ -2,6 +2,8 @@ import { createApiInstance } from './config/axiosConfig';
 
 const usuariosApi = createApiInstance('usuarios/datos/v1/usuarios')
 // Este es el crud
+
+// Authenticación basada en token JWT (Json Web Token) con Django Rest Framework (DRF) y React
 export const getAllUsers = (token) => {
   // return axios.get("http://127.0.0.1:8000/usuarios/datos/v1/usuarios/") > anterior
   return usuariosApi.get('/', {
@@ -18,8 +20,6 @@ export const getUser = (id, token) => {
   })
 }
 export const createUser = async (usuario, token) => { // es necesario enviar la imagen como parametro para que se pueda enviar al servidor
-  console.log(usuario)
-  console.log(token)
   return usuariosApi.post('/', usuario, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -42,6 +42,3 @@ export const updateUser = (id, usuario, token) => {
     }
   })
 }
-
-
-// SIMULACION DE LA API DE USUARIOS EN DJANGO COMO BACKEND

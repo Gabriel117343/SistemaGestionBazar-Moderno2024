@@ -140,8 +140,10 @@ class LoginView(APIView):
         # 2 autentica al usuario  
         user = authenticate(request, email=email, password=password) # autentica al usuario
 
+
         if user is not None:
             auth_login(request, user)  # Logea al usuario en el sistema
+
 
             try:
                 # Genera tokens de acceso y actualización para el usuario
@@ -150,7 +152,8 @@ class LoginView(APIView):
 
                 user = request.user
                 user.last_login = timezone.now()  # Actualiza la última vez que el usuario inició sesión
-                
+                # Guarda el token de refresco en el modelo de tokens pendientes
+            
                 user.save()
                 current_site = get_current_site(request)  # Obteniendo el dominio actual
                 domain = current_site.domain
@@ -205,6 +208,9 @@ class LogoutView(APIView):
                 raise AuthenticationFailed('Invalid refresh token')
 
              # Se añade el token a la lista de tokens pendientes de eliminación
+            print('Token ---------------------', token)
+            # remover el token de el oustading y agregarlo a la blacklist
+            
             token.blacklist()
 
             # Actualizar el último inicio de sesión del usuario

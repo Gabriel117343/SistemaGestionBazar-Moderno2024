@@ -221,7 +221,6 @@ export const FormRegistroUsuarios = ({ cerrarModal }) => {
               <div className='advertencia'>
                 <p className='d-block text-danger m-0'>{claseRut.advertencia}</p>
               </div>
-
             </div>
 
             <div className='form-group'>

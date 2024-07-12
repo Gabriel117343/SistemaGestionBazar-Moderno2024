@@ -55,6 +55,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'backend.views.JWTQueryParameterMiddleware', # esto es para que se pueda enviar el token jwt por la url
     'backend.views.ActualizarUltimaActividadMiddleware', # esto es para actualizar la ultima actividad del usuario
+    'backend.middleware.TokenCleanupMiddleware', # esto es para limpiar la lista negra de tokens
 ]
 
 ROOT_URLCONF = 'formulario.urls'

@@ -21,6 +21,6 @@ class UsuarioAdmin(admin.ModelAdmin):
     list_display = ('id', 'rut', 'nombre', 'apellido', 'email', 'telefono', 'jornada', 'rol') # campos a mostrar en la tabla de usuarios en el admin
     list_filter = ('rol',) # filtro por rol
     search_fields = ('rut', 'nombre', 'apellido', 'email', 'telefono', 'jornada', 'rol') # búsqueda por rut, nombre, apellido, email, telefono, jornada y rol
-    list_per_page = 3 # paginación de 3 en 3
-
+    list_per_page = 10 # paginación de 10 en 10 
+    
     

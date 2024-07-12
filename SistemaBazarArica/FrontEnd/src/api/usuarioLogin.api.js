@@ -1,12 +1,13 @@
 import { createApiInstance } from './config/axiosConfig';
+// PETICIONES ASINCRONAS PARA EL LOGIN, LOGOUT Y OBTENER USUARIO ACTUAL CON AXIOS PERSONALIZADO
 
 const usuarioLoginApi = createApiInstance('usuarios/login')
-
 const usuarioLogoutApi = createApiInstance('usuarios/logout')
 
 const usuarioGetApi = createApiInstance('usuarios/get_usuario_logeado')
-
 const usuarioRefreshTokenApi = createApiInstance('usuarios/api/token/refresh')
+
+// Authenticación basada en token JWT (Json Web Token) con Django Rest Framework (DRF) y React
 
 export const login = async (usuario) => {
   
