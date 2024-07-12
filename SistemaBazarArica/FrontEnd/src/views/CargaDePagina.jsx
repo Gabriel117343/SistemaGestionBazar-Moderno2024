@@ -1,4 +1,5 @@
 import "./views.css";
+// Para mostrar un spinner de carga de página en el centro de la pantalla mientras se carga la página
 export const CargaDePagina = () => {
   return (
     <section
