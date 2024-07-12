@@ -1,4 +1,6 @@
 import "./views.css";
+
+// Mientras se cargan los datos, se muestra un spinner de carga de datos en el centro de la pantalla
 export default function CargaDeDatos() {
   return (
     <div className="d-flex justify-content-center pt-5">
