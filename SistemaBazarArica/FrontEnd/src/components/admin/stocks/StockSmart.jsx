@@ -79,16 +79,23 @@ export const StockSmart = () => {
   };
 
   const filtrarPorProveedor = (idProveedor) => {
-    console.log('first')
+
     inputRef.current.value = "";
-    if (idProveedor === "all") return setStockFiltrado(productos);
-    console.log(productos)
-    let nuevoFiltro = productos.filter((producto) => {
-      return producto.proveedor.id === parseInt(idProveedor);
-    });
-    setStockFiltrado(nuevoFiltro);
-    // Navegar a la ruta con el id del proveedor
-    navigate(`/admin/stocks/${idProveedor}`);
+    if (idProveedor === "all") {
+      setStockFiltrado(productos);
+      navigate("/admin/stocks");
+      return;
+    } else {
+      // Filtrar por proveedor
+      console.log(productos)
+      let nuevoFiltro = productos.filter((producto) => {
+        return producto.proveedor.id === parseInt(idProveedor);
+      });
+      setStockFiltrado(nuevoFiltro);
+      // Navegar a la ruta con el id del proveedor
+      navigate(`/admin/stocks/${idProveedor}`);
+    }
+    
   };
 
   // Acciones extra

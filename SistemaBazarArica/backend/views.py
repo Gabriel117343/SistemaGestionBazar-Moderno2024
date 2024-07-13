@@ -21,6 +21,7 @@ from rest_framework.response import Response
 import json
 import os # para eliminar la imagen anterior cuando se actualiza la imagen de un usuario
 
+from rest_framework.exceptions import NotFound
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from django.core.mail import send_mail # para enviar correos
@@ -50,7 +51,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 # lista negra de tokens para bloquear tokens de acceso y actualización que se han utilizado
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 
-import blurhash # para generar blurhash para las imagenes
+
 from django.utils.deprecation import MiddlewareMixin
 from rest_framework.documentation import include_docs_urls
 
@@ -475,9 +476,11 @@ class SeccionView(viewsets.ModelViewSet):
             return Response({'error': 'Error al obtener las Secciones'}, status=status.HTTP_400_BAD_REQUEST)
     def destroy(self, request, *args, **kwargs):
         try:
-            instance = self.get_object()
-            self.perform_destroy(instance) # Elimina la Seccion
+            instance = self.get_object()  # Intenta obtener la instancia basada en el ID de la URL
+            self.perform_destroy(instance)  # Llama a la función para eliminar la instancia
             return Response({'message': 'Seccion eliminada!'}, status=status.HTTP_200_OK)
+        except NotFound:
+            return Response({'error': 'Seccion no encontrada'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': 'Error al eliminar la Seccion'}, status=status.HTTP_400_BAD_REQUEST)
     def create(self, request, *args, **kwargs):

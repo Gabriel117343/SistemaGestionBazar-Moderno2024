@@ -17,7 +17,7 @@ export const login = async (usuario) => {
       'Content-Type': 'multipart/form-data'
       
     },
-    timeout: 5000
+    timeout: 8000
   })
 }
 export const logout = async (accessToken, refreshToken) => {

@@ -26,7 +26,7 @@ export const createSeccion = async (seccion, token) => {
   })
 }
 export const deleteSeccion = (id, token) => {
-  return seccionesApi.delete(`/${id}`, {
+  return seccionesApi.delete(`/${id}/`, {
     headers: {
       Authorization: `Bearer ${token}`
     }

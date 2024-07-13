@@ -28,7 +28,7 @@ export const createUser = async (usuario, token) => { // es necesario enviar la 
   })
 }
 export const deleteUser = (id, token) => {
-  return usuariosApi.delete(`/${id}`, {
+  return usuariosApi.delete(`/${id}/`, {
     headers: {
       Authorization: `Bearer ${token}`
     }

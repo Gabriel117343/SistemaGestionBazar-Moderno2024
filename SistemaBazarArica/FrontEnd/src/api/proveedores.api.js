@@ -26,7 +26,7 @@ export const createProveedor = async (proveedor, token) => {
   })
 }
 export const deleteProveedor = (id, token) => {
-  return proveedoresApi.delete(`/${id}`, {
+  return proveedoresApi.delete(`/${id}/`, {
     headers: {
       Authorization: `Bearer ${token}`
     }

@@ -29,7 +29,7 @@ export const createProducto = async (producto, token) => {
   })
 }
 export const deleteProducto = (id, token) => {
-  return productosApi.delete(`/${id}`, {
+  return productosApi.delete(`/${id}/`, {
     headers: {
       Authorization: `Bearer ${token}`
     }

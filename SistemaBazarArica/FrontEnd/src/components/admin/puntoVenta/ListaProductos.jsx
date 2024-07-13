@@ -90,8 +90,8 @@ export const ListaProductos = ({ productos }) => {
                       alt={`esto es una imagen de un ${producto.nombre}`}
                     />
                   ) : (
-                    <img
-                      width="100%"
+                    <img        
+                      width="100%"      
                       height="150px"
                       src="https://ww.idelcosa.com/img/default.jpg"
                       alt="esta es una imagen por defecto"

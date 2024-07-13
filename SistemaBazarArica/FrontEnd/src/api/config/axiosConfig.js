@@ -13,7 +13,7 @@ export const createApiInstance = (path='') => {
     baseURL: `${API_URL.despliegue_local}/${path}`
   });
 
-  // Interceptor de solicitud para incluir el token de acceso
+  // INTERCEPTOR DE SOLICITUD PARA INCLUIR EL TOKEN DE ACCESO EN El | HEADER | DE AUTORIZACIÓN DE CADA SOLICITUD A LA API DE DJANGO
   // apiInstance.interceptors.request.use(config => {
   //   const token = localStorage.getItem('accessToken');
   //   if (token) {
@@ -24,7 +24,7 @@ export const createApiInstance = (path='') => {
   //   return Promise.reject(error);
   // });
 
-  // Interceptor de respuesta para manejar tokens de acceso caducados
+  // INTERCEPTOR DE RESPUESTA PARA SOLICITAR UN | TOKEN DE ACCESO (por consecuente uno de refreco también)| CUANDO ESTE EXPIRE Y SE OBTENGA UN 401 (NO AUTORIZADO) DE LA API DE DJANGO
   apiInstance.interceptors.response.use(response => {
     return response;
   }, async error => {
@@ -51,6 +51,7 @@ export const createApiInstance = (path='') => {
         return Promise.reject(refreshError);
       }
     }
+ 
     return Promise.reject(error);
   });
 

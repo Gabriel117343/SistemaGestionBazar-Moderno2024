@@ -25,7 +25,7 @@ export const createPedido = async (pedido, token) => {
   })
 }
 export const deletePedido = (id, token) => {
-  return pedidosApi.delete(`/${id}`, {
+  return pedidosApi.delete(`/${id}/`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
