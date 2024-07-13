@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+// HOC que muestra un mensaje de carga mientras se carga una imagen
 export function withLoadingImage(WrappedComponent) {
   return function(props) {
     const [loading, setLoading] = useState(true);
