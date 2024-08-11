@@ -29,6 +29,8 @@ export const TablaProveedoresContenedor = () => {
   useEffect(() => {
     async function cargar () {
       toast.loading('Cargando...', { id: "loading" });
+      // se utiliza async/await en lugar de promesas para esperar la respuesta y obtener el mensaje
+      // hace el código más limpio, fácil de entender y rápido
       const { success, message } = await getProveedoresContext(); // se ejecuta la funcion getProveedores del contexto de los proveedores
       if (success) {
         setIsLoading(false);

@@ -34,6 +34,8 @@ export const TablaUsuariosContenedor = () => {
     
     async function cargarUsuarios () {
       toast.loading("Cargando Usuarios...", { duration: 2000, id: "toastId"});
+      // se utiliza async/await en lugar de promesas para esperar la respuesta y obtener el mensaje
+      // hace el código más limpio, fácil de entender y rápido
       const { success, message } = await getUsuarios();
       if (success) {
         setIsLoading(false);

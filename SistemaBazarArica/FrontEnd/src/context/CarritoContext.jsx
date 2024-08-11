@@ -31,7 +31,7 @@ export const CarritoProvider = ({ children }) => {
       })
      
       setCarrito(productoActualizado)
-      return { success: true, message: 'Se aumentó la cantidad del producto en el carrito!'}
+      return { success: true, message: 'Se aumentó la cantidad en el carrito🛒'}
 
     } else {
       setCarrito([...carrito, { ...producto, cantidad: 1 }])

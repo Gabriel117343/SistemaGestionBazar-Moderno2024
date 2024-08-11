@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"; // el cn es una función que se encarga de concatenar clases de tailwindcss de manera más sencilla
 import { motion } from "framer-motion";
 // ESTO COMPONENTE FUE MODIFICADO DEL GRADUALSPACING ORIGINAL de la WEB DE MAGIC UI
 export default function GradualSpacing({

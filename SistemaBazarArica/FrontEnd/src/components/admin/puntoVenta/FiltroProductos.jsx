@@ -22,6 +22,7 @@ export const FiltroProductos = () => {
 
   useEffect(() => {
     const cargarProductos = async () => {
+      // en vez de útilzar una promesa, se utiliza async await para esperar la respuesta y obtener el mensaje (es más limpio, facil de entender y rapido)
       toast.loading("Cargando productos...", { id: "loading" });
       const { success, message } = await getProductosContext(INCLUIR_INACTIVOS);
       if (success) {

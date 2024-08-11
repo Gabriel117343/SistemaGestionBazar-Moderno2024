@@ -24,6 +24,8 @@ export const TablaPedidosContenedor = () => {
   useEffect(() => {
     const cargar = async () => {
       toast.loading("Cargando...", { id: 'loading' });
+      // se utiliza async/await en lugar de promesas para esperar la respuesta y obtener el mensaje
+      // hace el código más limpio, fácil de entender y rápido
       const { success, message } = await getPedidosContext();
       if (success) {
         toast.success(message ?? "Pedidos cargados", { id: 'loading' });

@@ -58,8 +58,9 @@ export const Carrito = () => {
     setOpcionCliente(true);
   };
   const agregarProducto = async (producto) => {
+    // en vez de útilzar una promesa, se utiliza async await para esperar la respuesta y obtener el mensaje (es más limpio, facil de entender y rapido)
     const { success, message } = await agregarProductoCarrito(producto);
-    toast.dismiss({ id: "loading" }); // se cierra el toast de cargando
+
     if (success) {
       toast.success(message, { id: "loading" });
     } else {

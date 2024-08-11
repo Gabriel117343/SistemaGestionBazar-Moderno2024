@@ -22,8 +22,11 @@ export const StockSmart = () => {
   const navigate = useNavigate(); // navegar entre rutas
   const inputRef = useRef(null);
   const selectRef = useRef(null);
+
   useEffect(() => {
     async function cargarProductos() {
+      // se utiliza async/await en lugar de promesas para esperar la respuesta y obtener el mensaje
+      // hace el código más limpio, fácil de entender y rápido
       toast.loading("Cargando productos...", { id: "loading" });
       const { success, message } = await getProductosContext();
       if (!success) {

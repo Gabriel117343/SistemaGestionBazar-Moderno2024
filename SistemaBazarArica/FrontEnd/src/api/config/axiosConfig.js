@@ -10,7 +10,7 @@ const API_URL = Object.freeze({
 });
 export const createApiInstance = (path='') => {
   const apiInstance = axios.create({
-    baseURL: `${API_URL.despliegue_local}/${path}`
+    baseURL: `${API_URL.desarrollo}/${path}`
   });
 
   // INTERCEPTOR DE SOLICITUD PARA INCLUIR EL TOKEN DE ACCESO EN El | HEADER | DE AUTORIZACIÓN DE CADA SOLICITUD A LA API DE DJANGO

@@ -19,6 +19,8 @@ export const FiltroVentas = () => {
   useEffect(() => {
     toast.loading("Cargando ventas...", { id: "loading" });
     const cargarVentas = async () => {
+      // se utiliza async/await en lugar de promesas para esperar la respuesta y obtener el mensaje
+      // hace el código más limpio, fácil de entender y rápido
       const { success, message } = await getVentasContext();
       if (!success) {
         toast.error(

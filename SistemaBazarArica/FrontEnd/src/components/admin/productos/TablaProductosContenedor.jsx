@@ -29,6 +29,8 @@ export const TablaProductosContenedor = () => {
     toast.dismiss({ id: "toastId" });
     async function cargar() {
       toast.loading("Cargando productos...", { duration: 2000, id: "toastId"});
+      // se utiliza async/await en lugar de promesas para esperar la respuesta y obtener el mensaje
+      // hace el código más limpio, fácil de entender y rápido
       const { success, message } = await getProductosContext(INCLUIR_INACTIVOS); // se ejecuta la funcion getProductos del contexto de los productos
       if (success) {
         setIsLoading(false);

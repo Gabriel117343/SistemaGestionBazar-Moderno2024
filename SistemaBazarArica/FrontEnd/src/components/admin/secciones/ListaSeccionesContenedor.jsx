@@ -32,6 +32,8 @@ export const ListaSeccionesContenedor = () => {
     toast.dismiss({ id: "loading" });
     async function cargar () {
       toast.loading('Cargando...', { duration: 2000, id: "loading" });
+      // se utiliza async/await en lugar de promesas para esperar la respuesta y obtener el mensaje
+      // hace el código más limpio, fácil de entender y rápido
       const { success, message} = await getSeccionesContext(); // se ejecuta la funcion getProductos del contexto de los productos
 
       if (success) {
