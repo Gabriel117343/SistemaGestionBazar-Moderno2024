@@ -29,7 +29,7 @@ export const FormEdicion = ({ cerrarModal, seccion, actualizarSeccion}) => {
   return (
     <form action="" onSubmit={enviarFormulario}>
       <div>
-        {vistaImagen && <img style={{width: '100%', height: '200px'}} src={vistaImagen.replace('http://localhost:8000/', 'https://dwq9c4nw-8000.brs.devtunnels.ms/')} alt="esto es una imagen de una seccion" className='rounded'/>}
+        {vistaImagen && <img style={{width: '100%', height: '200px'}} src={vistaImagen} alt="esto es una imagen de una seccion" className='rounded'/>}
       </div>
       <div className="form-group pt-2">
         <label htmlFor="nombre">Nombre</label>

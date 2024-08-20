@@ -1,5 +1,4 @@
 import { useContext, useState, createContext, useEffect } from 'react'
-import toast from 'react-hot-toast'
 
 export const CarritoContext = createContext()
 

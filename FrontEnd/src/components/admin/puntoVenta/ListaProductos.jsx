@@ -86,7 +86,7 @@ export const ListaProductos = ({ productos }) => {
                 >
                   {producto.imagen ? (
                     <img
-                      src={producto.imagen.replace('http://localhost:8000/', 'https://dwq9c4nw-8000.brs.devtunnels.ms/')}
+                      src={producto.imagen}
                       alt={`esto es una imagen de un ${producto.nombre}`}
                     />
                   ) : (

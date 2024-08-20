@@ -168,7 +168,7 @@ export const Carrito = () => {
                     <img
                       loading="lazy"
                       src={
-                        producto.imagen.replace('http://localhost:8000/', 'https://dwq9c4nw-8000.brs.devtunnels.ms/') ||
+                        producto.imagen ||
                         "https://ww.idelcosa.com/img/default.jpg"
                       }
                       alt={`imagen de ${producto.nombre}`}

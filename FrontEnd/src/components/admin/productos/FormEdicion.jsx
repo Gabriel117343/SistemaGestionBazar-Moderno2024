@@ -47,7 +47,7 @@ export const FormEdicion = ({ cerrarModal, producto}) => {
   return (
     <form action="" onSubmit={enviarFormulario} id={`${idFormAdmin}-edicion`}>
       <div>
-        <img style={{width: '100%', height: '200px'}} src={vistaImagen.replace('http://localhost:8000/', 'https://dwq9c4nw-8000.brs.devtunnels.ms/')} alt="Imagen de Producto" className='rounded'/>
+        <img style={{width: '100%', height: '200px'}} src={vistaImagen} alt="Imagen de Producto" className='rounded'/>
       </div>
       <div className="form-group">
         <label htmlFor="nombre">Nombre</label>

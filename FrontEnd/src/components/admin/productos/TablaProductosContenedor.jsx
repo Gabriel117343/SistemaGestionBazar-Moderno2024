@@ -58,13 +58,12 @@ export const TablaProductosContenedor = () => {
       if (aceptar.isConfirmed) {
         toast.loading("Eliminando...", { id: "toastId" });
         setTimeout(async () => {
-          toast.dismiss({ id: "toastId" });
           const { success, message } = await eliminarProductoContext(id);
           if (success) {
          
-            toast.success(message);
+            toast.success(message, { id: 'toastId' });
           } else {
-            toast.error(message);
+            toast.error(message, { id: 'toastId' });
           }
         }, 1000);
       }
