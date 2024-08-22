@@ -5,7 +5,9 @@
 ![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)
 ![Version](https://img.shields.io/badge/Version-1.8-orange.svg?style=flat-square)
 
+
 Este sistema de gestión está diseñado para facilitar la administración de productos, pedidos, stock, secciones y proveedores.
+(versión en desarrollo)
 
 ## Características del Sistema
 
@@ -14,6 +16,8 @@ Este sistema de gestión está diseñado para facilitar la administración de pr
 - **Administración de Pedidos**: Facilita la creación, actualización y eliminación de pedidos, incluyendo la opción de marcar pedidos como recibidos y ajustar el stock.
 - **Manejo de Secciones y Proveedores**: Ofrece gestión de secciones y proveedores asociados a productos y pedidos, garantizando una estructura organizada.
 - **Autenticación Segura**: Utiliza JWT para garantizar la autenticidad y seguridad en las operaciones, restringiendo el acceso a usuarios autenticados.
+- **Jornada Laboral**: Permite Administrar la jornada laboral de los usuarios del sistema para restringir el acceso no autorizado al sistema.
+- **Control de Ventas**: Permite Visualizar las ventas por cada Vendedor a través de dashboards y tablas de ventas.
 
 ## Estructura de los modelos
 
