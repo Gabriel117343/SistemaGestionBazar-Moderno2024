@@ -1,29 +1,14 @@
 import { useState } from 'react'
 import { MagicMotion } from 'react-magic-motion'
 import './secciones.css'
-const MostrarSecciones = ({ listaSecciones, borrarSeccion, edicionSeccion, filtro,showModal }) => {
+import { PaginationButton } from '../../shared/PaginationButton'
+import useFiltroDatosMostrar from '../../../hooks/useFiltroDatosMostrar'
+const MostrarSecciones = ({ listaSecciones, borrarSeccion, edicionSeccion,showModal }) => {
+  const [currentPage, setCurrentPage] = useState(1) 
 
-  if (filtro) { // si hay un filtro se filtra la lista de secciones sino se muestra la lista completa
-    listaSecciones = listaSecciones.filter(seccion => seccion.nombre.toLowerCase().includes(filtro.toLowerCase()) || seccion.numero.toString().toLowerCase().includes(filtro.toLowerCase()) || seccion.descripcion.toLowerCase().includes(filtro.toLowerCase()))
-  } // Busca la seccion por su nombre
-  if (listaSecciones.length === 0) {
-    return (
-      <div className="alert alert-warning mt-3" role="alert">
-        No se han encontrado secciones con ese nombre
-      </div>
-    )
-  }
-  const [currentPage, setCurrentPage] = useState(1) // estado para manejar la pagina actual, por defecto se mostrara la pagina 1 de la tabla
   // Se define la cantidad de secciones a mostrar por pagina
   const cantidadSecciones = 10
-  // Calculando el índice de inicio y fin de la lista actual en función de la página actual y los elementos por página
-  const startIndex = (currentPage - 1) * cantidadSecciones
-  const endIndex = startIndex + cantidadSecciones
-  // Obtener los elementos a mostrar en la página actual, slice filtrara el inicio a fin
-  const seccionesMostrar = listaSecciones.slice(startIndex, endIndex)
-  // Servira para calcular el número total de paginas en función de la cantidad total de elementos y los elementos por página ej: el boton 1, 2, 3 etc..
-  const totalBotones = Math.ceil(listaSecciones.length / cantidadSecciones)// reverse para que la tabla muestre desde el ultimo usuario creado al primero
-  console.log('render')
+  const seccionesMostrar = useFiltroDatosMostrar({ currentPage, datosPorPagina: cantidadSecciones, datos: listaSecciones.toReversed() })
   return (
       <section>
         <table className="table table-striped table-hover table-bordered mt-2" style={{filter: showModal && 'blur(0.7px)'}}>
@@ -57,12 +42,9 @@ const MostrarSecciones = ({ listaSecciones, borrarSeccion, edicionSeccion, filtr
           
         </tbody>
       </table>
-      <div className="pagination-buttons mb-3 mt-1 animacion-numeros">
-        {Array.from({ length: totalBotones }, (_, index) => (
-          <button key={index + 1} className={`btn ${currentPage === index + 1 ? 'btn-info' : 'btn-secondary'}`} onClick={() => setCurrentPage(index + 1)}>
-          {index + 1}
-          </button>
-        ))}
+      <div className="pagination-buttons mb-3 mt-1 animacion-numeros d-flex gap-1">
+
+        <PaginationButton currentPage={currentPage} setCurrentPage={setCurrentPage} totalDatos={listaSecciones.length} cantidadPorPagina={cantidadSecciones} />
       </div>
     </section>
       
@@ -88,12 +70,12 @@ const SinSecciones = () => {
     </section>
   )
 }
-export const ValidarSecciones = ({ listaSecciones, borrarSeccion, edicionSeccion, filtro, showModal }) => {
+export const ValidarSecciones = ({ listaSecciones, ...props }) => {
 
   const validacion = listaSecciones?.length > 0 // valida si hay secciones , el resultado sera true o false
   return (
     validacion ?
-    <MostrarSecciones listaSecciones={listaSecciones} borrarSeccion={borrarSeccion} edicionSeccion={edicionSeccion} filtro={filtro} showModal={showModal}/>
+    <MostrarSecciones listaSecciones={listaSecciones} {...props}/>
     :
     <SinSecciones />
   )

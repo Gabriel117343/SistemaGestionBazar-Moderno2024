@@ -8,7 +8,7 @@ import { CarritoContext } from "../../../context/CarritoContext";
 import { ProductosContext } from "../../../context/ProductosContext";
 import { VentasContext } from "../../../context/VentasContext";
 import { toast } from "react-hot-toast";
-import useCarrito from "../../../hooks/useCarrito";
+import useCalculoDatosVenta from "../../../hooks/useCalculoDatosVenta";
 
 import "./puntoventa.css";
 import { debounce } from "lodash";
@@ -17,7 +17,7 @@ export const Carrito = () => {
   const [showModal, setShowModal] = useState(false);
   const [showListModal, setShowListModal] = useState(false);
   const [opcionCliente, setOpcionCliente] = useState(true);
-  const { obtenerInfoVentaTipo, obtenerInfoVentaProducto } = useCarrito();
+  const { obtenerInfoVentaTipo, obtenerInfoVentaProducto } = useCalculoDatosVenta();
   const { createVentaContext } = useContext(VentasContext);
   const {
     stateCliente: { clientes, clienteSeleccionado },

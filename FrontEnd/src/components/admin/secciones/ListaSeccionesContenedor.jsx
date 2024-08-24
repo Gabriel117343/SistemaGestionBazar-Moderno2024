@@ -87,7 +87,7 @@ export const ListaSeccionesContenedor = () => {
     setShowRegistroModal(false); // Cerrar la modal de registro
   };
   const cambiarFiltro = (filtro) => {
-    if (filtro.trim().length === 0) return seccionesFiltradas(secciones); // si el input esta vacio no se filtra nada y se muestra la lista completa
+    if (filtro.trim().length === 0) return setSeccionesFiltradas(secciones); // si el input esta vacio no se filtra nada y se muestra la lista completa
     const nuevaLista = secciones.filter(seccion => {
       return seccion.nombre.toLowerCase().includes(filtro.toLowerCase()) || seccion.numero.toString().toLowerCase().includes(filtro.toLowerCase()) || seccion.descripcion.toLowerCase().includes(filtro.toLowerCase())
     })
@@ -111,7 +111,7 @@ export const ListaSeccionesContenedor = () => {
   const imprimirTabla = () => {
     print();
   };
-  const busquedaActiva = imputFiltroRef.current?.value.length > 0;
+  const busquedaActiva = imputFiltroRef.current?.value.trim().length > 0;
   return (
     <section className="pt-2">
       <div className="row">

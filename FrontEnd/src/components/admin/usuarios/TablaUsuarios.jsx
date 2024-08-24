@@ -1,24 +1,16 @@
 import { useState } from "react";
 import { MagicMotion } from "react-magic-motion";
 import "./styles.css";
+import { PaginationButton } from '../../shared/PaginationButton'
+import useFiltroDatosMostrar from '../../../hooks/useFiltroDatosMostrar'
 export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, showModal}) => {
  
   const [currentPage, setCurrentPage] = useState(1);
 
-  console.log(listaPersonas)
   // Se define la cantidad de usuarios a mostrar por pagina
   const cantidadUsuarios = 10;
-  // Calculando el índice de inicio y fin de la lista actual en función de la página actual y los elementos por página
-  const startIndex = (currentPage - 1) * cantidadUsuarios;
-  const endIndex = startIndex + cantidadUsuarios;
-  // Obtener los elementos a mostrar en la página actual, slice filtrara el inicio a fin
-
-  const usuariosMostrar = listaPersonas.slice(startIndex, endIndex);
-
-  // Servira para calcular el número total de páginas en función de la cantidad total de elementos y los elementos por página ej: el boton 1, 2, 3 etc..
-  const totalBotones = Math.ceil(
-    listaPersonas.length / cantidadUsuarios
-  ); // toReversed crea una copia superficial del array y lo invierte, 
+  
+  const usuariosMostrar = useFiltroDatosMostrar({ currentPage, datosPorPagina: cantidadUsuarios, datos: listaPersonas.toReversed() })
   return (
     <section>
       <table className="table table-striped table-hover mb-0" id="tabla-usuarios" style={{filter: showModal && 'blur(0.7px)'}}>
@@ -98,17 +90,14 @@ export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, sho
         </tbody>
       </table>
 
-      <div className="pagination-buttons mb-3 mt-1 animacion-numeros">
-        {/* bucle Array.from() para generar botones según la cantidad de páginas necesarias, solo se usara el indice del array */}
-        {Array.from({ length: totalBotones }, (_, index) => (
-          <button
-            key={index + 1}
-            className={`btn ${currentPage === index + 1 ? "btn-info" : "btn-secondary"}`}
-            onClick={() => setCurrentPage(index + 1)}
-          >
-            {index + 1}
-          </button>
-        ))}
+      <div className="pagination-buttons mb-3 mt-1 animacion-numeros d-flex gap-1">
+ 
+        <PaginationButton
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalDatos={listaPersonas.length}
+          cantidadPorPagina={cantidadUsuarios}
+        />
       </div>
     </section>
   );
@@ -140,9 +129,7 @@ export const SinUsuarios = () => {
 };
 export const ValidarUsuarios = ({
   listaPersonas,
-  borrarPersona,
-  edicionUsuario,
-  showModal
+  ...props
 }) => {
 
   const persona = listaPersonas?.length > 0;
@@ -150,9 +137,7 @@ export const ValidarUsuarios = ({
   return persona ? (
     <MostrarTabla
       listaPersonas={listaPersonas}
-      borrarPersona={borrarPersona}
-      edicionUsuario={edicionUsuario}
-      showModal={showModal}
+      {...props}
     />
   ) : (
     <SinUsuarios />

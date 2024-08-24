@@ -3,53 +3,22 @@ import { MagicMotion } from "react-magic-motion";
 import { toast } from "react-hot-toast";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { CarritoContext } from "../../../context/CarritoContext";
+import useCalculoProductosMostrar from "../../../hooks/useCalculoProductosMostrar";
+("../../../hooks/useCalculoProductosMostrar");
+import { PaginationButton } from "../../shared/PaginationButton";
+import useFiltroDatosMostrar from "../../../hooks/useFiltroDatosMostrar";
 export const ListaProductos = ({ productos }) => {
   const { sidebar } = useContext(SidebarContext);
   const [currentPage, setCurrentPage] = useState(1);
   const { carrito, agregarProductoCarrito } = useContext(CarritoContext);
+  const { calculoPaginas, productosPorPagina } = useCalculoProductosMostrar();
 
-  function calculoPaginas() {
-    // se define la cantidad de productos por pagina dependiendo si esta en es md o lg
-    // si el sidebar esta abierto o cerrado y si esta en una resolucion de 1700px o 1900pxs
-    let productosPorPagina = 0;
-    if (window.innerWidth < 1500 || (sidebar && window.innerWidth < 1900)) {
-      productosPorPagina = 8;
-    } else if (
-      window.innerWidth >= 1500 &&
-      window.innerWidth <= 1900 &&
-      !sidebar
-    ) {
-      productosPorPagina = 10;
-    } else if (
-      window.innerWidth >= 1900 &&
-      !sidebar &&
-      window.innerHeight >= 900
-    ) {
-      productosPorPagina = 17;
-    } else if (window.innerWidth >= 1900 && !sidebar) {
-      console.log("d");
-      productosPorPagina = 12;
-    } else {
-      productosPorPagina = 10;
-    }
-    return productosPorPagina;
-  }
   useEffect(() => {
-    setCurrentPage(1);
-    // se setea la pagina actual a 1 cada vez que se cambie la cantidad de productos
-  }, [productos.length]);
-
-  // se calcula la cantidad de productos por pagina
-  const cantidadPorPagina = calculoPaginas();
-  // calculando el índice y fin de la lista actual en función de la página actual y los elementos por página
-
-  const startIndex = (currentPage - 1) * cantidadPorPagina;
-  const endIndex = startIndex + cantidadPorPagina;
-
-  // Obtengo los elementos a mostrar en la página actual, slice filtrara el inicio a fin
-  const productosMostrar = productos.slice(startIndex, endIndex);
-  // Servira para calcular el número total de páginas en función de la cantidad total de elementos y los elementos por página ej: el boton 1, 2, 3 etc..
-  const totalBotones = Math.ceil(productos.length / cantidadPorPagina);
+    function obtenerProductosPorPagina() {
+      calculoPaginas(sidebar);
+    }
+    obtenerProductosPorPagina();
+  }, [sidebar]); // si el sidebar cambia se recalcula la cantidad de productos por pagina
 
   const agregarProducto = async (producto) => {
     toast.loading("Agregando al carrito...", { id: "loading" });
@@ -61,6 +30,12 @@ export const ListaProductos = ({ productos }) => {
       toast.error(message, { id: "loading" });
     }
   };
+
+  const productosMostrar = useFiltroDatosMostrar({
+    currentPage,
+    datosPorPagina: productosPorPagina,
+    datos: productos,
+  });
   return (
     <article>
       <ul className="productos">
@@ -75,7 +50,7 @@ export const ListaProductos = ({ productos }) => {
             // cantidadCalculada lo que hace es restar la cantidad de productos en stock con la cantidad de productos que ya estan en el carrito
             // Es una forma de representar la cantidad de productos que se pueden agregar, no es la cantidad real que viene del stock del backend
             return (
-              <li key={producto?.id} className="producto">
+              <li key={producto.id} className="producto">
                 {cantidadCalculada <= 5 && (
                   <div className="icono-informativo">
                     <i className="bi bi-exclamation-circle"></i>
@@ -90,8 +65,8 @@ export const ListaProductos = ({ productos }) => {
                       alt={`esto es una imagen de un ${producto.nombre}`}
                     />
                   ) : (
-                    <img        
-                      width="100%"      
+                    <img
+                      width="100%"
                       height="150px"
                       src="https://ww.idelcosa.com/img/default.jpg"
                       alt="esta es una imagen por defecto"
@@ -120,7 +95,7 @@ export const ListaProductos = ({ productos }) => {
                 </div>
                 <div className="pt-0 mt-0 btn-agregar">
                   <button onClick={() => agregarProducto(producto)}>
-                   <i className="bi bi-cart-plus"></i> Agregar
+                    <i className="bi bi-cart-plus"></i> Agregar
                   </button>
                 </div>
               </li>
@@ -128,16 +103,13 @@ export const ListaProductos = ({ productos }) => {
           })}
         </MagicMotion>
       </ul>
-      <div className="pt-1">
-        {Array.from({ length: totalBotones }, (_, index) => (
-          <button
-            key={index + 1}
-            className={`btn ${currentPage === index + 1 ? "btn-info" : "btn-secondary"}`}
-            onClick={() => setCurrentPage(index + 1)}
-          >
-            {index + 1}
-          </button>
-        ))}
+      <div className="pt-1 d-flex gap-1">
+        <PaginationButton
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalDatos={productos.length}
+          cantidadPorPagina={productosPorPagina}
+        />
       </div>
     </article>
   );

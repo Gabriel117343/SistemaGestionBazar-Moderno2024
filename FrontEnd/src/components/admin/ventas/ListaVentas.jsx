@@ -1,19 +1,19 @@
 import { MagicMotion as Animar } from "react-magic-motion";
 import { useState } from 'react'
+import { PaginationButton } from '../../shared/PaginationButton';
+import useFiltroDatosMostrar from '../../../hooks/useFiltroDatosMostrar'
 const ListaVentas = ({ ventas }) => {
   
   const [currentPage, setCurrentPage] = useState(1);
   const cantidadVentas = 12;
-  const startIndex = (currentPage - 1) * cantidadVentas;
-  const endIndex = startIndex + cantidadVentas;
-  const ventasMostrar = ventas.slice(startIndex, endIndex);
-  const totalBotones = Math.ceil(ventas.reverse().length / cantidadVentas);
 
+  const ventasMostrar = useFiltroDatosMostrar({ currentPage, datosPorPagina: cantidadVentas, datos: ventas.toReversed() });
   return (
     <article>
       <table className="table table-striped table-hover">
         <thead>
           <tr>
+            <th>#</th>
             <th>Venta ID</th>
             <th>Vendedor</th>
             <th >Fecha de Venta</th>
@@ -26,9 +26,10 @@ const ListaVentas = ({ ventas }) => {
         </thead>
         <tbody>
           <Animar>
-            {ventasMostrar?.map((venta) => {
+            {ventasMostrar?.map((venta, index) => {
               return (
                 <tr key={venta.id}>
+                  <td>{(currentPage - 1) * 10 + index + 1}</td>
                   <td>{venta.id}</td>
                   <td>
                     {venta.vendedor.nombre} {venta.vendedor.apellido}
@@ -47,17 +48,9 @@ const ListaVentas = ({ ventas }) => {
           </Animar>
         </tbody>
       </table>
-      <div className="pagination-buttons mb-3 mt-1 animacion-numeros">
-        {/* bucle Array.from() para generar botones según la cantidad de páginas necesarias, solo se usara el indice del array */}
-        {Array.from({ length: totalBotones }, (_, index) => (
-          <button
-            key={index + 1}
-            className={`btn ${currentPage === index + 1 ? "btn-info" : "btn-secondary"}`}
-            onClick={() => setCurrentPage(index + 1)}
-          >
-            {index + 1}
-          </button>
-        ))}
+      <div className="pagination-buttons mb-3 mt-1 animacion-numeros d-flex gap-1">
+       
+        <PaginationButton currentPage={currentPage} setCurrentPage={setCurrentPage} totalDatos={ventas.length} cantidadPorPagina={cantidadVentas} />
       </div>
     </article>
   );

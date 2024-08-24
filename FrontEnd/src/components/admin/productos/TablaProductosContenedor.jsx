@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef} from "react";
 import { ValidarProductos } from "./TablaProductos";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
@@ -15,16 +15,17 @@ import { ButtonNew } from "../../shared/ButtonNew";
 export const TablaProductosContenedor = () => {
   const [showModal, setShowModal] = useState(false);
   const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
-
-  const [productoBuscado, setProductoBuscado] = useState(null); // Nuevo estado para el input de busqueda
   const {
     stateProducto: { productos, productoSeleccionado },
     eliminarProductoContext,
     getProductoContext,
     getProductosContext,
   } = useContext(ProductosContext);
+  const [productosFiltrados , setProductosFiltrado] = useState(productos); // Nuevo estado para el input de busqueda
   const [isLoading, setIsLoading] = useState(true);
   const INCLUIR_INACTIVOS = true;
+
+  const inputRef = useRef(null);
   useEffect(() => {
     toast.dismiss({ id: "toastId" });
     async function cargar() {
@@ -83,10 +84,23 @@ export const TablaProductosContenedor = () => {
     setShowRegistroModal(false); // Cerrar la modal de registro
     setShowModal(false);
   };
-  const cambiarFiltro = (event) => {
-    setProductoBuscado(event.target.value); // se guarda el valor del input de busqueda en el estado productoBuscado
-  };
-  const debounceCambiarFiltro = debounce(cambiarFiltro, 300); // Debounce para retrazar la ejecucion de la funcion cambiarFiltro
+
+  const filtrarProductos = (event) => {
+    const filtro = event.target.value.toLowerCase().trim();
+    if (!filtro) return setProductosFiltrado(productos);
+    const newProductos = productos.filter((producto) => {
+      return (
+        producto.nombre.toLowerCase().includes(filtro) ||
+        producto.codigo.toLowerCase().includes(filtro) ||
+        producto.tipo.toLowerCase().includes(filtro) ||
+        producto.seccion.nombre.toLowerCase().includes(filtro) ||
+        producto.proveedor.nombre.toLowerCase().includes(filtro)
+      );
+    })
+    setProductosFiltrado(newProductos);
+  }
+  const debounceFiltrarProductos = debounce(filtrarProductos, 300); // Debounce para retrazar la ejecucion de la funcion 
+  
   // Acciones extra
   const refrescarTabla = async () => {
     toast.loading("Refrescando", { id: "toastId" });
@@ -103,6 +117,7 @@ export const TablaProductosContenedor = () => {
   const imprimirTabla = () => {
     print();
   };
+  const busquedaActiva = inputRef.current?.value.trim() !== "";
   return (
     <section className="pt-2">
       <div className="row d-flex mb-2">
@@ -114,10 +129,11 @@ export const TablaProductosContenedor = () => {
         <div className="col-md-10 d-flex align-items-center gap-2">
           <i className="bi bi-search"></i>
           <input
+            ref={inputRef}
             className="form-control"
             type="text"
             placeholder="Buscar producto por nombre, precio, tipo, seccion, proveedor..."
-            onChange={debounceCambiarFiltro}
+            onChange={debounceFiltrarProductos}
           />
           <button
             className="btn btn-outline-primary btn-nuevo-animacion"
@@ -137,10 +153,10 @@ export const TablaProductosContenedor = () => {
         <CargaDeDatos />
       ) : (
         <ValidarProductos
-          listaProductos={productos}
+          listaProductos={busquedaActiva ? productosFiltrados : productos}
           borrarProducto={borrarProducto}
           edicionProducto={edicionProducto}
-          filtro={productoBuscado}
+
           showModal={showModal}
         />
       )}

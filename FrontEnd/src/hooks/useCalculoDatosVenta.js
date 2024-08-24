@@ -2,7 +2,7 @@ import { useState, useContext } from 'react'
 import { CarritoContext } from '../context/CarritoContext'
 // Hook personalizado para manejar el carrito de compras - CUSTOM HOOK REUTILIZABLE
 // sera utilizado tanto para el Admin como para el Vendedor
-export default function useCarrito ()  {
+export default function useTransformacionDatosVenta ()  {
   const { carrito } = useContext(CarritoContext)
 
   

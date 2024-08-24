@@ -5,17 +5,19 @@ import { Modal } from "react-bootstrap";
 import { toast } from "react-hot-toast";
 import "./styles.css";
 import { ProveedoresContext } from "../../../context/ProveedoresContext";
+import { PaginationButton } from '../../shared/PaginationButton'
+import useFiltroDatosMostrar from '../../../hooks/useFiltroDatosMostrar'
 const MostrarTabla = ({
   listaProveedores,
   borrarProovedor,
 }) => {
   const { stateProveedor: { proveedorSeleccionado }, getProveedorContext } = useContext(ProveedoresContext);
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const cerrarModal = () => {
     setShowModal(false);
   };
   
-
   const edicionProveedor = async (id) => {
     toast.loading("Cargando...", { id: "loading" });
     const { success, message } = await getProveedorContext(id);
@@ -26,19 +28,11 @@ const MostrarTabla = ({
       toast.error(message ?? 'Ha ocurrido un Error inesperado', { id: "loading" });
     }
   };
-  const [currentPage, setCurrentPage] = useState(1);
+
   // Se define la cantidad de usuarios a mostrar por pagina
   const cantidadProveedores = 10;
-  // Calculando el índice de inicio y fin de la lista actual en función de la página actual y los elementos por página
-  const startIndex = (currentPage - 1) * cantidadProveedores;
-  const endIndex = startIndex + cantidadProveedores;
-  // Obtener los elementos a mostrar en la página actual, slice filtrara el inicio a fin
-  const proveedoresMostrar = listaProveedores.slice(startIndex, endIndex);
-  // Servira para calcular el número total de páginas en función de la cantidad total de elementos y los elementos por página ej: el boton 1, 2, 3 etc..
-  const totalBotones = Math.ceil(
-    listaProveedores.length / cantidadProveedores
-  ); // reverse para que la tabla muestre desde el ultimo usuario creado al primero
  
+  const proveedoresMostrar = useFiltroDatosMostrar({ currentPage, datosPorPagina: cantidadProveedores, datos: listaProveedores.toReversed()})
   return (
     <section>
       <table className="table table-striped table-hover mb-0" id="tabla-proveedores" style={{filter: showModal && 'blur(0.7px)'}}>
@@ -60,7 +54,7 @@ const MostrarTabla = ({
           <MagicMotion>
             {proveedoresMostrar.map((proveedor, index) => (
               <tr key={proveedor.id}>
-                <td>{index + 1}</td>
+                <td>{(currentPage - 1) * 10 + index + 1}</td>
                 <td>{proveedor.fecha_creacion.substring(0, 10)}</td>
                 <td>{proveedor.nombre}</td>
                 <td>{proveedor.persona_contacto}</td>
@@ -104,17 +98,14 @@ const MostrarTabla = ({
           </MagicMotion>
         </tbody>
       </table>
-      <div className="pagination-buttons mb-3 mt-1 animacion-numeros">
-        {/* bucle Array.from() para generar botones según la cantidad de páginas necesarias, solo se usara el indice del array */}
-        {Array.from({ length: totalBotones }, (_, index) => (
-          <button
-            key={index + 1}
-            className={`btn ${currentPage === index + 1 ? "btn-info" : "btn-secondary"}`}
-            onClick={() => setCurrentPage(index + 1)}
-          >
-            {index + 1}
-          </button>
-        ))}
+      <div className="pagination-buttons mb-3 mt-1 animacion-numeros d-flex gap-1">
+        
+        <PaginationButton
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalDatos={listaProveedores.length}
+          cantidadPorPagina={cantidadProveedores}
+        />
       </div>
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton className="bg-info">
