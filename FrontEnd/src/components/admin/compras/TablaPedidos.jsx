@@ -135,7 +135,7 @@ const MostrarPedidos = forwardRef(
                 return (
                   <tr key={pedido.id}>
                     <td headers={`${tableId}-numero`}>
-                      {(currentPage - 1) * 10 + index + 1}
+                      {(currentPage - 1) * cantidadPedidos + index + 1}
                     </td>
                     <td headers={`${tableId}-fechaCreacion`}>
                       {pedido?.fecha_pedido.slice(0, 10)}

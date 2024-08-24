@@ -29,7 +29,7 @@ const ListaVentas = ({ ventas }) => {
             {ventasMostrar?.map((venta, index) => {
               return (
                 <tr key={venta.id}>
-                  <td>{(currentPage - 1) * 10 + index + 1}</td>
+                  <td>{(currentPage - 1) * cantidadVentas + index + 1}</td>
                   <td>{venta.id}</td>
                   <td>
                     {venta.vendedor.nombre} {venta.vendedor.apellido}

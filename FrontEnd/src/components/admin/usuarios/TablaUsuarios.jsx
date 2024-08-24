@@ -36,7 +36,7 @@ export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, sho
             {usuariosMostrar.map((person, index) => (
               <tr key={person.id}>
                 {/* <th className=' pt-0 pb-0'><img className='usuario-imagen p-0 m-0' src={person.imagen ? person.imagen : 'https://w7.pngwing.com/pngs/807/180/png-transparent-user-account-resume-curriculum-vitae-europe-others-service-resume-logo-thumbnail.png'} alt='imagen' /></th> */}
-                <td>{index + 1}</td>
+                <td>{(currentPage - 1) * cantidadUsuarios + index + 1}</td>
                 <td>{person.rut}</td>
                 <td className="text-capitalize">{person.nombre}</td>
                 <td>{person.apellido}</td>

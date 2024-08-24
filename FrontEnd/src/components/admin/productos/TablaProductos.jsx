@@ -46,7 +46,7 @@ const MostrarProductos = ({
           <MagicMotion>
             {productosMostrar.map((producto, index) => (
               <tr key={producto.id}>
-                <td>{(currentPage - 1) * 10 + index + 1}</td>
+                <td>{(currentPage - 1) * cantidadProductos + index + 1}</td>
                 <td className="text-capitalize">{producto.nombre}</td>
                 <td>{producto.seccion.nombre}</td>
                 <td>{producto.codigo}</td>

@@ -25,7 +25,7 @@ const MostrarSecciones = ({ listaSecciones, borrarSeccion, edicionSeccion,showMo
           <MagicMotion> {/* Cuando hay un cambio anima la tabla */}
             {seccionesMostrar.map((seccion, index) => (
                 <tr key={seccion.id}>
-                  <td scope="row">{index + 1}</td>
+                  <td scope="row">{(currentPage - 1) * cantidadSecciones + index + 1}</td>
                   <td>{seccion.nombre}</td>
                   <td>{seccion.numero}</td>
                   <td>{seccion.descripcion}</td>

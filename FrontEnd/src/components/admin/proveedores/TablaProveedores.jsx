@@ -54,7 +54,7 @@ const MostrarTabla = ({
           <MagicMotion>
             {proveedoresMostrar.map((proveedor, index) => (
               <tr key={proveedor.id}>
-                <td>{(currentPage - 1) * 10 + index + 1}</td>
+                <td>{(currentPage - 1) * cantidadProveedores + index + 1}</td>
                 <td>{proveedor.fecha_creacion.substring(0, 10)}</td>
                 <td>{proveedor.nombre}</td>
                 <td>{proveedor.persona_contacto}</td>
