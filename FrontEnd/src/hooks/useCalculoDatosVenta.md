@@ -11,13 +11,7 @@ Calcula la cantidad total y el total de ventas por tipo de producto en el carrit
 #### Retorno
 Un objeto donde las claves son los tipos de productos y los valores son objetos con la cantidad total y el total de ventas de ese tipo.
 
-#### Ejemplo de retorno
-```javascript
-{
-  bebidas: { cantidad: 5, total: 3500 },
-  lacteos: { cantidad: 6, total: 1700 },
-}
-```
+
 ### `obtenerInfoVentaProducto`
 Calcula la cantidad total y el total de ventas para cada producto específico en el carrito, utilizando el ID del producto en lugar de su nombre ya que puede ser actualizado.
 
@@ -26,7 +20,23 @@ Un objeto donde las claves son los IDs de los productos y los valores son objeto
 
 #### Ejemplo de retorno
 ```javascript
-{
-  1: { cantidad: 3, total: 2400 }, 
-  2: { cantidad: 2, total: 1800 },
-}
+[
+  {
+    "tipo": "tipo",
+    "entidad_id": 1,
+    "cantidad": 10,
+    "total": 100.0
+  },
+  {
+    "tipo": "producto",
+    "entidad_id": 2,
+    "cantidad": 5,
+    "total": 50.0
+  },
+  {
+    "tipo": "proveedor",
+    "entidad_id": 3,
+    "cantidad": 15,
+    "total": 150.0
+  }
+]

@@ -694,28 +694,37 @@ class VentaView(viewsets.ModelViewSet):
         if serializer.is_valid():
             cliente_id = request.data.get('cliente')
             total = request.data.get('total')
-            info_venta_tipo = request.data.get('info_venta_tipo')
-            info_venta_producto_id = request.data.get('info_venta_producto_id')
+            info_venta_json = request.data.get('info_venta_json')
+  
 
             try:
                 cliente = Cliente.objects.get(id=cliente_id)
                 vendedor = Usuario.objects.get(id=request.user.id)
-                venta = serializer.save(cliente=cliente, vendedor=vendedor, total=total, info_venta_tipo=info_venta_tipo, info_venta_producto_id=info_venta_producto_id)
+                venta = serializer.save(cliente=cliente, vendedor=vendedor, total=total, info_venta_json=info_venta_json)
 
-                # Decodificar info_venta_producto_id
-                productos_vendidos = json.loads(info_venta_producto_id)
-
-                # Actualizar el stock de cada producto vendido
-                for producto_id, datos in productos_vendidos.items():
-                    cantidad_vendida = datos[0]['cantidad']
-                    stock = Stock.objects.get(producto_id=producto_id)
-                    if stock.cantidad >= cantidad_vendida:
-                        stock.cantidad -= cantidad_vendida
-                        stock.save()
-                    else:
-                        # Manejar el caso en que no haya suficiente stock, util cuando desde una sesión un vendedor intenta vender un producto que ya fue vendido por otro vendedor y en casos donde ambos vendedores tengan el productos en el mismo carro de compras y uno de ellos lo venda primero.
-                        return Response({'message': f'No hay suficiente stock para el producto {producto_id}'}, status=status.HTTP_400_BAD_REQUEST)
-
+                info_venta = json.loads(info_venta_json)
+                print(info_venta)
+                 # Obtener productos vendidos
+                productos_vendidos = []
+                for item in info_venta:
+                    if 'producto' in item:
+                        # Si el item tiene un producto, añadirlo a la lista de productos vendidos 
+                        productos_vendidos.extend(item['producto'])
+            
+                 # Actualizar el stock de cada producto vendido
+                for producto in productos_vendidos:
+                    producto_id = producto['entidad_id']
+                    cantidad_vendida = producto['cantidad']
+                    try:
+                        stock = Stock.objects.get(producto_id=producto_id)
+                        if stock.cantidad >= cantidad_vendida:
+                            stock.cantidad -= cantidad_vendida
+                            stock.save()
+                        else:
+                            return Response({'message': f'No hay suficiente stock para el producto {producto_id}'}, status=status.HTTP_400_BAD_REQUEST)
+                    except Stock.DoesNotExist:
+                        return Response({'message': f'El producto {producto_id} no existe en el stock'}, status=status.HTTP_400_BAD_REQUEST)
+            
                 venta.save()
                 return Response({'message': 'Venta realizada exitosamente!'}, status=status.HTTP_201_CREATED)
             except Cliente.DoesNotExist:

@@ -14,6 +14,11 @@ export default defineConfig({
     outDir: 'dist', // Especifica el directorio de salida para la construcción
     assetsDir: 'assets', // Especifica el directorio de salida para los activos (relativo al directorio de salida)
   },
-  publicDir: 'public' // El directorio publico para servir archivos estáticos - uso para netlify
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './vitest.setup.js',
+  },
+  publicDir: 'public', // El directorio publico para servir archivos estáticos - uso para netlify
   
 })

@@ -23,7 +23,7 @@ export const ListaSeccionesContenedor = () => {
   } = useContext(SeccionesContext);
   const [showModal, setShowModal] = useState(false);
   const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
-  const [seccionBuscada, setSeccionBuscada] = useState(null); // Nuevo estado para el input de busqueda
+
   const [isLoading, setIsLoading] = useState(true)
   const [seccionesFiltradas, setSeccionesFiltradas] = useState(secciones);
   const imputFiltroRef = useRef(null); // Referencia al input de busqueda
@@ -150,7 +150,7 @@ export const ListaSeccionesContenedor = () => {
           listaSecciones={busquedaActiva ? seccionesFiltradas : secciones}
           borrarSeccion={borrarSeccion}
           edicionSeccion={edicionSeccion}
-          filtro={seccionBuscada}
+   
           showModal={showModal}
         />
         )

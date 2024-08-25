@@ -140,10 +140,10 @@ class Venta(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2)
     fecha_venta = models.DateTimeField(auto_now_add=True)
     descuento = models.ForeignKey(Descuento, on_delete=models.SET_NULL, null=True, blank=True)
-    info_venta_tipo = JSONField(blank=True, null=True)
-    info_venta_producto_id = JSONField(blank=True, null=True)
+    info_venta_json = JSONField(blank=True, null=True) # campo JSON para guardar información adicional de la venta para ser Transformados para el Grafico de Ventas en el Frontend
     def __str__(self):
         return f'Venta {self.id}'
+
 class Seccion(models.Model):
     nombre = models.CharField(max_length=100)
     numero = models.IntegerField(unique=True)

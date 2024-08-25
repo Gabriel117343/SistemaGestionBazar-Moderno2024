@@ -8,7 +8,7 @@ import { CarritoContext } from "../../../context/CarritoContext";
 import { ProductosContext } from "../../../context/ProductosContext";
 import { VentasContext } from "../../../context/VentasContext";
 import { toast } from "react-hot-toast";
-import useCalculoDatosVenta from "../../../hooks/useCalculoDatosVenta";
+import useTransformarDatosVenta from "../../../hooks/useTransformarDatosVenta";
 
 import "./puntoventa.css";
 import { debounce } from "lodash";
@@ -17,13 +17,13 @@ export const Carrito = () => {
   const [showModal, setShowModal] = useState(false);
   const [showListModal, setShowListModal] = useState(false);
   const [opcionCliente, setOpcionCliente] = useState(true);
-  const { obtenerInfoVentaTipo, obtenerInfoVentaProducto } = useCalculoDatosVenta();
   const { createVentaContext } = useContext(VentasContext);
   const {
     stateCliente: { clientes, clienteSeleccionado },
     getClientesContext,
   } = useContext(ClientesContext);
   // Contexto de carrito
+  const infoVenta = useTransformarDatosVenta();
   const {
     carrito,
     agregarProductoCarrito,
@@ -33,7 +33,8 @@ export const Carrito = () => {
     actualizarCantidadCarrito,
   } = useContext(CarritoContext);
   const {
-    stateProducto: { productos }, getProductosContext
+    stateProducto: { productos },
+    getProductosContext,
   } = useContext(ProductosContext);
 
   useEffect(() => {
@@ -84,7 +85,7 @@ export const Carrito = () => {
     if (!success) {
       toast.error(message ?? "Error al cargar los productos");
     }
-  }
+  };
   const realizarVenta = async () => {
     const formVenta = new FormData();
     formVenta.append("cliente", clienteSeleccionado.id);
@@ -93,17 +94,9 @@ export const Carrito = () => {
       carrito.reduce((acc, prod) => acc + prod.precio * prod.cantidad, 0)
     ); // total de la venta
 
-    const infoVentaPorTipo = obtenerInfoVentaTipo();
+    const informacionAdicional = infoVenta(carrito);
 
-    console.log(infoVentaPorTipo);
-    const infoVentaPorProducto = obtenerInfoVentaProducto();
-    console.log(infoVentaPorProducto);
-    // antes de enviar se convierte a JSON para que el backend pueda leerlo
-    formVenta.append("info_venta_tipo", JSON.stringify(infoVentaPorTipo));
-    formVenta.append(
-      "info_venta_producto_id",
-      JSON.stringify(infoVentaPorProducto)
-    );
+    formVenta.append("info_venta_json", JSON.stringify(informacionAdicional));
 
     // agregar productos
 
@@ -174,7 +167,6 @@ export const Carrito = () => {
                       alt={`imagen de ${producto.nombre}`}
                       className="img-min-producto"
                     />
-                    
                   </div>
                   <strong className="ps-1">{producto.nombre}</strong>
                   <div className="d-flex flex-column">
@@ -248,12 +240,11 @@ export const Carrito = () => {
           </button>
         </div>
         {clienteSeleccionado && !opcionCliente ? (
-          <button onClick={() => ajustarOpciones()} className="d-flex align-items-center gap-2 pt-1 ps-2 button-especial">
-            <i
-              className="bi bi-person-circle"
-              style={{ fontSize: "40px" }}
-              
-            ></i>
+          <button
+            onClick={() => ajustarOpciones()}
+            className="d-flex align-items-center gap-2 pt-1 ps-2 button-especial"
+          >
+            <i className="bi bi-person-circle" style={{ fontSize: "40px" }}></i>
             <p className="text-center m-0">
               {clienteSeleccionado?.nombre} {clienteSeleccionado?.apellido}
             </p>
