@@ -32,7 +32,7 @@ const MostrarProductos = ({
             <th>Nombre</th>
             <th>Secction</th>
             <th>Codigo</th>
-            <th>tipo</th>
+            <th>Categoria</th>
             <th>Precio</th>
             <th>Proveedor</th>
             <th>Estado</th>
@@ -50,7 +50,7 @@ const MostrarProductos = ({
                 <td className="text-capitalize">{producto.nombre}</td>
                 <td>{producto.seccion.nombre}</td>
                 <td>{producto.codigo}</td>
-                <td className="text-capitalize">{producto.tipo}</td>
+                <td className="text-capitalize">{producto.categoria.nombre}</td>
                 <td>$ {producto.precio}</td>
                 <td>{producto.proveedor.nombre}</td>
                 <td>
@@ -112,7 +112,7 @@ const SinProductos = () => {
             <th>Nombre</th>
             <th>Secction</th>
             <th>Codigo</th>
-            <th>tipo</th>
+            <th>Categoria</th>
             <th>Precio</th>
             <th>Proveedor</th>
             <th>Estado</th>

@@ -1,0 +1,4 @@
+
+.swal2-container {
+  z-index: 200000; /* para que se muestre encima de cualquier otro elemento como una modal  */
+}
