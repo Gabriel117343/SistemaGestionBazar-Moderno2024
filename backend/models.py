@@ -6,7 +6,7 @@ from PIL import Image
 from django.db.models import JSONField # para campos JSON en la base de datos de SQLite
 # en caso de utilizar postgresql, se debe importar de la siguiente manera:
 # from django.contrib.postgres.fields import JSONField
-
+from django.db import migrations
 # Create your models here.
 class Usuario(AbstractUser):
     ROLES = [
@@ -30,20 +30,11 @@ class Usuario(AbstractUser):
 
 # Modelo para los productos disponibles en el bazar
 class Producto(models.Model):
-    TIPOS_PRODUCTO = [
-        ('aseo', 'Aseo'),
-        ('bebidas', 'Bebidas'),
-        ('carnes', 'Carnes'),
-        ('lacteos', 'Lacteos'),
-        ('pastas', 'Pastas'),
-        ('snacks', 'Snacks'),
-        ('otros', 'Otros')
-        # ... Otros tipos de productos
-    ]
+
     nombre = models.CharField(max_length=100)
     descripcion = models.CharField(max_length=255, default='Sin descripción')
     codigo = models.CharField(max_length=50, unique=True)
-    tipo = models.CharField(max_length=20, choices=TIPOS_PRODUCTO)
+    categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE, null=True, blank=True) # esto quiere decir que un producto pertenece a una categoria y una categoria puede tener muchos productos
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     imagen = models.ImageField(upload_to='imagenes/', null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -54,8 +45,15 @@ class Producto(models.Model):
     hash = models.CharField(max_length=255, default='Sin hash')
     # Otros campos relacionados con el producto
     def __str__(self):
-        return '{0} - {1}'.format(self.nombre, self.tipo)
+        return '{0} - {1}'.format(self.nombre, self.categoria)
+class Categoria(models.Model):
 
+    nombre = models.CharField(max_length=100, unique=True)
+    descripcion = models.CharField(max_length=255, default='Sin descripción')
+
+    def __str__(self):
+        return '{0}'.format(self.nombre)
+    
 class Proveedor(models.Model): # esto significa que cuando se agrege un producto se debe seleccionar un proveedor
     fecha_creacion = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     nombre = models.CharField(max_length=100) # nombre del proveedor
@@ -176,3 +174,37 @@ class Stock(models.Model):
 
     def __str__(self):
         return f'{self.cantidad} x {self.producto.nombre}'
+class VentaCategoria(models.Model):
+    entidad_id = models.IntegerField()
+    nombre = models.CharField(max_length=255)
+    cantidad = models.IntegerField()
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Tipo {self.entidad_id}: {self.nombre}, {self.cantidad} items, Total: {self.total}"
+
+class VentaProducto(models.Model):
+    entidad_id = models.IntegerField()
+    nombre = models.CharField(max_length=255)
+    cantidad = models.IntegerField()
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Producto {self.entidad_id}: {self.nombre}, {self.cantidad} items, Total: {self.total}"
+
+class VentaProveedor(models.Model):
+    entidad_id = models.IntegerField()
+    nombre = models.CharField(max_length=255)
+    cantidad = models.IntegerField()
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Proveedor {self.entidad_id}: {self.nombre}, {self.cantidad} items, Total: {self.total}"
+class Dashboard(models.Model):
+    ventas_categoria = models.ManyToManyField(VentaCategoria)
+    ventas_producto = models.ManyToManyField(VentaProducto)
+    ventas_proveedor = models.ManyToManyField(VentaProveedor)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Dashboard {self.fecha}"

@@ -48,7 +48,7 @@ export const FiltroProductos = () => {
   }, []);
 
   const filtrarPorSeccion = (id) => {
-    // se resetea el input de busqueda y el select de tipo
+    // se resetea el input de busqueda y el select de categoria
     toast.dismiss({ id: "loading" }); // se cierra el toast de cargando
     buscadorRef.current.value = "";
     tipoRef.current.value = "all";
@@ -67,7 +67,7 @@ export const FiltroProductos = () => {
   
   
   const filtroNombre = (event) => {
-    // se setea el select de tipo en all
+    // se setea el select de categoria en all
     tipoRef.current.value = "all";
     const nombre = event.target.value.toLowerCase().trim();
     if (nombre.length === 0) return setProductosFiltrados(productos);
@@ -77,13 +77,13 @@ export const FiltroProductos = () => {
     setProductosFiltrados(productosFilt);
   };
 
-  const filtroTipo = (event) => {
+  const filtroCategoria = (event) => {
     // se setea el input de busqueda en vacio
     buscadorRef.current.value = "";
-    const tipo = event.target.value;
-    if (tipo === "all") return setProductosFiltrados(productos);
+    const categoria = event.target.value;
+    if (categoria === "all") return setProductosFiltrados(productos);
     const productosFilt = productos.filter(
-      (producto) => producto.tipo === tipo
+      (producto) => producto.categoria.nombre === categoria
     );
     setProductosFiltrados(productosFilt);
   };
@@ -107,19 +107,19 @@ export const FiltroProductos = () => {
   const busquedaActiva =
     tipoRef?.current?.value !== "all" ||
     buscadorRef?.current?.value?.length > 0 || filtroPorSeccionActivo;
-
+  console.log(productos)
   return (
     <>
       <div className="col-md-8">
         <div className="row pb-1">
           <div className="col-md-6">
-            <label htmlFor="tipoSelect">Filtrar por tipo</label>
+            <label htmlFor="tipoSelect">Filtrar por categoria</label>
             <select
               ref={tipoRef}
               className="form-control"
-              name="tipo"
+              name="categoria"
               id="tipoSelect"
-              onChange={(e) => filtroTipo(e)}
+              onChange={(e) => filtroCategoria(e)}
               defaultValue="all"
             >
               <option value="all">Todas</option>

@@ -2,13 +2,14 @@
 // sera utilizado tanto para el Admin como para el Vendedor
 export default function useTransformarDatosVenta() {
   return (carrito) => {
-    function obtenerInfoVentaTipo() {
+    console.log(carrito)
+    function obtenerInfoVentaCategoria() {
       const totalTiposCarrito = new Set(
-        carrito.map((producto) => producto.tipo.id)
+        carrito.map((producto) => producto.categoria.id)
       );
       const categorias = [];
       totalTiposCarrito.forEach((id) => {
-        const tipoEnCarrito = carrito.filter((prod) => prod.tipo.id === id);
+        const tipoEnCarrito = carrito.filter((prod) => prod.categoria.id === id);
         const cantidad = tipoEnCarrito.reduce(
           (acc, prod) => acc + prod.cantidad,
           0
@@ -24,7 +25,7 @@ export default function useTransformarDatosVenta() {
           total: total,
         });
       });
-      return { tipo: [...categorias] };
+      return { categoria: [...categorias] };
     }
 
     // Obtener información por producto
@@ -79,7 +80,7 @@ export default function useTransformarDatosVenta() {
       return { proveedor: [...proveedores] };
     }
     return [
-      obtenerInfoVentaTipo(),
+      obtenerInfoVentaCategoria(),
       obtenerInfoVentaProducto(),
       obtenerInfoVentaProveedor(),
     ];

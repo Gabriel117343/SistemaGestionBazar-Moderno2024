@@ -23,6 +23,8 @@ router.register(r'productos_pedidos', views.ProductoPedidoView, 'productos_pedid
 router.register(r'clientes', views.ClienteView, 'clientes')
 # Ventas
 router.register(r'ventas', views.VentaView, 'ventas')
+# Categorias
+router.register(r'categorias', views.CategoriaView, 'categorias')
 urlpatterns = [
     path('datos/v1/', include(router.urls)),
     path('docs/', get_docs_view()), 

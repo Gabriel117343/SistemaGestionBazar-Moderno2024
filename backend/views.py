@@ -2,9 +2,9 @@ from cmath import e
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from django.utils import timezone
-from .serializer import UsuarioSerializer, ClienteSerializer, ProveedorSerializer, ProveedorSerializer, ProductoSerializer, PedidoSerializer, ProductoPedidoSerializer, DescuentoSerializer, VentaSerializer, SeccionSerializer, MovimientoSerializer, StockSerializer
-from .models import Usuario, Producto, Proveedor, Cliente, Pedido, ProductoPedido, Descuento, Venta, Seccion, Movimiento, Stock
-
+from .serializer import UsuarioSerializer, ClienteSerializer, ProveedorSerializer, ProveedorSerializer, ProductoSerializer, PedidoSerializer, ProductoPedidoSerializer, DescuentoSerializer, VentaSerializer, SeccionSerializer, MovimientoSerializer, StockSerializer, DashboardSerializer, CategoriaSerializer
+from .models import Usuario, Producto, Proveedor, Cliente, Pedido, ProductoPedido, Descuento, Venta, Seccion, Movimiento, Stock, VentaCategoria, VentaProveedor, VentaProducto, Dashboard, Categoria
+from django.db import transaction
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
 from django.http import JsonResponse
@@ -125,18 +125,18 @@ class LoginView(APIView):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            return Response({'error': 'Credenciales Invalidas', 'tipo': 'credenciales'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Credenciales Invalidas', '': 'credenciales'}, status=status.HTTP_400_BAD_REQUEST)
 
         if not user.is_active:
-            return Response({'error': 'Su cuenta se encuentra Inactiva, contacte con el Administrador', 'tipo': 'cuenta'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Su cuenta se encuentra Inactiva, contacte con el Administrador', '': 'cuenta'}, status=status.HTTP_400_BAD_REQUEST)
 
         #---------------------------------
         # 1 valida si el usuario esta dentro del horario laboral
         now = datetime.now().time()  # obtén la hora actual
         if user.jornada == 'duirno' and not (time(9, 0) <= now <= time(18, 0)):
-            return Response({'error': 'Esta cuenta esta fuera del Horario laboral, contacte con el Administrador', 'tipo': 'horario'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Esta cuenta esta fuera del Horario laboral, contacte con el Administrador', '': 'horario'}, status=status.HTTP_400_BAD_REQUEST)
         elif user.jornada == 'vespertino' and not (time(18, 0) <= now or now <= time(9, 0)):
-            return Response({'error': 'Esta cuenta esta fuera del Horario laboral, contacte con el Administrador', 'tipo': 'horario'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Esta cuenta esta fuera del Horario laboral, contacte con el Administrador', '': 'horario'}, status=status.HTTP_400_BAD_REQUEST)
         #---------------------------------
         # 2 autentica al usuario  
         user = authenticate(request, email=email, password=password) # autentica al usuario
@@ -180,7 +180,7 @@ class LoginView(APIView):
                 return Response({'error': 'Cannot create token'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         else:
-            return Response({'error': 'Credenciales Invalidas', 'tipo': 'credenciales'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Credenciales Invalidas', '': 'credenciales'}, status=status.HTTP_400_BAD_REQUEST)
 class GeneratePasswordResetLinkView(APIView):
     permission_classes = [JWTAuthentication]
     print('Generando passowrd reset link')
@@ -433,35 +433,72 @@ class ProductoView(viewsets.ModelViewSet):
         try:
             serializer = self.get_serializer(data=request.data)
             if serializer.is_valid():
-                # Obtén el ID del proveedor del request
                 proveedor_id = request.data.get('proveedor')
-                # Busca el proveedor en la base de datos
-                proveedor = Proveedor.objects.get(id=proveedor_id)
-
-                # Obtén el ID de la sección del request
                 seccion_id = request.data.get('seccion')
-                # Busca la sección en la base de datos
-                seccion = Seccion.objects.get(id=seccion_id)
+                categoria_id = request.data.get('categoria')
+                print('CATETORIA', categoria_id)
+                try:
+                    proveedor = Proveedor.objects.get(id=proveedor_id)
+                    seccion = Seccion.objects.get(id=seccion_id)
+                    categoria = Categoria.objects.get(id=categoria_id)
+                except Proveedor.DoesNotExist:
+                    return Response({'error': 'Proveedor no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
+                except Seccion.DoesNotExist:
+                    return Response({'error': 'Sección no encontrada'}, status=status.HTTP_400_BAD_REQUEST)
+                except Categoria.DoesNotExist:
+                    return Response({'error': 'Categoría no encontrada'}, status=status.HTTP_400_BAD_REQUEST)
 
-                # Asocia el producto con el proveedor y la sección antes de guardarlo
-                producto = serializer.save(proveedor=proveedor, seccion=seccion)
-              
-                # Crea una entrada en la tabla Stock con cantidad 0
+                producto = serializer.save(proveedor=proveedor, seccion=seccion, categoria=categoria)
                 Stock.objects.create(producto=producto, cantidad=0)
-                return Response({'data': serializer.data, 'message': 'Se ha credo el Producto Exitosamente'}, status=status.HTTP_201_CREATED)
-            return Response({'error': 'No se ha podido crear el Producto'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'data': serializer.data, 'message': 'Producto creado exitosamente'}, status=status.HTTP_201_CREATED)
+            return Response({'error': 'Datos inválidos', 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({'error': 'Error al crear el Producto'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Error al crear el Producto', 'details': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     def update(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=True) # partial=True para permitir actualizaciones parciales
+            serializer = self.get_serializer(instance, data=request.data, partial=True)  # partial=True para permitir actualizaciones parciales
             if serializer.is_valid():
-                self.perform_update(serializer) # Actualiza el Producto
+                categoria_id = request.data.get('categoria')
+                seccion_id = request.data.get('seccion')
+                
+                # transaction.atomic() para asegurar que todas las operaciones de base de datos se realicen correctamente o se reviertan si hay un error en alguna de ellas
+                with transaction.atomic():
+                    if categoria_id:
+                        try:
+                            categoria = Categoria.objects.get(id=categoria_id)
+                            instance.categoria = categoria
+                        except Categoria.DoesNotExist:
+                            return Response({'error': 'Categoría no encontrada'}, status=status.HTTP_400_BAD_REQUEST)
+                    
+                    if seccion_id:
+                        try:
+                            seccion = Seccion.objects.get(id=seccion_id)
+                            instance.seccion = seccion
+                        except Seccion.DoesNotExist:
+                            return Response({'error': 'Sección no encontrada'}, status=status.HTTP_400_BAD_REQUEST)
+                    
+                    self.perform_update(serializer)  # Actualiza el Producto
+
                 return Response({'data': serializer.data, 'message': 'Producto actualizado correctamente!'}, status=status.HTTP_200_OK)
             return Response({'message': 'Error al actualizar el Producto', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({'error': 'Error al actualizar el Producto'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Error al actualizar el Producto', 'details': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+class CategoriaView(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
+    serializer_class = CategoriaSerializer
+    queryset = Categoria.objects.all() # Esto indica que todas las instancias del modelo Categoria son el conjunto de datos sobre el que operará esta vista.
+    def get(self, request, *args, **kwargs):
+        try:
+            queryset = Categoria.objects.all()
+            serializer = CategoriaSerializer(queryset, many=True)
+            if not serializer.data:
+                return Response({'error': 'No hay Categorías registradas'}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'data': serializer.data, 'message': 'Categorías obtenidas!'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': 'Error al obtener las Categorías'}, status=status.HTTP_400_BAD_REQUEST)
+
 class SeccionView(viewsets.ModelViewSet):
     serializer_class = SeccionSerializer
     queryset = Seccion.objects.all() # Esto indica que todas las instancias del modelo Seccion son el conjunto de datos sobre el que operará esta vista.
@@ -687,46 +724,36 @@ class VentaView(viewsets.ModelViewSet):
     serializer_class = VentaSerializer
     queryset = Venta.objects.all()
     permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
-
+    authentication_classes = [JWTAuthentication]
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             cliente_id = request.data.get('cliente')
             total = request.data.get('total')
             info_venta_json = request.data.get('info_venta_json')
-  
 
             try:
-                cliente = Cliente.objects.get(id=cliente_id)
-                vendedor = Usuario.objects.get(id=request.user.id)
-                venta = serializer.save(cliente=cliente, vendedor=vendedor, total=total, info_venta_json=info_venta_json)
+                # Se utiliza atomic para asegurar que todas las operaciones se realicen o se reviertan en caso de error en alguna de ellas 
+                with transaction.atomic():
+                    cliente = Cliente.objects.get(id=cliente_id)
+                    vendedor = Usuario.objects.get(id=request.user.id)
+                    venta = serializer.save(cliente=cliente, vendedor=vendedor, total=total)
 
-                info_venta = json.loads(info_venta_json)
-                print(info_venta)
-                 # Obtener productos vendidos
-                productos_vendidos = []
-                for item in info_venta:
-                    if 'producto' in item:
-                        # Si el item tiene un producto, añadirlo a la lista de productos vendidos 
-                        productos_vendidos.extend(item['producto'])
-            
-                 # Actualizar el stock de cada producto vendido
-                for producto in productos_vendidos:
-                    producto_id = producto['entidad_id']
-                    cantidad_vendida = producto['cantidad']
                     try:
-                        stock = Stock.objects.get(producto_id=producto_id)
-                        if stock.cantidad >= cantidad_vendida:
-                            stock.cantidad -= cantidad_vendida
-                            stock.save()
-                        else:
-                            return Response({'message': f'No hay suficiente stock para el producto {producto_id}'}, status=status.HTTP_400_BAD_REQUEST)
-                    except Stock.DoesNotExist:
-                        return Response({'message': f'El producto {producto_id} no existe en el stock'}, status=status.HTTP_400_BAD_REQUEST)
-            
-                venta.save()
-                return Response({'message': 'Venta realizada exitosamente!'}, status=status.HTTP_201_CREATED)
+                        info_venta = json.loads(info_venta_json)
+                    except json.JSONDecodeError:
+                        return Response({'message': 'Formato JSON inválido en info_venta_json'}, status=status.HTTP_400_BAD_REQUEST)
+
+                    if not isinstance(info_venta, list):
+                        return Response({'message': 'info_venta_json debe ser una lista de objetos'}, status=status.HTTP_400_BAD_REQUEST)
+
+                    productos_vendidos = self.obtener_productos_vendidos(info_venta)
+                    self.actualizar_stock(productos_vendidos)
+
+                    venta.save()
+                    self.actualizar_dashboard(request, info_venta)
+
+                    return Response({'message': 'Venta realizada exitosamente!'}, status=status.HTTP_201_CREATED)
             except Cliente.DoesNotExist:
                 return Response({'message': 'Cliente no encontrado'}, status=status.HTTP_400_BAD_REQUEST)
             except Usuario.DoesNotExist:
@@ -734,7 +761,91 @@ class VentaView(viewsets.ModelViewSet):
             except Stock.DoesNotExist:
                 return Response({'message': 'Stock no encontrado para uno de los productos'}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
-                # Capturar cualquier otro error no anticipado
                 return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def obtener_productos_vendidos(self, info_venta):
+        productos_vendidos = []
+        for item in info_venta:
+            if 'producto' in item:
+                productos_vendidos.extend(item['producto'])
+        return productos_vendidos
+
+    def actualizar_stock(self, productos_vendidos):
+        for producto in productos_vendidos:
+            producto_id = producto['entidad_id']
+            cantidad_vendida = producto['cantidad']
+            stock = Stock.objects.get(producto_id=producto_id)
+            if stock.cantidad >= cantidad_vendida:
+                stock.cantidad -= cantidad_vendida
+                stock.save()
+            else:
+                raise Stock.DoesNotExist(f'No hay suficiente stock para el producto {producto_id}')
+    def actualizar_dashboard(self, request, info_venta):
+        transformar_datos_view = TransformarDatosView()
+        transformar_datos_response = transformar_datos_view.post(request, info_venta) # se le envía la información de la venta para actualizar el dashboard
+        if transformar_datos_response.status_code != status.HTTP_200_OK:
+            raise Exception('Error al actualizar el dashboard')
+
+class TransformarDatosView(APIView):
+    def post(self, request, info_venta, format=None):
+        info_categoria = {}
+        info_producto = {}
+        info_proveedor = {}
+
+        for item in info_venta:
+            if 'categoria' in item:
+                for categoria in item['categoria']:
+                    categoria_id = categoria.get('entidad_id')
+                    if categoria_id is None:
+                        continue  # O manejar el error de otra manera
+                    cantidad = categoria['cantidad']
+                    total = categoria['total']
+                    categoria_nombre = Seccion.objects.get(id=categoria_id).nombre
+
+                    if categoria_id not in info_categoria:
+                        info_categoria[categoria_id] = {'entidad_id': categoria_id, 'nombre': categoria_nombre, 'cantidad': 0, 'total': 0.0}
+                    info_categoria[categoria_id]['cantidad'] += cantidad
+                    info_categoria[categoria_id]['total'] += total
+
+            if 'producto' in item:
+                for producto in item['producto']:
+                    producto_id = producto.get('entidad_id')
+                    if producto_id is None:
+                        continue  # O manejar el error de otra manera
+                    cantidad = producto['cantidad']
+                    total = producto['total']
+                    producto_nombre = Producto.objects.get(id=producto_id).nombre
+
+                    if producto_id not in info_producto:
+                        info_producto[producto_id] = {'entidad_id': producto_id, 'nombre': producto_nombre, 'cantidad': 0, 'total': 0.0}
+                    info_producto[producto_id]['cantidad'] += cantidad
+                    info_producto[producto_id]['total'] += total
+
+            if 'proveedor' in item:
+                for proveedor in item['proveedor']:
+                    proveedor_id = proveedor.get('entidad_id')
+                    if proveedor_id is None:
+                        continue  # O manejar el error de otra manera
+                    cantidad = proveedor['cantidad']
+                    total = proveedor['total']
+                    proveedor_nombre = Proveedor.objects.get(id=proveedor_id).nombre
+
+                    if proveedor_id not in info_proveedor:
+                        info_proveedor[proveedor_id] = {'entidad_id': proveedor_id, 'nombre': proveedor_nombre, 'cantidad': 0, 'total': 0.0}
+                    info_proveedor[proveedor_id]['cantidad'] += cantidad
+                    info_proveedor[proveedor_id]['total'] += total
+
+        # Guarda las instancias antes de asociarlas al Dashboard
+        ventas_categoria = [VentaCategoria.objects.create(**data) for data in info_categoria.values()]
+        ventas_producto = [VentaProducto.objects.create(**data) for data in info_producto.values()]
+        ventas_proveedor = [VentaProveedor.objects.create(**data) for data in info_proveedor.values()]
+
+        dashboard = Dashboard.objects.create()
+        dashboard.ventas_categoria.set(ventas_categoria)
+        dashboard.ventas_producto.set(ventas_producto)
+        dashboard.ventas_proveedor.set(ventas_proveedor)
+
+        serializer = DashboardSerializer(dashboard)
+        return Response(serializer.data, status=status.HTTP_200_OK)

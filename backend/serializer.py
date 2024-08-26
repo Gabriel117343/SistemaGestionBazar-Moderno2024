@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Usuario, ProductoPedido, Producto, Proveedor, Cliente, Pedido, Descuento, Venta, Seccion, Movimiento, Stock
+from .models import Usuario, ProductoPedido, Producto, Proveedor, Cliente, Pedido, Descuento, Venta, Seccion, Movimiento, Stock, Dashboard, VentaCategoria, VentaProducto, VentaProveedor, Categoria
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta: # metadatos del modelo Usuario para serializar los datos
         model = Usuario
@@ -87,21 +87,51 @@ class StockSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stock
         fields = ['id', 'cantidad', 'descripcion']
+class CategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categoria
+        fields = '__all__'
 class ProductoSerializer(serializers.ModelSerializer):
     proveedor = ProveedorSerializer(read_only=True) # se serializa el proveedor de forma manual
     # al establecer read_only=True, no se espera que el campo proveedor sea enviado en la petición post o put desde la api en React
     seccion = SeccionSerializer(read_only=True) # se serializa la seccion de forma manual
     stock = StockSerializer(read_only=True) # se serializa el stock de forma manual
+    categoria = CategoriaSerializer(read_only=True)
     class Meta:
         model = Producto # metadatos del modelo Producto para serializar los datos
         # fields = '__all__' # se serializan todos los campos del modelo Producto
         # __all__ no toma en cuenta los campos many to many, por lo que se debe especificar los campos que se quieren serializar
         # en este caso la seccion y el proveedor son campos many to many, por lo que se deben serializar de forma manual
         # solo se incluiran el id, nombre y descripcion de la seccion y el proveedor no todos los campos
-        fields = ['id', 'nombre', 'descripcion', 'codigo', 'tipo', 'precio', 'imagen', 'fecha_creacion', 'estado', 'seccion', 'proveedor', 'stock']
+        fields = ['id', 'nombre', 'descripcion', 'codigo', 'categoria', 'precio', 'imagen', 'fecha_creacion', 'estado', 'seccion', 'proveedor', 'stock']
+    
 
 class SeccionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Seccion
         fields = '__all__'
+
+class VentaCategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VentaCategoria
+        fields = ['entidad_id', 'nombre', 'cantidad', 'total']
+
+class VentaProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VentaProducto
+        fields = ['entidad_id', 'nombre', 'cantidad', 'total']
+
+class VentaProveedorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VentaProveedor
+        fields = ['entidad_id', 'nombre', 'cantidad', 'total']
+
+class DashboardSerializer(serializers.ModelSerializer):
+    ventas_categoria = VentaCategoriaSerializer(many=True)
+    ventas_producto = VentaProductoSerializer(many=True)
+    ventas_proveedor = VentaProveedorSerializer(many=True)
+
+    class Meta:
+        model = Dashboard
+        fields = ['ventas_categoria', 'ventas_producto', 'ventas_proveedor', 'fecha']

@@ -21,7 +21,7 @@ import { StocksProvider } from "../context/StocksContext";
 import { CarritoProvider } from "../context/CarritoContext";
 // MENU DE OPCIONES PARA EL ADMINISTRADOR
 import { Menu } from "../components/admin/Menu";
-
+import CustomModal from '../views/CustomModal'
 export const AdminRoutes = () => {
   return (
     <CarritoProvider>
@@ -31,6 +31,7 @@ export const AdminRoutes = () => {
             <UsuariosProvider>
               <SidebarProvider>
                 <HeaderAdmin />
+                <CustomModal />
                 <Menu>
                   <Routes>
                     <Route path="/dashboard" element={<Dashboard />} />

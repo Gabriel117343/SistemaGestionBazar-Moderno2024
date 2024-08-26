@@ -1,4 +1,86 @@
+/* Estilo para deshabilitar el desplazamiento del fondo cuando el modal está abierto */
 
+
+/* --------- Custom Modal --------- */
+
+.modal-overlay {
+
+  position: fixed;
+  
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  
+  background: rgba(0, 0, 0, 0.5); /* Fondo plomo (gris) con transparencia */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Asegúrate de que esté por encima de otros elementos */
+}
+dialog {
+  transition: scale .3s ease, display .3s ease allow-discrete;
+  scale: 0;
+  position: relative;
+  border: none;
+  padding: 0;
+  
+  border-radius: 5px 5px;
+  overflow: hidden;
+  margin-top: 2rem;
+
+  display: flex;
+  border-radius: 8px; /* Añade un borde redondeado */
+  box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.1); /* Añade una sombra */
+  max-width: 700px;
+  
+  min-width: 500px;
+  min-height: 70vh;
+  max-height: calc(100vh - 50px);
+
+  flex-direction: column;
+ 
+ 
+  &[open] {
+   
+    scale: 1;
+    overflow-y: auto;
+    transition: scale .3s ease-in-out, opacity .3s ease, translate 1s ease;
+    translate: 0px 0px;
+    @starting-style {
+      scale: 0;
+      translate: 0px 100px;
+    }
+ 
+    
+  }
+}
+@media (max-width: 650px ) {
+  dialog {
+    min-width: 350px;
+
+  }
+}
+
+dialog .modal-header {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 8px;
+  background-color: #2dacdf;
+  color: white;
+
+}
+dialog .modal-body {
+  padding: 1rem;
+  background-color: white;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  flex-grow: 1;
+  overflow-y: auto; /* Permite el desplazamiento vertical */
+}
+/* --------- Custom Modal --------- */
 .fondo-carga {
   background-color: #150916;
   flex-direction: column;
@@ -37,7 +119,6 @@
   background: #1e3c72;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to right, #1c4991, #122e63);  /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to right, #1c4991, #122e63); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
 
   height: inherit;
 }
