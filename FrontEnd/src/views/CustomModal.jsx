@@ -13,27 +13,33 @@ const CustomModal = forwardRef(({ children, show, onHide }, ref) => {
     }
   }, [show]);
 
-  const handleDialogClick = (e) => {
-    // detiene la propagación del evento onClick para que no se cierre el modal
-    e.stopPropagation();
-  };
+  // Convertir children a un array y filtrar Header y Body
+  const childrenArray = React.Children.toArray(children);
+  const header = childrenArray.find(
+    (child) => child.type === CustomModal.Header
+  );
+  const body = childrenArray.find((child) => child.type === CustomModal.Body);
 
   return (
-    show && (
-      <div className="modal-overlay" onClick={onHide}>
-        <dialog
-          aria-atomic="true"
-          ref={ref}
-          open={show}
-          onClose={onHide}
-          tabIndex="-1"
-          className="custom-modal"
-          onClick={e => handleDialogClick(e)}
-        >
-          {children}
-        </dialog>
-      </div>
-    )
+    <>
+      {show && (
+        <>
+          <div open={show} className="modal-overlay" onClick={onHide} />
+        </>
+      )}
+      <dialog
+        aria-atomic="true"
+        ref={ref}
+        open={show}
+        onClose={onHide}
+        tabIndex="-1"
+        className="custom-modal"
+      >
+        {header}
+        {/** Dado que el contenido del body puede recibir props  puede causar errores, se condiciona para mostrarlo si se llamo con show*/}
+        {show && <div className="modal-content">{body}</div>}
+      </dialog>{" "}
+    </>
   );
 });
 
