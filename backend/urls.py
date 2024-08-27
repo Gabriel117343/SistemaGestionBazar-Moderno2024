@@ -25,6 +25,7 @@ router.register(r'clientes', views.ClienteView, 'clientes')
 router.register(r'ventas', views.VentaView, 'ventas')
 # Categorias
 router.register(r'categorias', views.CategoriaView, 'categorias')
+
 urlpatterns = [
     path('datos/v1/', include(router.urls)),
     path('docs/', get_docs_view()), 
@@ -36,4 +37,8 @@ urlpatterns = [
     path('generate_password_reset_link/', GeneratePasswordResetLinkView.as_view()),
     path('send_password_reset_email/',  SendPasswordResetEmailView.as_view()),
     path('reset_password/', ResetPasswordView.as_view()),
+     # Nuevas rutas para las vistas de filtrado (no siguen el estandard CRUD)
+    path('ventas_categoria/', VentaCategoriaAPIView.as_view(), name='ventas_categoria'),
+    path('ventas_producto/', VentaProductoAPIView.as_view(), name='ventas_producto'),
+    path('ventas_proveedor/', VentaProveedorAPIView.as_view(), name='ventas_proveedor'),
 ]

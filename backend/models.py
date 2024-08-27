@@ -63,7 +63,7 @@ class Proveedor(models.Model): # esto significa que cuando se agrege un producto
     estado = models.BooleanField(default=True)
     # Otros campos relacionados con el proveedor
     def __str__(self):
-        return self.nombre
+        return f'{self.nombre} - id {self.id}'
 class Cliente(models.Model):
     #heredar del user con password y email
 
@@ -140,7 +140,7 @@ class Venta(models.Model):
     descuento = models.ForeignKey(Descuento, on_delete=models.SET_NULL, null=True, blank=True)
     info_venta_json = JSONField(blank=True, null=True) # campo JSON para guardar información adicional de la venta para ser Transformados para el Grafico de Ventas en el Frontend
     def __str__(self):
-        return f'Venta {self.id}'
+        return f'Venta {self.id} - Total {self.total}'
 
 class Seccion(models.Model):
     nombre = models.CharField(max_length=100)
@@ -175,29 +175,49 @@ class Stock(models.Model):
     def __str__(self):
         return f'{self.cantidad} x {self.producto.nombre}'
 class VentaCategoria(models.Model):
-    entidad_id = models.IntegerField()
+    venta = models.ForeignKey(Venta, on_delete=models.CASCADE)
+    
     nombre = models.CharField(max_length=255)
     cantidad = models.IntegerField()
     total = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    # atributos para poder filtrar la la venta Categoria
+    entidad_id = models.IntegerField(null=False) # el id de la categoria
+    proveedor_id = models.IntegerField(null=True, blank=True)
+    producto_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return f"Tipo {self.entidad_id}: {self.nombre}, {self.cantidad} items, Total: {self.total}"
 
 class VentaProducto(models.Model):
-    entidad_id = models.IntegerField()
+    venta = models.ForeignKey(Venta, on_delete=models.CASCADE)
+    
     nombre = models.CharField(max_length=255)
     cantidad = models.IntegerField()
     total = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    # atributos para poder filtrar la la venta Producto
+    entidad_id = models.IntegerField(null=False) # el id del producto
+    categoria_id = models.IntegerField(null=True, blank=True)
+    proveedor_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return f"Producto {self.entidad_id}: {self.nombre}, {self.cantidad} items, Total: {self.total}"
+    # atributos para poder filtrar la la venta Producto
 
 class VentaProveedor(models.Model):
-    entidad_id = models.IntegerField()
+    venta = models.ForeignKey(Venta, on_delete=models.CASCADE)
+    
     nombre = models.CharField(max_length=255)
     cantidad = models.IntegerField()
     total = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
+    # atributos para poder filtrar la la venta Proveedor
+    entidad_id = models.IntegerField(null=False) # el id del proveedor
+    producto_id = models.IntegerField(null=True, blank=True)
+    categoria_id = models.IntegerField(null=True, blank=True)
     def __str__(self):
         return f"Proveedor {self.entidad_id}: {self.nombre}, {self.cantidad} items, Total: {self.total}"
 class Dashboard(models.Model):

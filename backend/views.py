@@ -2,8 +2,9 @@ from cmath import e
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from django.utils import timezone
-from .serializer import UsuarioSerializer, ClienteSerializer, ProveedorSerializer, ProveedorSerializer, ProductoSerializer, PedidoSerializer, ProductoPedidoSerializer, DescuentoSerializer, VentaSerializer, SeccionSerializer, MovimientoSerializer, StockSerializer, DashboardSerializer, CategoriaSerializer
-from .models import Usuario, Producto, Proveedor, Cliente, Pedido, ProductoPedido, Descuento, Venta, Seccion, Movimiento, Stock, VentaCategoria, VentaProveedor, VentaProducto, Dashboard, Categoria
+from .serializer import *
+from .models import *
+
 from django.db import transaction
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
@@ -54,7 +55,7 @@ from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, Ou
 
 from django.utils.deprecation import MiddlewareMixin
 from rest_framework.documentation import include_docs_urls
-
+import pytz # para obtener la zona horaria
 
 User = get_user_model() # esto es para obtener el modelo de usuario que se está utilizando en el proyecto
 
@@ -725,6 +726,7 @@ class VentaView(viewsets.ModelViewSet):
     queryset = Venta.objects.all()
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
@@ -751,7 +753,8 @@ class VentaView(viewsets.ModelViewSet):
                     self.actualizar_stock(productos_vendidos)
 
                     venta.save()
-                    self.actualizar_dashboard(request, info_venta)
+                    # una vez que se ha realizado la venta, se actualiza el dashboard con la información de la venta
+                    self.actualizar_dashboard(request, info_venta, venta) 
 
                     return Response({'message': 'Venta realizada exitosamente!'}, status=status.HTTP_201_CREATED)
             except Cliente.DoesNotExist:
@@ -782,14 +785,14 @@ class VentaView(viewsets.ModelViewSet):
                 stock.save()
             else:
                 raise Stock.DoesNotExist(f'No hay suficiente stock para el producto {producto_id}')
-    def actualizar_dashboard(self, request, info_venta):
-        transformar_datos_view = TransformarDatosView()
-        transformar_datos_response = transformar_datos_view.post(request, info_venta) # se le envía la información de la venta para actualizar el dashboard
+    def actualizar_dashboard(self, request, info_venta, venta):
+        transformar_datos_view = TransformarDatosView() # se encarga de actualizar el dashboard
+        transformar_datos_response = transformar_datos_view.post(request, info_venta, venta) # se le envía la información de la venta para actualizar el dashboard
         if transformar_datos_response.status_code != status.HTTP_200_OK:
             raise Exception('Error al actualizar el dashboard')
 
 class TransformarDatosView(APIView):
-    def post(self, request, info_venta, format=None):
+    def post(self, request, info_venta, venta, format=None):
         info_categoria = {}
         info_producto = {}
         info_proveedor = {}
@@ -798,20 +801,28 @@ class TransformarDatosView(APIView):
             if 'categoria' in item:
                 for categoria in item['categoria']:
                     categoria_id = categoria.get('entidad_id')
+                    producto_id = categoria.get('producto_id')
+                    proveedor_id = categoria.get('proveedor_id')
                     if categoria_id is None:
                         continue  # O manejar el error de otra manera
                     cantidad = categoria['cantidad']
                     total = categoria['total']
-                    categoria_nombre = Seccion.objects.get(id=categoria_id).nombre
+                    categoria_nombre = Categoria.objects.get(id=categoria_id).nombre
 
                     if categoria_id not in info_categoria:
-                        info_categoria[categoria_id] = {'entidad_id': categoria_id, 'nombre': categoria_nombre, 'cantidad': 0, 'total': 0.0}
+                        info_categoria[categoria_id] = {'venta': venta, 'entidad_id': categoria_id, 'nombre': categoria_nombre, 'cantidad': 0, 'total': 0.0}
+                    # Actualiza la cantidad y el total de ventas
                     info_categoria[categoria_id]['cantidad'] += cantidad
                     info_categoria[categoria_id]['total'] += total
+                    # Se agrega el id del producto y del proveedor de la categoria
+                    info_categoria[categoria_id]['producto_id'] = producto_id
+                    info_categoria[categoria_id]['proveedor_id'] = proveedor_id
 
             if 'producto' in item:
                 for producto in item['producto']:
                     producto_id = producto.get('entidad_id')
+                    categoria_id = producto.get('categoria_id')
+                    proveedor_id = producto.get('proveedor_id')
                     if producto_id is None:
                         continue  # O manejar el error de otra manera
                     cantidad = producto['cantidad']
@@ -819,13 +830,19 @@ class TransformarDatosView(APIView):
                     producto_nombre = Producto.objects.get(id=producto_id).nombre
 
                     if producto_id not in info_producto:
-                        info_producto[producto_id] = {'entidad_id': producto_id, 'nombre': producto_nombre, 'cantidad': 0, 'total': 0.0}
+                        info_producto[producto_id] = {'venta': venta, 'entidad_id': producto_id, 'nombre': producto_nombre, 'cantidad': 0, 'total': 0.0}
+                    # Actualiza la cantidad y el total de ventas
                     info_producto[producto_id]['cantidad'] += cantidad
                     info_producto[producto_id]['total'] += total
+                    # Se agrega la categoria y el proveedor del producto
+                    info_producto[producto_id]['categoria_id'] = categoria_id
+                    info_producto[producto_id]['proveedor_id'] = proveedor_id
 
             if 'proveedor' in item:
                 for proveedor in item['proveedor']:
                     proveedor_id = proveedor.get('entidad_id')
+                    categoria_id = proveedor.get('categoria_id')
+                    producto_id = proveedor.get('producto_id')
                     if proveedor_id is None:
                         continue  # O manejar el error de otra manera
                     cantidad = proveedor['cantidad']
@@ -833,9 +850,14 @@ class TransformarDatosView(APIView):
                     proveedor_nombre = Proveedor.objects.get(id=proveedor_id).nombre
 
                     if proveedor_id not in info_proveedor:
-                        info_proveedor[proveedor_id] = {'entidad_id': proveedor_id, 'nombre': proveedor_nombre, 'cantidad': 0, 'total': 0.0}
+                        info_proveedor[proveedor_id] = {'venta': venta, 'entidad_id': proveedor_id, 'nombre': proveedor_nombre, 'cantidad': 0, 'total': 0.0}
+                    # Actualiza la cantidad y el total de ventas
                     info_proveedor[proveedor_id]['cantidad'] += cantidad
                     info_proveedor[proveedor_id]['total'] += total
+
+                    # Se agrega la categoria y el producto del proveedor
+                    info_proveedor[proveedor_id]['categoria_id'] = categoria_id
+                    info_proveedor[proveedor_id]['producto_id'] = producto_id
 
         # Guarda las instancias antes de asociarlas al Dashboard
         ventas_categoria = [VentaCategoria.objects.create(**data) for data in info_categoria.values()]
@@ -848,4 +870,88 @@ class TransformarDatosView(APIView):
         dashboard.ventas_proveedor.set(ventas_proveedor)
 
         serializer = DashboardSerializer(dashboard)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+# VISTAS PARA EL DASHBOARD DE VENTAS DEL FRONTEND
+class VentaCategoriaAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        fecha_inicio = request.query_params.get('fecha_inicio')
+        fecha_fin = request.query_params.get('fecha_fin')
+        categoria_id = request.query_params.get('categoria_id')
+        proveedor_id = request.query_params.get('proveedor_id')
+        producto_id = request.query_params.get('producto_id')
+        
+        queryset = VentaCategoria.objects.all()
+        
+        if fecha_inicio and fecha_fin:
+            # Convertir las fechas a objetos datetime con zona horaria
+            tz = pytz.timezone('America/Santiago')  # O la zona horaria que estés usando
+            fecha_inicio = timezone.make_aware(datetime.strptime(fecha_inicio, '%Y-%m-%d'), tz)
+            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'), tz)
+            queryset = queryset.filter(fecha__range=[fecha_inicio, fecha_fin])
+        
+        if categoria_id:
+            queryset = queryset.filter(entidad_id=categoria_id)
+        if proveedor_id:
+            queryset = queryset.filter(proveedor_id=proveedor_id)
+        if producto_id:
+            queryset = queryset.filter(producto_id=producto_id)
+        
+        serializer = VentaCategoriaSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class VentaProductoAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        fecha_inicio = request.query_params.get('fecha_inicio')
+        fecha_fin = request.query_params.get('fecha_fin')
+        producto_id = request.query_params.get('producto_id')
+        categoria_id = request.query_params.get('categoria_id')
+        proveedor_id = request.query_params.get('proveedor_id')
+        
+        queryset = VentaProducto.objects.all()
+        
+        if fecha_inicio and fecha_fin:
+            # Convertir las fechas a objetos datetime con zona horaria
+            tz = pytz.timezone('America/Santiago')  # O la zona horaria que estés usando
+            fecha_inicio = timezone.make_aware(datetime.strptime(fecha_inicio, '%Y-%m-%d'), tz)
+            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'), tz)
+            queryset = queryset.filter(fecha__range=[fecha_inicio, fecha_fin])
+        
+        if producto_id:
+            queryset = queryset.filter(entidad_id=producto_id)
+        if categoria_id:
+            queryset = queryset.filter(categoria_id=categoria_id)
+        if proveedor_id:
+            queryset = queryset.filter(proveedor_id=proveedor_id)
+        
+        serializer = VentaProductoSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class VentaProveedorAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        fecha_inicio = request.query_params.get('fecha_inicio')
+        fecha_fin = request.query_params.get('fecha_fin')
+        proveedor_id = request.query_params.get('proveedor_id')
+        categoria_id = request.query_params.get('categoria_id')
+        producto_id = request.query_params.get('producto_id')
+        
+        queryset = VentaProveedor.objects.all()
+        
+        if fecha_inicio and fecha_fin:
+            # Convertir las fechas a objetos datetime con zona horaria
+            tz = pytz.timezone('America/Santiago')  # O la zona horaria que estés usando
+            fecha_inicio = timezone.make_aware(datetime.strptime(fecha_inicio, '%Y-%m-%d'), tz)
+            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'), tz)
+            queryset = queryset.filter(fecha__range=[fecha_inicio, fecha_fin])
+        
+        if proveedor_id:
+            queryset = queryset.filter(entidad_id=proveedor_id)
+        if categoria_id:
+            queryset = queryset.filter(categoria_id=categoria_id)
+        if producto_id:
+            queryset = queryset.filter(producto_id=producto_id)
+        
+        serializer = VentaProveedorSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -24,7 +24,8 @@ export const confirmarCategoria = ({
 
     inputPlaceholder: `Escribe "Cambiar categoria a ${nuevaCategoria.nombre}." para confirmar`,
     showCancelButton: true,
-    confirmButtonText: "Sí, cambiar",
+    confirmButtonText: "Continuar",
+    confirmButtonColor: "#3085d6",
     cancelButtonText: "Cancelar",
     preConfirm: () => {
       const inputValue = Swal.getInput().value;
@@ -70,7 +71,8 @@ export const confirmarSeccion = ({
 
     inputPlaceholder: `Escribe "Cambiar seccion a ${nuevaSeccion.nombre}." para confirmar`,
     showCancelButton: true,
-    confirmButtonText: "Sí, cambiar",
+    confirmButtonText: "Continuar",
+    confirmButtonColor: "#3085d6",
     cancelButtonText: "Cancelar",
     preConfirm: () => {
       const inputValue = Swal.getInput().value;

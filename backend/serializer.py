@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Usuario, ProductoPedido, Producto, Proveedor, Cliente, Pedido, Descuento, Venta, Seccion, Movimiento, Stock, Dashboard, VentaCategoria, VentaProducto, VentaProveedor, Categoria
+from .models import Usuario, ProductoPedido, Producto, Proveedor, Cliente, Pedido, Descuento, Venta, Seccion, Movimiento, Stock, Dashboard, VentaCategoria, VentaProducto, VentaProveedor, Categoria, VentaCategoria, VentaProducto, VentaProveedor
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta: # metadatos del modelo Usuario para serializar los datos
         model = Usuario
@@ -135,3 +135,19 @@ class DashboardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dashboard
         fields = ['ventas_categoria', 'ventas_producto', 'ventas_proveedor', 'fecha']
+
+# Para los Gráficos de Ventas
+class VentaCategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VentaCategoria
+        fields = '__all__'
+
+class VentaProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VentaProducto
+        fields = '__all__'
+
+class VentaProveedorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VentaProveedor
+        fields = '__all__'
