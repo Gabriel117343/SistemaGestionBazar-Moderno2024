@@ -21,12 +21,12 @@ export default function useTransformarDatosVenta() {
         );
         // Estos id seran para poder filtrar en las ventasCategoria por producto o seccion
         const productoId = tipoEnCarrito[0].id
-        const seccionId = tipoEnCarrito[0].seccion.id
+        const proveedorId = tipoEnCarrito[0].proveedor.id
 
         categorias.push({
           entidad_id: id,
           producto_id: productoId,
-          seccion_id: seccionId,
+          proveedor_id: proveedorId,
           cantidad: cantidad,
           total: total,
         });
@@ -50,12 +50,13 @@ export default function useTransformarDatosVenta() {
           (acc, prod) => acc + prod.cantidad * parseFloat(prod.precio),
           0
         );
+        // Estos id seran para poder filtrar en las ventasProducto por categoria o proveedor
         const categoriaId = productoEnCarrito[0].categoria.id
-        const seccionId = productoEnCarrito[0].seccion.id
+        const proveedorId = productoEnCarrito[0].proveedor.id
         productos.push({
           entidad_id: id,
           categoria_id: categoriaId,
-          seccion_id: seccionId,
+          proveedor_id: proveedorId,
           cantidad: cantidad,
           total: total,
         });
