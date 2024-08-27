@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib import messages
-from .models import Usuario, Cliente, Producto, Categoria, Pedido, ProductoPedido, Descuento, Venta, Seccion, Movimiento, Proveedor, Stock, VentaProducto, VentaProveedor, VentaCategoria, Dashboard
+from .models import *
 # Register your models here.
 
 admin.site.site_header = 'Administración de Sistema Bazar Arica' # título del administrador # esto es para cambiar el título del administrador
@@ -17,10 +17,12 @@ admin.site.register(Seccion)
 admin.site.register(Movimiento)
 admin.site.register(Proveedor)
 admin.site.register(Stock)
+
 admin.site.register(VentaProducto)
 admin.site.register(VentaProveedor)
 admin.site.register(VentaCategoria)
-admin.site.register(Dashboard)
+admin.site.register(VentaSeccion)
+
 
 
 

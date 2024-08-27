@@ -41,4 +41,5 @@ urlpatterns = [
     path('ventas_categoria/', VentaCategoriaAPIView.as_view(), name='ventas_categoria'),
     path('ventas_producto/', VentaProductoAPIView.as_view(), name='ventas_producto'),
     path('ventas_proveedor/', VentaProveedorAPIView.as_view(), name='ventas_proveedor'),
+    path('ventas_seccion/', VentaSeccionAPIView.as_view(), name='ventas_seccion'),
 ]

@@ -138,7 +138,7 @@ class Venta(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2)
     fecha_venta = models.DateTimeField(auto_now_add=True)
     descuento = models.ForeignKey(Descuento, on_delete=models.SET_NULL, null=True, blank=True)
-    info_venta_json = JSONField(blank=True, null=True) # campo JSON para guardar información adicional de la venta para ser Transformados para el Grafico de Ventas en el Frontend
+    # info_venta_json = JSONField(blank=True, null=True) 
     def __str__(self):
         return f'Venta {self.id} - Total {self.total}'
 
@@ -182,29 +182,30 @@ class VentaCategoria(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2)
     fecha = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
-    # atributos para poder filtrar la la venta Categoria
-    entidad_id = models.IntegerField(null=False) # el id de la categoria
-    proveedor_id = models.IntegerField(null=True, blank=True)
-    producto_id = models.IntegerField(null=True, blank=True)
+    # atributos para poder filtrar la venta Categoria
+    entidad_id = models.ForeignKey(Categoria, null=True, on_delete=models.SET_NULL) # el id de la categoria
+    proveedor = models.ForeignKey(Proveedor, null=True, blank=True, on_delete=models.SET_NULL) # si se elimina ese proveedor se pone en null en vez de eliminar la ventaCategoria 
+    producto = models.ForeignKey(Producto, null=True, blank=True, on_delete=models.SET_NULL)
+    seccion = models.ForeignKey(Seccion, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f"Tipo {self.entidad_id}: {self.nombre}, {self.cantidad} items, Total: {self.total}"
 
 class VentaProducto(models.Model):
-    venta = models.ForeignKey(Venta, on_delete=models.CASCADE)
+    venta = models.ForeignKey(Venta, on_delete=models.CASCADE) # una venta puede tener muchos productos y un producto solo puede estar en una venta
     
     nombre = models.CharField(max_length=255)
     cantidad = models.IntegerField()
     total = models.DecimalField(max_digits=10, decimal_places=2)
     fecha = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    # atributos para poder filtrar la la venta Producto
-    entidad_id = models.IntegerField(null=False) # el id del producto
-    categoria_id = models.IntegerField(null=True, blank=True)
-    proveedor_id = models.IntegerField(null=True, blank=True)
+    # atributos para poder filtrar la venta Producto
+    entidad_id = models.ForeignKey(Producto, null=True, on_delete=models.SET_NULL) # el id del producto
+    categoria = models.ForeignKey(Categoria, null=True, blank=True, on_delete=models.SET_NULL)
+    proveedor = models.ForeignKey(Proveedor, null=True, blank=True, on_delete=models.SET_NULL)
+    seccion = models.ForeignKey(Seccion, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f"Producto {self.entidad_id}: {self.nombre}, {self.cantidad} items, Total: {self.total}"
-    # atributos para poder filtrar la la venta Producto
 
 class VentaProveedor(models.Model):
     venta = models.ForeignKey(Venta, on_delete=models.CASCADE)
@@ -214,17 +215,27 @@ class VentaProveedor(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2)
     fecha = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
-    # atributos para poder filtrar la la venta Proveedor
-    entidad_id = models.IntegerField(null=False) # el id del proveedor
-    producto_id = models.IntegerField(null=True, blank=True)
-    categoria_id = models.IntegerField(null=True, blank=True)
-    def __str__(self):
-        return f"Proveedor {self.entidad_id}: {self.nombre}, {self.cantidad} items, Total: {self.total}"
-class Dashboard(models.Model):
-    ventas_categoria = models.ManyToManyField(VentaCategoria)
-    ventas_producto = models.ManyToManyField(VentaProducto)
-    ventas_proveedor = models.ManyToManyField(VentaProveedor)
-    fecha = models.DateTimeField(auto_now_add=True)
+    # atributos para poder filtrar la venta Proveedor
+    entidad_id = models.ForeignKey(Proveedor, null=True, on_delete=models.SET_NULL) # el id del proveedor
+    producto = models.ForeignKey(Producto, null=True, blank=True, on_delete=models.SET_NULL)
+    categoria = models.ForeignKey(Categoria, null=True, blank=True, on_delete=models.SET_NULL)
+    seccion = models.ForeignKey(Seccion, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return f"Dashboard {self.fecha}"
+        return f"Proveedor {self.entidad_id}: {self.nombre}, {self.cantidad} items, Total: {self.total}"
+
+class VentaSeccion(models.Model):
+    venta = models.ForeignKey(Venta, on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=255)
+    cantidad = models.IntegerField()
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    # atributos para poder filtrar la venta Seccion
+    entidad_id = models.ForeignKey(Seccion, null=True, on_delete=models.SET_NULL) # el id de la seccion
+    producto = models.ForeignKey(Producto, null=True, blank=True, on_delete=models.SET_NULL)
+    categoria = models.ForeignKey(Categoria, null=True, blank=True, on_delete=models.SET_NULL)
+    proveedor = models.ForeignKey(Proveedor, null=True, blank=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return f"Sección {self.entidad_id}: {self.nombre}, {self.cantidad} items, Total: {self.total}"

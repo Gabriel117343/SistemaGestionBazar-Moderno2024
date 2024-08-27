@@ -21,6 +21,10 @@ Un objeto donde las claves son los IDs de los productos y los valores son objeto
 ### `obtenerInfoVentaCategoria`
 Un objeto ...
 
+
+### `obtenerInfoVentaSeccion`
+Un objeto ...
+
 #### Ejemplo de uso
 Recibira el carrito de compras una vez hecha la venta a través de un array de objetos con cada producto.
 

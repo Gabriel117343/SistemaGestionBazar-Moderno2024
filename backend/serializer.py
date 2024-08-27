@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Usuario, ProductoPedido, Producto, Proveedor, Cliente, Pedido, Descuento, Venta, Seccion, Movimiento, Stock, Dashboard, VentaCategoria, VentaProducto, VentaProveedor, Categoria, VentaCategoria, VentaProducto, VentaProveedor
+from .models import *
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta: # metadatos del modelo Usuario para serializar los datos
         model = Usuario
@@ -69,9 +69,12 @@ class UsuarioResumidoSerializer(serializers.ModelSerializer):
 class VentaSerializer(serializers.ModelSerializer):
     cliente = ClienteSerializer(read_only=True) # se serializa el cliente de forma manual
     vendedor = UsuarioResumidoSerializer(read_only=True)  # Usar el nuevo serializador aquí
+
+
     class Meta: # metadatos del modelo Venta para serializar los datos
         model = Venta
-        fields = ['id', 'cliente', 'vendedor', 'total', 'fecha_venta', 'info_venta_json']
+        fields = ['id', 'cliente', 'vendedor', 'total', 'fecha_venta']
+
 class SeccionSerializer(serializers.ModelSerializer):
     class Meta: # metadatos del modelo Seccion para serializar los datos
         model = Seccion
@@ -127,14 +130,6 @@ class VentaProveedorSerializer(serializers.ModelSerializer):
         model = VentaProveedor
         fields = ['entidad_id', 'nombre', 'cantidad', 'total']
 
-class DashboardSerializer(serializers.ModelSerializer):
-    ventas_categoria = VentaCategoriaSerializer(many=True)
-    ventas_producto = VentaProductoSerializer(many=True)
-    ventas_proveedor = VentaProveedorSerializer(many=True)
-
-    class Meta:
-        model = Dashboard
-        fields = ['ventas_categoria', 'ventas_producto', 'ventas_proveedor', 'fecha']
 
 # Para los Gráficos de Ventas
 class VentaCategoriaSerializer(serializers.ModelSerializer):
@@ -150,4 +145,8 @@ class VentaProductoSerializer(serializers.ModelSerializer):
 class VentaProveedorSerializer(serializers.ModelSerializer):
     class Meta:
         model = VentaProveedor
+        fields = '__all__'
+class VentaSeccionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VentaSeccion
         fields = '__all__'
