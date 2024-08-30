@@ -21,9 +21,9 @@ export const FormEdicion = ({ cerrarModal, producto, categorias }) => {
     : "../../../public/images/seccion-productos.jpg";
   const [vistaImagen, setVistaImagen] = useState(imagenIncial); // estado para la vista previa de la imagen
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(
-    producto.categoria.id
+    producto?.categoria?.id
   );
-  const [seccionSeleccionada, setSeccionSeleccionada] = useState(producto.seccion.id);
+  const [seccionSeleccionada, setSeccionSeleccionada] = useState(producto?.seccion?.id);
   useEffect(() => {
     const cargar = () => {
       getProveedoresContext(); // obtiene los proveedores
@@ -93,8 +93,8 @@ export const FormEdicion = ({ cerrarModal, producto, categorias }) => {
           onChange={(e) => {
             confirmarSeccion({
               nuevaSeccion: secciones.find((seccion) => seccion.id === parseInt(e.target.value)),
-              productoNombre: producto.nombre,
-              SeccionActual: producto.seccion,
+              productoNombre: producto?.nombre,
+              SeccionActual: producto?.seccion,
               setSeccionSeleccionada,
             });
 
@@ -119,8 +119,8 @@ export const FormEdicion = ({ cerrarModal, producto, categorias }) => {
           onChange={(e) =>
             confirmarCategoria({
               nuevaCategoria: categorias.find((categoria) => categoria.id === parseInt(e.target.value)),
-              productoNombre: producto.nombre,
-              categoriaActual: producto.categoria,
+              productoNombre: producto?.nombre,
+              categoriaActual: producto?.categoria,
               setCategoriaSeleccionada,
             })
           }

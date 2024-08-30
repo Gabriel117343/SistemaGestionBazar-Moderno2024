@@ -1,7 +1,6 @@
 import { FcShop } from "react-icons/fc";
 import { ListaDeOpciones } from "../../components/admin/dashboard/ListaDeOpciones";
-import { StocksProvider } from "../../context/StocksContext";
-import { PedidosProvider } from "../../context/PedidosContext";
+
 import { Grafico } from "../../components/admin/dashboard/Grafico";
 import GradualSpacing from "../../components/shared/magic_ui/GradualSpacing";
 import "./stylepages.css";
@@ -22,15 +21,12 @@ export const Dashboard = () => {
             type="h1"
           />
         </div>
-        <PedidosProvider>
-          <StocksProvider >
-            <div className="container-grid">
-              <ListaDeOpciones />
-             
-              <Grafico/>
-            </div>
-          </StocksProvider>
-        </PedidosProvider>
+
+        <div className="container-grid">
+          <ListaDeOpciones />
+
+          <Grafico />
+        </div>
       </section>
     </>
   );

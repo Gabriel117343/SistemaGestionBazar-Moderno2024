@@ -19,7 +19,7 @@ export const SeccionesProvider = ({ children }) => {
   const getSeccionesContext = async () => {
       try {
         const res = await getAllSecciones(TOKEN_ACCESO) // res para referenciarse al response del servidor
-        console.log(res)
+ 
         if (res.status === 200 || res.status === 201) {
           dispatch({
             type: 'GET_SECCIONES',
