@@ -5,16 +5,12 @@ const proveedoresApi = createApiInstance('usuarios/datos/v1/proveedores') // la 
 
 export const getAllProveedores = (token) => {
   return proveedoresApi.get('/', {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
+    
   })
 }
 export const getProveedor = (id, token) => {
   return proveedoresApi.get(`/${id}/`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
+   
   })
 }
 export const createProveedor = async (proveedor, token) => {

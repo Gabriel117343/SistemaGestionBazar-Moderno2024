@@ -2,12 +2,14 @@ import { createContext, useReducer } from 'react'
 
 import { ProductosReducer } from './reducers/ProductosReducer'
 import { getAllProductos, getProducto, createProducto, deleteProducto, updateProducto } from '../api/productos.api'
+
 export const ProductosContext = createContext() // creando el contexto de los productos para poder usarlo en cualquier componente
 
 export const ProductosProvider = ({ children }) => {
 
   const initialState = {
     productos: [],
+    cantidad: 0,
     productoSeleccionado: null
   } // estado inicial de los productos para el Reducer de los productos
   
@@ -15,19 +17,22 @@ export const ProductosProvider = ({ children }) => {
   // ASI TENGO TODO EL CODIGO DE LOS USUARIOS EN UN SOLO LUGAR Y NO TENGO QUE IMPORTAR LAS FUNCIONES EN CADA COMPONENTE QUE LAS NECESITE
   // UNICAMENTE SE PASAN LOS PARAMETROS QUE NECESITAN LAS FUNCIONES
 
-  const TOKEN_ACCESO = localStorage.getItem('accessToken');
-  const getProductosContext = async (incluirInactivos) => {
-
+ 
+  const getProductosContext = async ({incluirInactivos, page, page_size, filtro}) => {
+    console.log(page)
     try {
-      const res = await getAllProductos(TOKEN_ACCESO, incluirInactivos) // res para referenciarse al response del servidor
+      const res = await getAllProductos({ incluirInactivos, page, page_size, filtro }) // res para referenciarse al response del servidor
+      console.log(res.data)
       if (res.status === 200 || res.status === 201) {
         dispatch({
           type: 'GET_PRODUCTOS',
-          payload: res.data.data
+          payload: res.data
         })
+     
         return ({ success: true, message: res.data.message })
         // return ({ success: true, message: 'Usuario obtenido' }) > Asi se puede retornar un mensaje de exito sin necesidad de obtenerlo del response del servidor
       }
+      return ({ success: false, message: res.data.error })
     } catch (error) { // si hay un error en la peticion se ejecuta este bloque que captura el response del servidor
       console.error(error)
       return ({ success: false, message: error.response.data.error })
@@ -35,7 +40,7 @@ export const ProductosProvider = ({ children }) => {
   }
   const getProductoContext = async (id) => {
     try {
-      const res = await getProducto(id, TOKEN_ACCESO)
+      const res = await getProducto(id)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -45,13 +50,14 @@ export const ProductosProvider = ({ children }) => {
         return ({ success: true, message: res.data.message })
         // return ({ success: true, message: 'Usuario obtenido' }) > Asi se puede retornar un mensaje de exito sin necesidad de obtenerlo del response del servidor
       }
+      return ({ success: false, message: res.data.error })
     } catch (error) { // si hay un error en la peticion se ejecuta este bloque que captura el response del servidor 
       return ({ success: false, message: error.response.data.error })
     }
   }
   const crearProductoContext = async (producto) => {
     try {
-      const res = await createProducto(producto, TOKEN_ACCESO)
+      const res = await createProducto(producto)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -60,15 +66,16 @@ export const ProductosProvider = ({ children }) => {
         })
         return ({ success: true, message: res.data.message })
       }
+      return ({ success: false, message: res.data.error })
     } catch (error) {
       console.error(error)
       return ({ success: false, message: error.response.data.error })
     }
   }
   const eliminarProductoContext = async (id) => {
-    console.log(id)
+
     try {
-      const res = await deleteProducto(id, TOKEN_ACCESO)
+      const res = await deleteProducto(id)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -77,6 +84,7 @@ export const ProductosProvider = ({ children }) => {
         })
         return ({ success: true, message: res.data.message })
       }
+      return ({ success: false, message: res.data.error })
     } catch (error) {
       console.error(error)
       return ({ success: false, message: error.response.data.error })
@@ -84,7 +92,7 @@ export const ProductosProvider = ({ children }) => {
   }
   const actualizarProductoContext = async (id, producto) => {
     try {
-      const res = await updateProducto(id, producto, TOKEN_ACCESO)
+      const res = await updateProducto(id, producto)
       console.log(res)
       if (res.status === 200 || res.status === 201) {
         dispatch({
@@ -93,6 +101,7 @@ export const ProductosProvider = ({ children }) => {
         })
         return ({ success: true, message: res.data.message })
       }
+      return ({ success: false, message: res.data.error })
     } catch (error) {
       console.error(error)
       return ({ success: false, message: error.response.data.error })

@@ -1,24 +1,17 @@
-import { useState } from "react";
 import { MagicMotion } from "react-magic-motion";
 import "./styles.css";
 import { PaginationButton } from "../../shared/PaginationButton";
-import useFiltroDatosMostrar from "../../../hooks/useFiltroDatosMostrar";
+
 const MostrarProductos = ({
   listaProductos,
   borrarProducto,
   edicionProducto,
+  currentPage,
+  cambiarPagina,
+  cantidadDatos,
   showModal,
+  pageSize,
 }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // Se define la cantidad de usuarios a mostrar por pagina
-  const cantidadProductos = 10;
-
-  const productosMostrar = useFiltroDatosMostrar({
-    currentPage,
-    datosPorPagina: cantidadProductos,
-    datos: listaProductos.toReversed(),
-  });
   return (
     <section>
       <table
@@ -30,8 +23,8 @@ const MostrarProductos = ({
           <tr>
             <th>#</th>
             <th>Nombre</th>
-            <th>Secction</th>
-            <th>Codigo</th>
+            <th>Sección</th>
+            <th>Código</th>
             <th>Categoria</th>
             <th>Precio</th>
             <th>Proveedor</th>
@@ -44,9 +37,9 @@ const MostrarProductos = ({
         <tbody>
           {/* Cuando hay un cambio anima la tabla */}
           <MagicMotion>
-            {productosMostrar.map((producto, index) => (
+            {listaProductos.map((producto, index) => (
               <tr key={producto.id}>
-                <td>{(currentPage - 1) * cantidadProductos + index + 1}</td>
+                <td>{(currentPage - 1) * pageSize + index + 1}</td>
                 <td className="text-capitalize">{producto.nombre}</td>
                 <td>{producto.seccion.nombre}</td>
                 <td>{producto.codigo}</td>
@@ -94,9 +87,9 @@ const MostrarProductos = ({
       <div className="pagination-buttons mb-3 mt-1 animacion-numeros d-flex gap-1">
         <PaginationButton
           currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          totalDatos={listaProductos.length}
-          cantidadPorPagina={cantidadProductos}
+          cambiarPagina={cambiarPagina}
+          totalDatos={cantidadDatos}
+          cantidadPorPagina={10}
         />
       </div>
     </section>
@@ -130,7 +123,7 @@ const SinProductos = () => {
   );
 };
 export const ValidarProductos = ({ listaProductos, ...props }) => {
-  const validacion = listaProductos.length > 0;
+  const validacion = listaProductos?.length > 0;
   return validacion ? (
     <MostrarProductos listaProductos={listaProductos} {...props} />
   ) : (

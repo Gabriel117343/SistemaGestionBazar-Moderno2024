@@ -53,9 +53,9 @@ export const ListaDeOpciones = () => {
               <p> Total</p>
             </div> 
             <div className="contador-card">
-              <h3 className="p-0 m-0 contador-card">
+              <h3 className="p-0 m-0">
                 <ContadorAnimado
-                  value={pedidos.length ? pedidos.length : 0}
+                  value={pedidos.length ?? 0}
                   className="text-white"
                 />
               </h3>
@@ -72,7 +72,7 @@ export const ListaDeOpciones = () => {
               <p>Total</p>
             </div>
             <div className="contador-card">
-              <h3>
+              <h3 className="p-0 m-0">
                 <ContadorAnimado
                   value={
                     pedidos.filter((pedido) => pedido.estado === "recibido")
@@ -97,7 +97,7 @@ export const ListaDeOpciones = () => {
             <div className="contador-card">
               <h3 className="p-0 m-0">
                 <ContadorAnimado
-                  value={usuarios.length ? usuarios.length : 0}
+                  value={usuarios.length ?? 0}
                   className="text-white"
                 />
               </h3>
@@ -116,7 +116,7 @@ export const ListaDeOpciones = () => {
             <div className="contador-card">
               <h3 className="p-0 m-0">
                 <ContadorAnimado
-                  value={clientes.length ? clientes.length : 0}
+                  value={clientes.length ?? 0}
                   className="text-white"
                 />
               </h3>
@@ -135,7 +135,7 @@ export const ListaDeOpciones = () => {
             <div className="contador-card">
               <h3 className="p-0 m-0">
                 <ContadorAnimado
-                  value={stocks.length ? stocks.length : 0}
+                  value={stocks.length ?? 0}
                   className="text-white"
                 />
               </h3>
@@ -154,7 +154,7 @@ export const ListaDeOpciones = () => {
             <div className="contador-card">
               <h3 className="p-0 m-0">
                 <ContadorAnimado
-                  value={ventas.length ? ventas.length : 0}
+                  value={ventas.length ?? 0}
                   className="text-white"
                 />
               </h3>

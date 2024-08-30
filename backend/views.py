@@ -51,13 +51,21 @@ from rest_framework_simplejwt.tokens import RefreshToken # para obtener el token
 from rest_framework_simplejwt.authentication import JWTAuthentication
 # lista negra de tokens para bloquear tokens de acceso y actualización que se han utilizado
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
-
+from rest_framework.pagination import PageNumberPagination
 
 from django.utils.deprecation import MiddlewareMixin
 from rest_framework.documentation import include_docs_urls
 import pytz # para obtener la zona horaria
 
 User = get_user_model() # esto es para obtener el modelo de usuario que se está utilizando en el proyecto
+
+
+# Clase para poder paginar los resultados de las vistas
+class StandardResultsSetPagination(PageNumberPagination):
+  
+    page_size = 10  # Número de resultados por página por defecto
+    page_size_query_param = 'page_size'  # Permite al cliente cambiar el tamaño de la página
+    max_page_size = 100  # Tamaño máximo de la página permitido
 
 # Middleware para rastrea la última actividad de los usuarios y actualiza la última actividad en cada solicitud de las vistas de la API
 class ActualizarUltimaActividadMiddleware:
@@ -399,9 +407,11 @@ class ProductoView(viewsets.ModelViewSet):
     queryset = Producto.objects.all() # Esto indica que todas las instancias del modelo Producto son el conjunto de datos sobre el que operará esta vista.
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
+
+    pagination_class = StandardResultsSetPagination  # Paginación de los resultados
     def get_queryset(self):
         """
-        Sobrescribe el método get_queryset para retornar productos basados en el estado de activación
+        Se sobrescribe el método get_queryset para retornar productos basados en el estado de activación
         solo cuando se listan los productos. Para otras acciones, retorna todos los productos.
         """
         queryset = Producto.objects.select_related('proveedor', 'seccion', 'stock')
@@ -411,18 +421,33 @@ class ProductoView(viewsets.ModelViewSet):
             incluir_inactivos = self.request.query_params.get('incluir_inactivos', 'no').lower() == 'si'
             if not incluir_inactivos:
                 queryset = queryset.filter(estado=True)
-        # utilizar select_related para obtener los datos relacionados con el proveedor y la sección, evitando así consultas adicionales a la base de datos y el problema de N + 1 
+        # Filtra por nombre del producto si se proporciona
+        filtro = self.request.query_params.get('filtro', None)
+        if filtro:
+            if filtro.isdigit(): # isdigit() devuelve True si el filtro es un número, lo que indica que se está buscando por código
+                queryset = queryset.filter(codigo__icontains=filtro)
+            else:
+                queryset = queryset.filter(nombre__icontains=filtro)
         return queryset
-   
+
     def list(self, request, *args, **kwargs):
         print("Obteniendo Productos")
         try: 
             queryset = self.get_queryset()
-            
+            paginator = self.pagination_class()
+            page = paginator.paginate_queryset(queryset, request)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                paginated_response = paginator.get_paginated_response(serializer.data)
+                # Modifica el contenido de la respuesta paginada para incluir el mensaje personalizado
+                paginated_response.data['message'] = 'Productos obtenidos!'
+                return paginated_response
             serializer = self.get_serializer(queryset, many=True)
+
+            # si la paginación no se aplica, se envía la respuesta con todos los productos
             return Response({'data': serializer.data, 'message': 'Productos obtenidos!'}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'error': 'Error al obtener los Productos'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Error al obtener los Productos', 'details': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     def destroy(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
@@ -947,7 +972,13 @@ class TransformarDatosView(APIView):
 
 # Ej: http://127.0.0.1:8000/usuarios/ventas_categoria/?fecha_inicio=2024-08-26&fecha_fin=2024-08-28
 
+
+
 class VentaCategoriaAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    pagination_class = StandardResultsSetPagination
     def get(self, request, *args, **kwargs):
         fecha_inicio = request.query_params.get('fecha_inicio')
         fecha_fin = request.query_params.get('fecha_fin')
@@ -955,15 +986,20 @@ class VentaCategoriaAPIView(APIView):
         proveedor_id = request.query_params.get('proveedor_id')
         producto_id = request.query_params.get('producto_id')
         seccion_id = request.query_params.get('seccion_id')
+        sumar = request.query_params.get('sumar')
+
         queryset = VentaCategoria.objects.all()
         
+         # Imprimir las IDs de los productos asociados
+        for venta in queryset:
+            print(f"Venta ID: {venta.id}, Producto ID: {venta.producto_id}")
         if fecha_inicio and fecha_fin:
             # Convertir las fechas a objetos datetime con zona horaria
             tz = pytz.timezone('America/Santiago')  # O la zona horaria que estés usando
             fecha_inicio = timezone.make_aware(datetime.strptime(fecha_inicio, '%Y-%m-%d'), tz)
             fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'), tz)
             queryset = queryset.filter(fecha__range=[fecha_inicio, fecha_fin])
-        
+        # _id indica que se está filtrando por la clave foránea de la entidad relacionada osea el ID de la entidad ej: categoria_id
         if categoria_id:
             queryset = queryset.filter(entidad_id=categoria_id)
         if proveedor_id:
@@ -972,12 +1008,24 @@ class VentaCategoriaAPIView(APIView):
             queryset = queryset.filter(producto_id=producto_id)
         if seccion_id:
             queryset = queryset.filter(seccion_id=seccion_id)
+        if sumar:
+            return Response({ 'total': queryset.count() }, status=status.HTTP_200_OK)
         
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = VentaCategoriaSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
         serializer = VentaCategoriaSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
 class VentaProductoAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    pagination_class = StandardResultsSetPagination
     def get(self, request, *args, **kwargs):
         fecha_inicio = request.query_params.get('fecha_inicio')
         fecha_fin = request.query_params.get('fecha_fin')
@@ -985,6 +1033,8 @@ class VentaProductoAPIView(APIView):
         categoria_id = request.query_params.get('categoria_id')
         proveedor_id = request.query_params.get('proveedor_id')
         seccion_id = request.query_params.get('seccion_id')
+        sumar = request.query_params.get('sumar')
+
         queryset = VentaProducto.objects.all()
         
         if fecha_inicio and fecha_fin:
@@ -1002,12 +1052,25 @@ class VentaProductoAPIView(APIView):
             queryset = queryset.filter(proveedor_id=proveedor_id)
         if seccion_id:
             queryset = queryset.filter(seccion_id=seccion_id)
+
+        if sumar: 
+            return Response({ 'total': queryset.count() }, status=status.HTTP_200_OK)
         
-        serializer = VentaProductoSerializer(queryset, many=True)
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = VentaProductoSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = VentaProveedorSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class VentaProveedorAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    pagination_class = StandardResultsSetPagination
     def get(self, request, *args, **kwargs):
         fecha_inicio = request.query_params.get('fecha_inicio')
         fecha_fin = request.query_params.get('fecha_fin')
@@ -1015,6 +1078,8 @@ class VentaProveedorAPIView(APIView):
         categoria_id = request.query_params.get('categoria_id')
         producto_id = request.query_params.get('producto_id')
         seccion_id = request.query_params.get('seccion_id')
+        sumar = request.query_params.get('sumar')
+
         queryset = VentaProveedor.objects.all()
         
         if fecha_inicio and fecha_fin:
@@ -1032,12 +1097,25 @@ class VentaProveedorAPIView(APIView):
             queryset = queryset.filter(producto_id=producto_id)
         if seccion_id:
             queryset = queryset.filter(seccion_id=seccion_id)
+
+        if sumar:
+            return Response({ 'total': queryset.count() }, status=status.HTTP_200_OK)
         
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = VentaProveedorSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
         serializer = VentaProveedorSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
 class VentaSeccionAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    pagination_class = StandardResultsSetPagination
     def get(self, request, *args, **kwargs):
         fecha_inicio = request.query_params.get('fecha_inicio')
         fecha_fin = request.query_params.get('fecha_fin')
@@ -1045,6 +1123,8 @@ class VentaSeccionAPIView(APIView):
         categoria_id = request.query_params.get('categoria_id')
         producto_id = request.query_params.get('producto_id')
         proveedor_id = request.query_params.get('proveedor_id')
+        sumar = request.query_params.get('sumar')
+
         queryset = VentaSeccion.objects.all()
         
         if fecha_inicio and fecha_fin:
@@ -1061,6 +1141,13 @@ class VentaSeccionAPIView(APIView):
             queryset = queryset.filter(producto_id=producto_id)
         if proveedor_id:
             queryset = queryset.filter(proveedor_id=proveedor_id)
-        
+        if sumar: 
+            return Response({ 'total': queryset.count() }, status=status.HTTP_200_OK)
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = VentaSeccionSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
         serializer = VentaSeccionSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

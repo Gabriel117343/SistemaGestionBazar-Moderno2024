@@ -45,7 +45,7 @@ class Producto(models.Model):
     hash = models.CharField(max_length=255, default='Sin hash')
     # Otros campos relacionados con el producto
     def __str__(self):
-        return '{0} - {1}'.format(self.nombre, self.categoria)
+        return '{0} - {1} - {2}'.format(self.nombre, self.categoria, self.id)
 class Categoria(models.Model):
 
     nombre = models.CharField(max_length=100, unique=True)

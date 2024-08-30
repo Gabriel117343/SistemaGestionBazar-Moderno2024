@@ -84,7 +84,7 @@ export const Menu = ({ children }) => {
       icon: <i className="bi bi-truck"></i>,
     },
     {
-      path: "/admin/productos",
+      path: "/admin/productos?page=1",
       name: "Productos",
       icon: <i className="bi bi-bag"></i>,
     },

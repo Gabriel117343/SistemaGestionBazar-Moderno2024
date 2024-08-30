@@ -13,18 +13,19 @@ export const createApiInstance = (path='') => {
     baseURL: `${API_URL.desarrollo}/${path}`
   });
 
-  // INTERCEPTOR DE SOLICITUD PARA INCLUIR EL TOKEN DE ACCESO EN El | HEADER | DE AUTORIZACIÓN DE CADA SOLICITUD A LA API DE DJANGO
-  // apiInstance.interceptors.request.use(config => {
-  //   const token = localStorage.getItem('accessToken');
-  //   if (token) {
-  //     config.headers.Authorization = `Bearer ${token}`;
-  //   }
-  //   return config;
-  // }, error => {
-  //   return Promise.reject(error);
-  // });
+  // INTERCEPTOR DE SOLICITUD PARA INCLUIR EL TOKEN DE ACCESO EN El HEADER DE AUTORIZACIÓN DE CADA SOLICITUD A LA API DE DJANGO (antes de enviar la solicitud)
 
-  // INTERCEPTOR DE RESPUESTA PARA SOLICITAR UN | TOKEN DE ACCESO (por consecuente uno de refreco también)| CUANDO ESTE EXPIRE Y SE OBTENGA UN 401 (NO AUTORIZADO) DE LA API DE DJANGO
+  apiInstance.interceptors.request.use(config => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  }, error => {
+    return Promise.reject(error);
+  });
+
+  // INTERCEPTOR DE RESPUESTA PARA SOLICITAR UN | TOKEN DE ACCESO (por consecuente uno de refreco también)| CUANDO ESTE EXPIRE Y SE OBTENGA UN 401 (NO AUTORIZADO) DE LA API DE DJANGO (después de recibir la respuesta)
   apiInstance.interceptors.response.use(response => {
     return response;
   }, async error => {
@@ -44,6 +45,7 @@ export const createApiInstance = (path='') => {
         if (refresh) {
           localStorage.setItem('refreshToken', refresh);
         }
+        // se actualiza el token de acceso en el header de la solicitud original y se reenvia la solicitud
         originalRequest.headers.Authorization = `Bearer ${access}`;
         return axios(originalRequest);
       } catch (refreshError) {

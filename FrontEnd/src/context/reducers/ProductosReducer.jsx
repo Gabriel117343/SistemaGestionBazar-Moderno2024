@@ -7,7 +7,8 @@ export const ProductosReducer = (stateProducto, action ) => {
     case 'GET_PRODUCTOS':
       return {
         ...stateProducto,
-        productos: payload // guarda los productos en el estado
+        productos: payload.results, // guarda los productos en el estado
+        cantidad: payload.count // guarda la cantidad de productos en el estado
       }
     case 'GET_PRODUCTO':
       return {

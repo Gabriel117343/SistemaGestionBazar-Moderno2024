@@ -2,44 +2,43 @@ import { createApiInstance } from './config/axiosConfig';
 
 const productosApi = createApiInstance('usuarios/datos/v1/productos') // la urls por defectos
 
-// ESTE ES EL CRUD DE PRODUCTOS
-export const getAllProductos = (token, incluirInactivos) => {
+// ESTE ES EL CRU DDE PRODUCTOS
+
+export const getAllProductos = ({ incluirInactivos, page, page_size, filtro }) => {
   return productosApi.get('/', {
     params: {
-      incluir_inactivos: incluirInactivos ? 'si' : 'no'
+      incluir_inactivos: incluirInactivos ? 'si' : 'no',
+      page: page,
+      page_size: page_size,
+      filtro: filtro,
+
     },
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
+  
   })
 }
-export const getProducto = (id, token) => {
+export const getProducto = (id) => {
   return productosApi.get(`/${id}/`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
+   
   })
 }
-export const createProducto = async (producto, token) => {
+export const createProducto = async (producto) => {
   return productosApi.post('/', producto, {
     headers: {
       'Content-Type': 'multipart/form-data',
-      Authorization: `Bearer ${token}`
+
     }
   })
 }
-export const deleteProducto = (id, token) => {
+export const deleteProducto = (id) => {
   return productosApi.delete(`/${id}/`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
+
   })
 }
-export const updateProducto = (id, producto, token) => {
+export const updateProducto = (id, producto) => {
   return productosApi.put(`/${id}/`, producto, {
     headers: {
       'Content-Type': 'multipart/form-data',
-      Authorization: `Bearer ${token}`
+  
     }
   })
 }

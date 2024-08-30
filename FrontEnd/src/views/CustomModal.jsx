@@ -2,6 +2,7 @@ import React, { useEffect, forwardRef } from "react";
 import "./views.css";
 
 // recibe el Header y el Body como hijos
+
 const CustomModal = forwardRef(({ children, show, onHide }, ref) => {
   useEffect(() => {
     if (show) {
