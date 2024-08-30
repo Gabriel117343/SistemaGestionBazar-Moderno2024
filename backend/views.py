@@ -736,7 +736,7 @@ class VentaView(viewsets.ModelViewSet):
             info_venta_json = request.data.get('info_venta_json')
             
             try:
-                # Se utiliza atomic para asegurar que todas las operaciones se realicen o se reviertan en caso de error en alguna de ellas 
+                # Se utiliza atomic para asegurar que todas las operaciones se realizen o se reviertan en caso de error en alguna de ellas 
                 with transaction.atomic():
                     cliente = Cliente.objects.get(id=cliente_id)
                     vendedor = Usuario.objects.get(id=request.user.id)
@@ -761,7 +761,7 @@ class VentaView(viewsets.ModelViewSet):
                     except Exception as e:
                         return Response({'message': f'Error al guardar la venta: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
                     
-                    # 4 - una vez que se ha realizado la venta, se actualiza el dashboard con la información de la venta
+                    # 4 - una vez que se ha realizado la venta, se actualiza la información de la venta
                     self.TransformarDatosVenta(info_venta, venta) 
 
                     return Response({'message': 'Venta realizada exitosamente!'}, status=status.HTTP_201_CREATED)

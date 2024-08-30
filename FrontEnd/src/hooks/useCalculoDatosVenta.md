@@ -168,11 +168,12 @@ el Hook retorna un array con tres objetos, cada uno representando la informació
 
 
 ``` javascript
+  // La suma de la información detallada de la venta siempre será la misma 
    const resultado = [
   {
     categoria: [
       { entidad_id: 3, producto_id: 32, proveedor_id: 1, cantidad: 4, total: 2200 },
-      { entidad_id: 1, producto_id: 35, proveedor_id: 1, cantidad: 3, total: 2700 },
+      { entidad_id: 1, producto_id: 35, proveedor_id: 1, cantidad: 3, total: 2700 },// $7950
       { entidad_id: 2, producto_id: 36, proveedor_id: 1, cantidad: 3, total: 3050 }
     ]
   },
@@ -180,14 +181,14 @@ el Hook retorna un array con tres objetos, cada uno representando la informació
     producto: [
       { entidad_id: 32, categoria_id: 3, proveedor_id: 1, cantidad: 4, total: 2200 },
       { entidad_id: 35, categoria_id: 1, proveedor_id: 1, cantidad: 2, total: 1500 },
-      { entidad_id: 36, categoria_id: 2, proveedor_id: 1, cantidad: 2, total: 2400 },
+      { entidad_id: 36, categoria_id: 2, proveedor_id: 1, cantidad: 2, total: 2400 },// $7950
       { entidad_id: 37, categoria_id: 2, proveedor_id: 1, cantidad: 1, total: 650 },
       { entidad_id: 50, categoria_id: 1, proveedor_id: 3, cantidad: 1, total: 1200 }
     ]
   },
   {
     proveedor: [
-      { entidad_id: 1, categoria_id: 3, producto_id: 32, cantidad: 9, total: 6750 },
+      { entidad_id: 1, categoria_id: 3, producto_id: 32, cantidad: 9, total: 6750 },// $7950
       { entidad_id: 3, categoria_id: 1, producto_id: 50, cantidad: 1, total: 1200 }
     ]
   }

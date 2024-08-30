@@ -133,7 +133,7 @@ export default function useTransformarDatosVenta() {
           total: total,
         });
       });
-      console.log(secciones)
+      
       return { seccion: [...secciones] };
     }
 
