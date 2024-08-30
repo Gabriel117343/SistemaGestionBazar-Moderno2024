@@ -1,36 +1,34 @@
 // Hook personalizado para manejar el carrito de compras - CUSTOM HOOK REUTILIZABLE
 // sera utilizado tanto para el Admin como para el Vendedor
+
 export default function useTransformarDatosVenta() {
   return (carrito) => {
-    console.log(carrito)
+
     function obtenerInfoVentaCategoria() {
+      // el Set asegura que no se repitan los id de las categorias
       const totalTiposCarrito = new Set(
         carrito.map((producto) => producto.categoria.id)
       );
       const categorias = [];
       totalTiposCarrito.forEach((id) => {
         const tipoEnCarrito = carrito.filter((prod) => prod.categoria.id === id);
-        const cantidad = tipoEnCarrito.reduce(
-          (acc, prod) => acc + prod.cantidad,
-          0
-        );
-        
-        const total = tipoEnCarrito.reduce(
-          (acc, prod) => acc + prod.cantidad * parseFloat(prod.precio),
-          0
-        );
+
+        const calculo = tipoEnCarrito.reduce((acc, prod) => {
+          return {
+            cantidad: acc.cantidad + prod.cantidad,
+            total: acc.total + prod.cantidad * parseFloat(prod.precio),
+          }
+        },{ cantidad: 0, total: 0 });
+
         // Estos id seran para poder filtrar en las ventasCategoria por producto o seccion
-        const productoId = tipoEnCarrito[0].id
-        const proveedorId = tipoEnCarrito[0].proveedor.id
-        const seccionId = tipoEnCarrito[0].seccion.id
 
         categorias.push({
           entidad_id: id,
-          producto_id: productoId,
-          proveedor_id: proveedorId,
-          seccion_id: seccionId,
-          cantidad: cantidad,
-          total: total,
+          producto_id: tipoEnCarrito[0].id,
+          proveedor_id: tipoEnCarrito[0].proveedor.id,
+          seccion_id: tipoEnCarrito[0].seccion.id,
+          cantidad: calculo.cantidad,
+          total: calculo.total,
         });
       });
       return { categoria: [...categorias] };
@@ -44,25 +42,21 @@ export default function useTransformarDatosVenta() {
       );
       totalProductosCarritoId.forEach((id) => {
         const productoEnCarrito = carrito.filter((prod) => prod.id === id);
-        const cantidad = productoEnCarrito.reduce(
-          (acc, prod) => acc + prod.cantidad,
-          0
-        );
-        const total = productoEnCarrito.reduce(
-          (acc, prod) => acc + prod.cantidad * parseFloat(prod.precio),
-          0
-        );
-        // Estos id seran para poder filtrar en las ventasProducto por categoria o proveedor
-        const categoriaId = productoEnCarrito[0].categoria.id
-        const proveedorId = productoEnCarrito[0].proveedor.id
-        const seccionId = productoEnCarrito[0].seccion.id
+
+        const calculo = productoEnCarrito.reduce((acc, prod) => {
+          return {
+            cantidad: acc.cantidad + prod.cantidad,
+            total: acc.total + prod.cantidad * parseFloat(prod.precio),
+          }
+        },{ cantidad: 0, total: 0 });
+
         productos.push({
           entidad_id: id,
-          categoria_id: categoriaId,
-          proveedor_id: proveedorId,
-          seccion_id: seccionId,
-          cantidad: cantidad,
-          total: total,
+          categoria_id: productoEnCarrito[0].categoria.id,
+          proveedor_id: productoEnCarrito[0].proveedor.id,
+          seccion_id: productoEnCarrito[0].seccion.id,
+          cantidad: calculo.cantidad,
+          total: calculo.total,
         });
       });
       return { producto: [...productos] };
@@ -78,26 +72,22 @@ export default function useTransformarDatosVenta() {
         const productosDelProveedor = carrito.filter(
           (prod) => prod.proveedor.id === proveedorId
         );
-        const cantidad = productosDelProveedor.reduce(
-          (acc, prod) => acc + prod.cantidad,
-          0
-        );
-        const total = productosDelProveedor.reduce(
-          (acc, prod) => acc + prod.cantidad * parseFloat(prod.precio),
-          0
-        );
-        // Estos id seran para poder filtrar en las ventasProveedor por categoria o producto
-        const categoriaId = productosDelProveedor[0].categoria.id
-        const productoId = productosDelProveedor[0].id
-        const seccionId = productosDelProveedor[0].seccion.id
+
+        const calculo = productosDelProveedor.reduce((acc, prod) => {
+          return {
+            cantidad: acc.cantidad + prod.cantidad,
+            total: acc.total + prod.cantidad * parseFloat(prod.precio),
+          };
+        }, { cantidad: 0, total: 0 });
+
 
         proveedores.push({
           entidad_id: proveedorId,
-          categoria_id: categoriaId,
-          producto_id: productoId,
-          seccion_id: seccionId,
-          cantidad: cantidad,
-          total: total,
+          categoria_id: productosDelProveedor[0].categoria.id,
+          producto_id: productosDelProveedor[0].id,
+          seccion_id: productosDelProveedor[0].seccion.id,
+          cantidad: calculo.cantidad,
+          total: calculo.total,
         });
       });
       return { proveedor: [...proveedores] };
@@ -118,30 +108,26 @@ export default function useTransformarDatosVenta() {
             total: acc.total + prod.cantidad * parseFloat(prod.precio),
           };
         }, { cantidad: 0, total: 0 });
-        const cantidad = calculo.cantidad
-        const total = calculo.total
 
-        const categoriaId = productosDeSeccion[0].categoria.id
-        const productoId = productosDeSeccion[0].id
-        const proveedorId = productosDeSeccion[0].proveedor.id
         secciones.push({
           entidad_id: seccionId,
-          categoria_id: categoriaId,
-          producto_id: productoId,
-          proveedor_id: proveedorId,
-          cantidad: cantidad,
-          total: total,
+          categoria_id: productosDeSeccion[0].categoria.id,
+          producto_id: productosDeSeccion[0].id,
+          proveedor_id:  productosDeSeccion[0].proveedor.id,
+          cantidad: calculo.cantidad,
+          total: calculo.total,
         });
       });
       
       return { seccion: [...secciones] };
     }
 
-    return [
+    const resultado = [
       obtenerInfoVentaCategoria(),
       obtenerInfoVentaProducto(),
       obtenerInfoVentaProveedor(),
       obtenerInfoVentaSeccion(),
     ];
+    return resultado
   };
 }
