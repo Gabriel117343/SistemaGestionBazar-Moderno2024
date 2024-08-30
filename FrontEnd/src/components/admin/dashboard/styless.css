@@ -4,40 +4,42 @@
   display: grid;
  
   grid-template-areas: "icono-card card-info card-info";
-  grid-template-columns: 2fr 7fr;
-  width: 100%;
-  height: 100%;
+  grid-template-columns: 1fr 7fr;
+
   box-shadow: 4px 5px 3px rgba(83, 83, 83, 0.3) !important;
   border-radius: 10px;
+  overflow: hidden;
 }
 
 .container-card {
   
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+  grid-template-rows: repeat(auto-fill, 110px);
+  grid-auto-rows: 110px;
   gap: 15px 20px;
   margin: 0 auto; 
-
 }
 .contenido-card > h4 {
-  white-space: nowrap;
+  /* white-space: nowrap; */
   overflow: hidden;
 
 }
 .icono-card {
   position: relative;
-  border-radius: 10px 0 0 10px;
-  
   grid-area: icono-card;
   color: #f1f1f1;
-  font-size: 30p;
+  font-size: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.icono-card > i {
-  position: absolute;
+.tamaño-card .icono-card > i {
   font-size: 65px;
+}
+.icono-card > i {
+
+  padding: 0 8px 0 8px;
 }
 .contador-card {
   height: 100%;
@@ -65,21 +67,40 @@
   font-size: 17px;
 }
 
+@media(min-width: 868px) and (max-width: 1200px)  {
+  .tamaño-card .icono-card > i {
+    font-size: 50px;
+  }
+  .container-card {
+  
 
-@media screen and (max-width: 800px) {
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); 
+    grid-template-rows: repeat(auto-fill, 100px);
+    grid-auto-rows: 100px;
+
+  }
+  .contenido-card > h4 {
+    font-size: 18px;
+    overflow: inherit;    
+  }
+  .contenido-card > p {
+    font-size: 16px;
+  }
+  
+  
+}
+@media (min-width: 0px) and (max-width: 868px) {
   .tamaño-card > div {
     padding: 7px;
   }
   .container-card {
-    height: 30dvh;
-    align-items: start;
-    place-content: start;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    grid-template-rows: repeat();
-    gap: 7px 7px;
-    
-  }
   
+
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); 
+    grid-template-rows: repeat(auto-fill, 90px);
+    grid-auto-rows: 90px;
+  }
+
   .contenido-card > h4 {
     font-size: 16px;
     overflow: inherit;    
@@ -90,7 +111,9 @@
   .contador-card {
     font-size: 20px;
   }
-  
+  .tamaño-card .icono-card > i {
+    font-size: 40px;
+  }
   .container-grafico {
     display: grid;
     height: 70dvh;
@@ -103,14 +126,6 @@
 }
 
 
-.icono-dash {
-  font-size: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  margin: 0;
-}
 
 div.color-card-1 {
   background: rgb(206, 151, 34);
@@ -143,3 +158,4 @@ div.color-card-4 {
   margin-bottom: 0;
   padding-bottom: 0;
 }
+

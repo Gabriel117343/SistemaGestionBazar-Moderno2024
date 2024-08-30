@@ -51,7 +51,7 @@ export const ListaDeOpciones = () => {
             <div className="contenido-card">
               <h4>Ordenes de Compra</h4>
               <p> Total</p>
-            </div>
+            </div> 
             <div className="contador-card">
               <h3 className="p-0 m-0 contador-card">
                 <ContadorAnimado
