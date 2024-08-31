@@ -56,16 +56,11 @@ from rest_framework.pagination import PageNumberPagination
 from django.utils.deprecation import MiddlewareMixin
 from rest_framework.documentation import include_docs_urls
 import pytz # para obtener la zona horaria
-
+from django.db.models import Q
 User = get_user_model() # esto es para obtener el modelo de usuario que se está utilizando en el proyecto
 
 
-# Clase para poder paginar los resultados de las vistas
-class StandardResultsSetPagination(PageNumberPagination):
-  
-    page_size = 10  # Número de resultados por página por defecto
-    page_size_query_param = 'page_size'  # Permite al cliente cambiar el tamaño de la página
-    max_page_size = 100  # Tamaño máximo de la página permitido
+
 
 # Middleware para rastrea la última actividad de los usuarios y actualiza la última actividad en cada solicitud de las vistas de la API
 class ActualizarUltimaActividadMiddleware:
@@ -102,7 +97,7 @@ def get_docs_view():
         title='API Documentation',
         permission_classes=PublicDocsView.permission_classes,
         authentication_classes=PublicDocsView.authentication_classes
-    )
+    ) 
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny] # esto es para permitir cualquier usuario porque el usuario no está autenticado cuando se restablece la contraseña
     def post(self, request):
@@ -408,7 +403,6 @@ class ProductoView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
 
-    pagination_class = StandardResultsSetPagination  # Paginación de los resultados
     def get_queryset(self):
         """
         Se sobrescribe el método get_queryset para retornar productos basados en el estado de activación
@@ -431,14 +425,13 @@ class ProductoView(viewsets.ModelViewSet):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        print("Obteniendo Productos")
-        try: 
+
+        try:
             queryset = self.get_queryset()
-            paginator = self.pagination_class()
-            page = paginator.paginate_queryset(queryset, request)
+            page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
-                paginated_response = paginator.get_paginated_response(serializer.data)
+                paginated_response = self.get_paginated_response(serializer.data)
                 # Modifica el contenido de la respuesta paginada para incluir el mensaje personalizado
                 paginated_response.data['message'] = 'Productos obtenidos!'
                 return paginated_response
@@ -521,6 +514,14 @@ class CategoriaView(viewsets.ModelViewSet):
             serializer = CategoriaSerializer(queryset, many=True)
             if not serializer.data:
                 return Response({'error': 'No hay Categorías registradas'}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'data': serializer.data, 'message': 'Categorías obtenidas!'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': 'Error al obtener las Categorías'}, status=status.HTTP_400_BAD_REQUEST)
+    # se define list, ya que no se busca paginar las categorias, solo listarlas todas en una sola respuesta 
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = self.get_queryset()
+            serializer = self.get_serializer(queryset, many=True)
             return Response({'data': serializer.data, 'message': 'Categorías obtenidas!'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': 'Error al obtener las Categorías'}, status=status.HTTP_400_BAD_REQUEST)
@@ -752,6 +753,27 @@ class VentaView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
+    def get_queryset(self):
+        queryset = Venta.objects.select_related('cliente', 'vendedor')
+        
+        # Filtro por nombre del vendendor si se proporciona en la URL o el nombre del cliente
+        filtro = self.request.query_params.get('filtro', None)
+        if filtro: 
+            # Q permite combinar múltiples condiciones de filtro usando operadores lógicos como AND, OR, y NOT, y se utiliza para construir consultas complejas 
+            queryset = queryset.filter(Q(cliente__nombre__icontains=filtro) | Q(vendedor__nombre__icontains=filtro))
+        return queryset
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = self.get_queryset()
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                paginated_response = self.get_paginated_response(serializer.data)
+                paginated_response.data['message'] = 'Ventas obtenidas!'
+                return paginated_response
+            serializer = self.get_serializer(queryset, many=True)
+        except Exception as e:
+            return Response({'error': 'Error al obtener las Ventas'}, status=status.HTTP_400_BAD_REQUEST)
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
@@ -973,7 +995,12 @@ class TransformarDatosView(APIView):
 # Ej: http://127.0.0.1:8000/usuarios/ventas_categoria/?fecha_inicio=2024-08-26&fecha_fin=2024-08-28
 
 
-
+# Clase para poder paginar cada vista
+class StandardResultsSetPagination(PageNumberPagination):
+  
+    page_size = 10  # Número de resultados por página por defecto
+    page_size_query_param = 'page_size'  # Permite al cliente cambiar el tamaño de la página
+    max_page_size = 100  # Tamaño máximo de la página permitido
 class VentaCategoriaAPIView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]

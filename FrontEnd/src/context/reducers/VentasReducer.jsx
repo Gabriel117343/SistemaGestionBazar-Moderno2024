@@ -11,12 +11,20 @@ export const VentasReducer = (stateVenta, action) => {
     case 'CREATE_VENTA':
       return {
         ...stateVenta,
-        ventas: [...stateVenta.ventas, payload]
+        ventas: [...stateVenta.ventas, payload],
       }
     case 'GET_VENTAS':
       return {
         ...stateVenta,
-        ventas: payload
+        ventas: payload,
+ 
       }
+    case 'SET_CANTIDAD':
+      return {
+        ...stateVenta,
+        cantidad: payload,
+      }
+    default:
+      return stateVenta
   }
 }

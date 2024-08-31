@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { CarritoContext } from "../../../context/CarritoContext";
 import useCalculoProductosMostrar from "../../../hooks/useCalculoProductosMostrar";
-("../../../hooks/useCalculoProductosMostrar");
+
 import { PaginationButton } from "../../shared/PaginationButton";
 import useFiltroDatosMostrar from "../../../hooks/useFiltroDatosMostrar";
 export const ListaProductos = ({ productos }) => {

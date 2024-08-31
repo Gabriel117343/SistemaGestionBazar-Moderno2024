@@ -8,6 +8,7 @@ export const VentasProvider = ({ children }) => {
 
   const initialState = {
     ventas: [],
+    cantidad: 0,
     ventaSeleccionada: null,
 
   }
@@ -22,7 +23,7 @@ export const VentasProvider = ({ children }) => {
     
     try {
       const res = await createVenta(venta, TOKEN_ACCESO)
-      
+ 
       if (res.status === 200 || res.status === 201) {
         dispatchVenta({ type: 'CREATE_VENTA', payload: res.data })
       }
@@ -35,10 +36,14 @@ export const VentasProvider = ({ children }) => {
   const getVentasContext = async () => {
     try {
       const res = await getAllVentas(TOKEN_ACCESO)
+    
       if (res.status === 200) {
-        dispatchVenta({ type: 'GET_VENTAS', payload: res.data })
+        dispatchVenta({ type: 'GET_VENTAS', payload: res.data.results })
+        dispatchVenta({ type: 'SET_CANTIDAD', payload: res.data.count })
+        return { success: true, message: res.data.message }
       }
-      return { success: true, message: res.data.message }
+      return { success: false, message: res.data.message }
+     
     } catch (error) {
       return { success: false, message: error.response.data.message }
     }

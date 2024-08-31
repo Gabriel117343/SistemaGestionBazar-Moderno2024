@@ -7,8 +7,8 @@ export const ProductosReducer = (stateProducto, action ) => {
     case 'GET_PRODUCTOS':
       return {
         ...stateProducto,
-        productos: payload.results, // guarda los productos en el estado
-        cantidad: payload.count // guarda la cantidad de productos en el estado
+        productos: payload, // guarda los productos en el estado
+  
       }
     case 'GET_PRODUCTO':
       return {
@@ -29,6 +29,11 @@ export const ProductosReducer = (stateProducto, action ) => {
       return {
         ...stateProducto, // copia el estado actual del componente
         productos: stateProducto.productos.map((producto) => producto.id === payload.id ? payload : producto) // actualiza el producto  que se modifico y deja los demas igual como estaban antes de la modificacion
+      }
+    case 'SET_CANTIDAD':
+      return {
+        ...stateProducto,
+        cantidad: payload // guarda la cantidad de productos en el estado
       }
     default:
       return stateProducto // retorna el estado actual del componente si no se ejecuta ninguna accion

@@ -18,16 +18,20 @@ export const ProductosProvider = ({ children }) => {
   // UNICAMENTE SE PASAN LOS PARAMETROS QUE NECESITAN LAS FUNCIONES
 
  
-  const getProductosContext = async ({incluirInactivos, page, page_size, filtro}) => {
-    console.log(page)
+  const getProductosContext = async ({ incluirInactivos, page, page_size, filtro }) => {
+
     try {
       const res = await getAllProductos({ incluirInactivos, page, page_size, filtro }) // res para referenciarse al response del servidor
-      console.log(res.data)
+   
       if (res.status === 200 || res.status === 201) {
         dispatch({
           type: 'GET_PRODUCTOS',
-          payload: res.data
+          payload: res.data.results
         })
+        dispatch({
+          type: 'SET_CANTIDAD',
+          payload: res.data.count
+        })  
      
         return ({ success: true, message: res.data.message })
         // return ({ success: true, message: 'Usuario obtenido' }) > Asi se puede retornar un mensaje de exito sin necesidad de obtenerlo del response del servidor
@@ -47,6 +51,7 @@ export const ProductosProvider = ({ children }) => {
           type: 'GET_PRODUCTO',
           payload: res.data
         }) // si la peticion es exitosa se ejecuta el dispatch para actualizar el estado global de los productos
+             
         return ({ success: true, message: res.data.message })
         // return ({ success: true, message: 'Usuario obtenido' }) > Asi se puede retornar un mensaje de exito sin necesidad de obtenerlo del response del servidor
       }

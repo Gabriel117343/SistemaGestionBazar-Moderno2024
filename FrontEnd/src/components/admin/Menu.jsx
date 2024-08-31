@@ -46,7 +46,7 @@ export const Menu = ({ children }) => {
       icon: <i className="bi bi-speedometer"></i>,
     },
     {
-      path: "/admin/compras",
+      path: "/admin/compras?page=1",
       name: "Compras",
       icon: <i className="bi bi-basket2-fill"></i>,
     },
@@ -61,17 +61,17 @@ export const Menu = ({ children }) => {
       icon: <i className="bi bi-arrow-return-left"></i>,
     },
     {
-      path: "/admin/stocks",
+      path: "/admin/stocks?page=1",
       name: "Stock",
       icon: <i className="bi bi-box"></i>,
     },
     {
-      path: "/admin/ventas",
+      path: "/admin/venta?page=1",
       name: "Ventas",
       icon: <i className="bi bi-cart4"></i>,
     },
     {
-      path: "/admin/punto-venta",
+      path: "/admin/punto-venta?page=1?incluir_inactivos=false",
       name: "Punto de Venta",
       icon: <i className="bi bi-shop-window"></i>,
     },
@@ -79,22 +79,22 @@ export const Menu = ({ children }) => {
       name: "Mantenimiento",
     },
     {
-      path: "/admin/proveedores",
+      path: "/admin/proveedores?page=1",
       name: "Proveedores",
       icon: <i className="bi bi-truck"></i>,
     },
     {
-      path: "/admin/productos?page=1",
+      path: "/admin/productos?page=1&incluir_inactivos=true",
       name: "Productos",
       icon: <i className="bi bi-bag"></i>,
     },
     {
-      path: "/admin/usuarios",
+      path: "/admin/usuarios?page=1",
       name: "Usuarios",
       icon: <i className="bi bi-people"></i>,
     },
     {
-      path: "/admin/secciones",
+      path: "/admin/secciones?page=1",
       name: "Secciones",
       icon: <i className="bi bi-layers-fill"></i>,
     },

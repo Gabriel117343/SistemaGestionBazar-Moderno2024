@@ -25,7 +25,7 @@ const MostrarProductos = ({
             <th>Nombre</th>
             <th>Sección</th>
             <th>Código</th>
-            <th>Categoria</th>
+            <th>Categoría</th>
             <th>Precio</th>
             <th>Proveedor</th>
             <th>Estado</th>
@@ -103,9 +103,9 @@ const SinProductos = () => {
           <tr>
             <th>#</th>
             <th>Nombre</th>
-            <th>Secction</th>
-            <th>Codigo</th>
-            <th>Categoria</th>
+            <th>Sección</th>
+            <th>Código</th>
+            <th>Categoría</th>
             <th>Precio</th>
             <th>Proveedor</th>
             <th>Estado</th>

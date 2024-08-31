@@ -40,7 +40,7 @@ export const TablaProductosContenedor = () => {
 
   useEffect(() => {
     // se ejecuta al montar el compoennte y cada vez que cambie el searchParams
-    const incluirInactivos = searchParams.get("incluir_inactivos") || false;
+    const incluirInactivos = searchParams.get("incluir_inactivos");
     const filtro = searchParams.get("filtro") || "";
     const page = searchParams.get("page");
 
@@ -123,9 +123,9 @@ export const TablaProductosContenedor = () => {
   const filtrarProductos = (event) => {
     const filtro = event.target.value.trim();
     // si el filtro esta vacio se reinician los parametros de busqueda
-    if (filtro.length === 0) return setSearchParams({ page: 1 });
+    if (filtro.length === 0) return setSearchParams({ page: 1, incluir_inactivos: true });
 
-    setSearchParams({ filtro, page: 1 });
+    setSearchParams({...searchParams, filtro, page: 1, incluir_inactivos: true });
   };
   const debounceFiltrarProductos = debounce(filtrarProductos, 400); // Debounce para retrazar la ejecucion de la funcion
 
@@ -146,7 +146,7 @@ export const TablaProductosContenedor = () => {
     }
   };
   const cambiarPagina = ({ newPage }) => {
-    setSearchParams({ page: newPage });
+    setSearchParams({ page: newPage, incluir_inactivos: true });
   };
   const debounceRefrescarTabla = useRefreshDebounce(refrescarTabla, 2000);
   const imprimirTabla = () => {

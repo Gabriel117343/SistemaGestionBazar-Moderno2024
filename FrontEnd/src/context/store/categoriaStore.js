@@ -5,8 +5,8 @@ const useCategoriaStore = create((set) => ({
   geAllCategoriasStore: async (token) => {
     try {
       const res = await getAllCategorias(token)
-      if (res.status === 200 || res.status === 201) {
-        set({ categorias: res.data })
+      if (res.status === 200) {
+        set({ categorias: res.data.data })
         return ({ success: true, message: res.data.message })
       } else if (res.status === 204) {
         // cuando no hay contenido en la respuesta es el status 204

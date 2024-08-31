@@ -148,7 +148,12 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',  # Configura los permisos por defecto en cada vista de la API en views.py (de otro modo se debe configurar en cada vista, hay que especificar que no se necesita autenticación cuando se quiere hacer Login o Registro de usuario)
-    ]
+    ],
+    # Configuración de la paginación
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,  # Número de resultados por página por defecto
+    'PAGE_SIZE_QUERY_PARAM': 'page_size',  # Permite al cliente cambiar el tamaño de la página
+    'MAX_PAGE_SIZE': 100,  # Tamaño máximo de la página permitido
 }
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),

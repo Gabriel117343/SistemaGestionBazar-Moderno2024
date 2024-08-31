@@ -5,26 +5,36 @@ import { SeccionesContext } from "../../../context/SeccionesContext";
 import { ProductosContext } from "../../../context/ProductosContext";
 import CargaDeDatos from "../../../views/CargaDeDatos";
 import { debounce } from "lodash";
+
 import { ValidarProductos } from "./ListaProductos";
+import { useSearchParams } from 'react-router-dom';
+import { SidebarContext } from "../../../context/SidebarContext";
+import useCalculoProductosMostrar from "../../../hooks/useCalculoProductosMostrar";
 // import { withLoadingImage } from '../../../hocs/withLoadingImage'
 export const FiltroProductos = () => {
   
   const {stateSeccion: { secciones }, getSeccionesContext } = useContext(SeccionesContext);
-  const { stateProducto: { productos }, getProductosContext } = useContext(ProductosContext);
+  const { stateProducto: { productos, cantidad }, getProductosContext } = useContext(ProductosContext);
+  const { sidebar } = useContext(SidebarContext);
   
   const [isLoading, setIsLoading] = useState(true);
   const [productosFiltrados, setProductosFiltrados] = useState(productos);
   const [filtroPorSeccionActivo, setFiltroPorSeccionActivo] = useState(false);
+  const { calculoPaginas, productosPorPagina } = useCalculoProductosMostrar();
   
   const tipoRef = useRef(null);
   const buscadorRef = useRef(null);
+  const [searchParams, setSearchParams] = useSearchParams();
   const INCLUIR_INACTIVOS = false // no se incluyen los productos inactivos
 
   useEffect(() => {
     const cargarProductos = async () => {
-      // en vez de útilzar una promesa, se utiliza async await para esperar la respuesta y obtener el mensaje (es más limpio, facil de entender y rapido)
+      
+      const page = searchParams.get("page") || 1;
+      const page_size = productosPorPagina ?? 10;
+      const filtro = searchParams.get("filtro") || "";
       toast.loading("Cargando productos...", { id: "loading" });
-      const { success, message } = await getProductosContext(INCLUIR_INACTIVOS);
+      const { success, message } = await getProductosContext( page, page_size, filtro);
       if (success) {
         toast.success(message ?? "Productos cargados", { id: "loading" });
         setIsLoading(false); // se desactiva el componente de carga
@@ -34,6 +44,13 @@ export const FiltroProductos = () => {
         );
       }
     };
+   
+    cargarProductos();
+    
+    
+  }, [searchParams]); // cada vez que cambian los parametros de busqueda se ejecuta la funcion
+
+  useEffect(() => {
     const cargarSecciones = async () => {
       const { success, message } = await getSeccionesContext();
       if (!success) {
@@ -42,10 +59,14 @@ export const FiltroProductos = () => {
         );
       }
     };
-    cargarProductos();
     cargarSecciones();
-    
-  }, []);
+  }, [])
+  useEffect(() => {
+    function obtenerProductosPorPagina() {
+      calculoPaginas(sidebar);
+    }
+    obtenerProductosPorPagina();
+  }, [sidebar]); // si el sidebar cambia se recalcula la cantidad de productos por pagina
 
   const filtrarPorSeccion = (id) => {
     // se resetea el input de busqueda y el select de categoria
