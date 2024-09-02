@@ -2,9 +2,11 @@ import { create } from 'zustand'
 import { getAllCategorias } from '../../api/categorias.api'
 const useCategoriaStore = create((set) => ({
   categorias: [],
-  geAllCategoriasStore: async (token) => {
+  geAllCategoriasStore: async () => {
     try {
-      const res = await getAllCategorias(token)
+
+      const res = await getAllCategorias()
+      console.log(res)
       if (res.status === 200) {
         set({ categorias: res.data.data })
         return ({ success: true, message: res.data.message })

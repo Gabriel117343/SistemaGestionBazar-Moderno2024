@@ -396,17 +396,20 @@ class ProveedorView(viewsets.ModelViewSet):
             return Response({'message': 'Error al actualizar el Proveedor', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': 'Error al actualizar el Proveedor'}, status=status.HTTP_400_BAD_REQUEST)
+class ProductoPagination(PageNumberPagination):
+    page_size_query_param = 'page_size'  # Parámetro de consulta para el tamaño de la página
     
 class ProductoView(viewsets.ModelViewSet):
     serializer_class = ProductoSerializer
     queryset = Producto.objects.all() # Esto indica que todas las instancias del modelo Producto son el conjunto de datos sobre el que operará esta vista.
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
-
+    
+    pagination_class = ProductoPagination  # Usar la clase de paginación personalizada en lugar de la predeterminada en esta vista
     def get_queryset(self):
         """
         Se sobrescribe el método get_queryset para retornar productos basados en el estado de activación
-        solo cuando se listan los productos. Para otras acciones, retorna todos los productos.
+
         """
         queryset = Producto.objects.select_related('proveedor', 'seccion', 'stock')
         
@@ -417,11 +420,18 @@ class ProductoView(viewsets.ModelViewSet):
                 queryset = queryset.filter(estado=True)
         # Filtra por nombre del producto si se proporciona
         filtro = self.request.query_params.get('filtro', None)
+        categoria = self.request.query_params.get('categoria', None) # id de la categoria
+        seccion = self.request.query_params.get('seccion', None) # id de la seccion
+        print('Seccion:', seccion)
         if filtro:
             if filtro.isdigit(): # isdigit() devuelve True si el filtro es un número, lo que indica que se está buscando por código
                 queryset = queryset.filter(codigo__icontains=filtro)
             else:
                 queryset = queryset.filter(nombre__icontains=filtro)
+        if categoria:
+            queryset = queryset.filter(categoria__id=categoria)
+        if seccion:
+            queryset = queryset.filter(seccion__id=seccion)
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -438,7 +448,7 @@ class ProductoView(viewsets.ModelViewSet):
             serializer = self.get_serializer(queryset, many=True)
 
             # si la paginación no se aplica, se envía la respuesta con todos los productos
-            return Response({'data': serializer.data, 'message': 'Productos obtenidos!'}, status=status.HTTP_200_OK)
+
         except Exception as e:
             return Response({'error': 'Error al obtener los Productos', 'details': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     def destroy(self, request, *args, **kwargs):

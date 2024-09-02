@@ -1,25 +1,21 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext, useEffect, forwardRef } from "react";
 import { MagicMotion } from "react-magic-motion";
 import { toast } from "react-hot-toast";
-import { SidebarContext } from "../../../context/SidebarContext";
+
 import { CarritoContext } from "../../../context/CarritoContext";
-import useCalculoProductosMostrar from "../../../hooks/useCalculoProductosMostrar";
 
 import { PaginationButton } from "../../shared/PaginationButton";
-import useFiltroDatosMostrar from "../../../hooks/useFiltroDatosMostrar";
-export const ListaProductos = ({ productos }) => {
-  const { sidebar } = useContext(SidebarContext);
-  const [currentPage, setCurrentPage] = useState(1);
+import useCalculoProductosMostrar from "../../../hooks/useCalculoProductosMostrar";
+import './puntoventa.css'
+export const ListaProductos = forwardRef(({ productos, currentPage, cambiarPagina, cantidadDatos, pageSize }, ref) => {
+
   const { carrito, agregarProductoCarrito } = useContext(CarritoContext);
-  const { calculoPaginas, productosPorPagina } = useCalculoProductosMostrar();
-
+  
+  const { productosPorPagina, calcularProductosMostrar } = useCalculoProductosMostrar(); 
   useEffect(() => {
-    function obtenerProductosPorPagina() {
-      calculoPaginas(sidebar);
-    }
-    obtenerProductosPorPagina();
-  }, [sidebar]); // si el sidebar cambia se recalcula la cantidad de productos por pagina
-
+    calcularProductosMostrar();
+  }, [])
+  console.log(productosPorPagina)
   const agregarProducto = async (producto) => {
     toast.loading("Agregando al carrito...", { id: "loading" });
     const { success, message } = await agregarProductoCarrito(producto);
@@ -31,16 +27,12 @@ export const ListaProductos = ({ productos }) => {
     }
   };
 
-  const productosMostrar = useFiltroDatosMostrar({
-    currentPage,
-    datosPorPagina: productosPorPagina,
-    datos: productos,
-  });
+
   return (
-    <article>
+    <article ref={ref} className="container-productos">
       <ul className="productos">
         <MagicMotion duration={0.5}>
-          {productosMostrar?.map((producto) => {
+          {productos?.map((producto) => {
             // const stock = producto?.stock?.find(stock => stock.id === id)
             const cantidad = producto.stock.cantidad ?? 0; // se accede a la cantidad de productos en stock
             const stockProductoCarrito =
@@ -106,14 +98,14 @@ export const ListaProductos = ({ productos }) => {
       <div className="pt-1 d-flex gap-1">
         <PaginationButton
           currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          totalDatos={productos.length}
-          cantidadPorPagina={productosPorPagina}
+          cambiarPagina={cambiarPagina}
+          totalDatos={cantidadDatos}
+          cantidadPorPagina={pageSize}
         />
       </div>
     </article>
   );
-};
+});
 const SinProductos = () => {
   return (
     <div className="pt-2">
@@ -121,12 +113,12 @@ const SinProductos = () => {
     </div>
   );
 };
-export const ValidarProductos = ({ productos }) => {
+export const ValidarProductos = forwardRef(({ productos, ...props }, ref) => {
   const validacion = productos.length > 0;
 
   return (
     <>
-      {validacion ? <ListaProductos productos={productos} /> : <SinProductos />}
+      {validacion ? <ListaProductos productos={productos} {...props} ref={ref}/> : <SinProductos />}
     </>
   );
-};
+});

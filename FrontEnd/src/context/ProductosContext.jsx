@@ -18,10 +18,11 @@ export const ProductosProvider = ({ children }) => {
   // UNICAMENTE SE PASAN LOS PARAMETROS QUE NECESITAN LAS FUNCIONES
 
  
-  const getProductosContext = async ({ incluirInactivos, page, page_size, filtro }) => {
+  const getProductosContext = async (props) => {
+    '|incluir_inactivos|filtro|page|page_size|seccion|categoria'
 
     try {
-      const res = await getAllProductos({ incluirInactivos, page, page_size, filtro }) // res para referenciarse al response del servidor
+      const res = await getAllProductos(props) // res para referenciarse al response del servidor
    
       if (res.status === 200 || res.status === 201) {
         dispatch({

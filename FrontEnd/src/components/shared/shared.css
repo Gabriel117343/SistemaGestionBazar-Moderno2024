@@ -30,3 +30,8 @@
   padding: 10px;
 
 }
+.btn-filtro {
+  background: #4eacff;  /* fallback for old browsers */
+  color: white;
+  
+}

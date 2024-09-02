@@ -1,14 +1,21 @@
 /* estilos para el contenedor de los productos */
+.container-productos {
+  height: 85vh; /* esta sera la atura maxima para calcular el total de productos a mostrar */
+  outline: 1px solid red;
+
+ 
+}
 .productos {
   margin: 0;
   padding: 0;
   width: 100%;
   display: grid;
+  
   grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
   gap: 20px;
 }
 .producto {
-
+  outline: 1px solid red;
   display: flex;
   text-align: center;
   flex-direction: column;

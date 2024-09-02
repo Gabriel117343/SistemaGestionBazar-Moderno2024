@@ -71,7 +71,7 @@ export const Menu = ({ children }) => {
       icon: <i className="bi bi-cart4"></i>,
     },
     {
-      path: "/admin/punto-venta?page=1?incluir_inactivos=false",
+      path: "/admin/punto-venta?page=1&incluir_inactivos=false",
       name: "Punto de Venta",
       icon: <i className="bi bi-shop-window"></i>,
     },

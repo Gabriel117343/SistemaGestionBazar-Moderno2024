@@ -3,10 +3,6 @@ import { createApiInstance } from './config/axiosConfig';
 const categoriasApi = createApiInstance('usuarios/datos/v1/categorias')
 
 
-export const getAllCategorias = (token) => {
-  return categoriasApi.get('/', {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
+export const getAllCategorias = () => {
+  return categoriasApi.get('/', {})
 }

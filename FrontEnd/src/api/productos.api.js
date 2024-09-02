@@ -4,14 +4,16 @@ const productosApi = createApiInstance('usuarios/datos/v1/productos') // la urls
 
 // ESTE ES EL CRU DDE PRODUCTOS
 
-export const getAllProductos = ({ incluirInactivos, page, page_size, filtro }) => {
+export const getAllProductos = ({ incluir_inactivos, page, page_size, filtro, categoria, seccion }) => {
+
   return productosApi.get('/', {
     params: {
-      incluir_inactivos: incluirInactivos ? 'si' : 'no',
+      incluir_inactivos: incluir_inactivos,
       page: page,
       page_size: page_size,
       filtro: filtro,
-
+      categoria: categoria,
+      seccion: seccion
     },
   
   })
