@@ -41,6 +41,7 @@ export const ListaProductos = forwardRef(({ productos, currentPage, cambiarPagin
             const cantidadCalculada = cantidad - stockProductoCarrito;
             // cantidadCalculada lo que hace es restar la cantidad de productos en stock con la cantidad de productos que ya estan en el carrito
             // Es una forma de representar la cantidad de productos que se pueden agregar, no es la cantidad real que viene del stock del backend
+        
             return (
               <li key={producto.id} className="producto">
                 {cantidadCalculada <= 5 && (

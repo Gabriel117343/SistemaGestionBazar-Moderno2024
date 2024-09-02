@@ -5,11 +5,12 @@ export const ProductosReducer = (stateProducto, action ) => {
   const { type, payload } = action // destructuring de la accion
   switch (type) {
     case 'GET_PRODUCTOS':
-      return {
+        return {
         ...stateProducto,
-        productos: payload, // guarda los productos en el estado
-  
-      }
+        productos: payload.productos,
+        cantidad: payload.cantidad,
+        page_size: payload.page_size,
+      };
     case 'GET_PRODUCTO':
       return {
         ...stateProducto,

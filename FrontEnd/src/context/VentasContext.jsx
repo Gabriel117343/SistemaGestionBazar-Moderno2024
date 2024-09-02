@@ -23,7 +23,7 @@ export const VentasProvider = ({ children }) => {
     
     try {
       const res = await createVenta(venta, TOKEN_ACCESO)
- 
+     
       if (res.status === 200 || res.status === 201) {
         dispatchVenta({ type: 'CREATE_VENTA', payload: res.data })
       }

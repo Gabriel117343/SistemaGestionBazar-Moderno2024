@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 
 import { ProductosContext } from "../../../context/ProductosContext";
 import CargaDeDatos from "../../../views/CargaDeDatos";
-import { debounce } from "lodash";
+import { debounce, set } from "lodash";
 
 import { ValidarProductos } from "./ListaProductos";
 import { useSearchParams } from "react-router-dom";
@@ -21,16 +21,16 @@ export const FiltroProductos = () => {
   } = useContext(ProductosContext);
   const { sidebar } = useContext(SidebarContext);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const { productosPorPagina, calcularProductosMostrar } =
     useCalculoProductosMostrar(); // Obtiene la cantidad de productos por página
-  console.log(productosPorPagina);
+
   const categoriaRef = useRef(null);
   const buscadorRef = useRef(null);
 
   const componentProductosRef = useRef(null);
-  const [searchParams, setSearchParams] = useSearchParams();
 
+  console.log(productos);
   const parametrosDeConsulta = () => {
     return {
       page: searchParams.get("page"),
@@ -41,25 +41,26 @@ export const FiltroProductos = () => {
     };
   };
 
-
+  useEffect(() => {
+    calcularProductosMostrar(componentProductosRef, sidebar);
+  }, [sidebar]);
 
   useEffect(() => {
     const cargarProductos = async () => {
       toast.loading("Cargando productos...", { id: "loading" });
-      const pageSize =
-        productosPorPagina !== 1
-          ? productosPorPagina
-          : await calcularProductosMostrar(componentProductosRef);
-      console.log(pageSize);
+
+      if (productosPorPagina === 1) return;
+
       const parametros = parametrosDeConsulta();
 
       const { success, message } = await getProductosContext({
         ...parametros,
-        page_size: pageSize,
+        page_size: productosPorPagina,
       });
       if (success) {
         toast.success(message ?? "Productos cargados", { id: "loading" });
         setIsLoading(false); // se desactiva el componente de carga
+      
       } else {
         toast.error(
           message ?? "Ha ocurrido un error inesperado al cargar los productos",
@@ -69,8 +70,8 @@ export const FiltroProductos = () => {
     };
 
     cargarProductos();
-  }, [searchParams, sidebar]); // si los productos cambian o cambia el fitro se vuelve a cargar los productos
-
+  }, [searchParams, productosPorPagina]); // si los productos cambian o cambia el fitro se vuelve a cargar los productos
+  console.log('dsf')
   const filtrar = ({ idSeccion = "all", filtro, idCategoria = "all" }) => {
     const newParams = { page: 1, incluir_inactivos: false }; // parametros que siempre se envian en la busqueda
 
@@ -97,7 +98,7 @@ export const FiltroProductos = () => {
   const cambiarPagina = ({ newPage }) => {
     setSearchParams({ page: newPage, incluir_inactivos: true });
   };
-
+  console.log("first");
   return (
     <>
       <div className="col-md-8">

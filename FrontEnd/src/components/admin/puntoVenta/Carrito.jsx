@@ -9,7 +9,7 @@ import { ProductosContext } from "../../../context/ProductosContext";
 import { VentasContext } from "../../../context/VentasContext";
 import { toast } from "react-hot-toast";
 import useTransformarDatosVenta from "../../../hooks/useTransformarDatosVenta";
-
+import { useSearchParams } from "react-router-dom";
 import "./puntoventa.css";
 import { debounce } from "lodash";
 import Swal from "sweetalert2";
@@ -33,9 +33,10 @@ export const Carrito = () => {
     actualizarCantidadCarrito,
   } = useContext(CarritoContext);
   const {
-    stateProducto: { productos },
+    stateProducto: { productos, page_size },
     getProductosContext,
   } = useContext(ProductosContext);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     // si no hay productos en el carrito o no hay un cliente seleccionado, se habilita la opcion de seleccionar cliente
@@ -58,6 +59,18 @@ export const Carrito = () => {
   const ajustarOpciones = () => {
     setOpcionCliente(true);
   };
+
+  const parametrosDeConsulta = () => {
+    return {
+      page: searchParams.get("page"),
+      filtro: searchParams.get("filtro") ?? "",
+      categoria: searchParams.get("categoria") ?? "",
+      seccion: searchParams.get("seccion") ?? "",
+      incluir_inactivos: searchParams.get("incluir_inactivos"),
+      page_size: page_size
+    };
+  };
+
   const agregarProducto = async (producto) => {
     // en vez de útilzar una promesa, se utiliza async await para esperar la respuesta y obtener el mensaje (es más limpio, facil de entender y rapido)
     const { success, message } = await agregarProductoCarrito(producto);
@@ -81,7 +94,10 @@ export const Carrito = () => {
     }
   };
   const refrescarProductos = async () => {
-    const { success, message } = await getProductosContext();
+    const parametros = parametrosDeConsulta();
+
+    const { success, message } = await getProductosContext(parametros);
+    console.log(message ?? "Productos cargados");
     if (!success) {
       toast.error(message ?? "Error al cargar los productos");
     }
@@ -100,11 +116,13 @@ export const Carrito = () => {
 
     // agregar productos
 
-    const { success, message } = await createVentaContext(formVenta);
+    const { success, message } = await createVentaContext(formVenta).finally(() =>{
+      refrescarProductos(); //
+    })
 
     if (success) {
       vaciarCarrito();
-      refrescarProductos();
+   
       Swal.fire({
         title: "Venta realizada",
         text: message,

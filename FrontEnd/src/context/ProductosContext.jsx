@@ -10,6 +10,7 @@ export const ProductosProvider = ({ children }) => {
   const initialState = {
     productos: [],
     cantidad: 0,
+    page_size: 0,
     productoSeleccionado: null
   } // estado inicial de los productos para el Reducer de los productos
   
@@ -23,19 +24,19 @@ export const ProductosProvider = ({ children }) => {
 
     try {
       const res = await getAllProductos(props) // res para referenciarse al response del servidor
-   
-      if (res.status === 200 || res.status === 201) {
+      console.log(res)
+      if (res.status === 200) {
         dispatch({
           type: 'GET_PRODUCTOS',
-          payload: res.data.results
-        })
-        dispatch({
-          type: 'SET_CANTIDAD',
-          payload: res.data.count
-        })  
+          payload: {
+            productos: res.data.results,
+            cantidad: res.data.count,
+            page_size: props.page_size ?? 1,
+          },
+        });
      
         return ({ success: true, message: res.data.message })
-        // return ({ success: true, message: 'Usuario obtenido' }) > Asi se puede retornar un mensaje de exito sin necesidad de obtenerlo del response del servidor
+       
       }
       return ({ success: false, message: res.data.error })
     } catch (error) { // si hay un error en la peticion se ejecuta este bloque que captura el response del servidor
