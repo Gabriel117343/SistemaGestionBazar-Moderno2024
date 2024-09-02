@@ -9,13 +9,18 @@ const API_URL = Object.freeze({
   despliegue_local: 'https://dwq9c4nw-8000.brs.devtunnels.ms'
 });
 export const createApiInstance = (path='') => {
+
   const apiInstance = axios.create({
-    baseURL: `${API_URL.desarrollo}/${path}`
+    baseURL: `${API_URL.desarrollo}/${path}`,
   });
 
-  // INTERCEPTOR DE SOLICITUD PARA INCLUIR EL TOKEN DE ACCESO EN El HEADER DE AUTORIZACIÓN DE CADA SOLICITUD A LA API DE DJANGO (antes de enviar la solicitud)
 
   apiInstance.interceptors.request.use(config => {
+    const patronLogin = /\/login/;
+
+    // Si ya tiene un token de acceso en el header, no se agrega otro o si se está en la ruta de inicio de sesión se omite
+    if (Object.hasOwn(config.headers, 'Authorization' || patronLogin.test(config.baseURL))) return config;
+
     const token = localStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
