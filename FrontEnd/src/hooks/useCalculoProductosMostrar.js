@@ -16,17 +16,26 @@ function useCalculoProductosMostrar() {
           console.log(columnas)
           
           const filas = Math.floor(height / productoHeight);
-          console.log(filas)
-          console.log(height)
-          console.log(width)
+
           const totalProductos = columnas * filas;
-          console.log(totalProductos)
+
           setProductosPorPagina(totalProductos);
           resolve(totalProductos);
         } else {
-          resolve(5); // valor por defecto si no hay referencia
+          // dado que al cargar el componente el ref no existe, se calcula la cantidad de productos por página de acuerdo al ancho de la ventana
+          if (window.innerWidth < 1200) {
+            console.log('first')
+            setProductosPorPagina(6);
+            resolve(6)
+          } else if (window.innerWidth > 1200 && window.innerWidth < 1800) {
+            setProductosPorPagina(8);
+            resolve(8)
+          } else {
+            setProductosPorPagina(10);
+            resolve(10)
+          }
         }
-      }, 1300)
+      }, 800)
       
     });
   };

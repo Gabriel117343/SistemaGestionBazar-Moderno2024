@@ -7,22 +7,24 @@ import CargaDeDatos from "../../../views/CargaDeDatos";
 import { debounce } from "lodash";
 
 import { ValidarProductos } from "./ListaProductos";
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from "react-router-dom";
 import { SidebarContext } from "../../../context/SidebarContext";
 
 import useCalculoProductosMostrar from "../../../hooks/useCalculoProductosMostrar";
 // import { withLoadingImage } from '../../../hocs/withLoadingImage'
-import { CategoriaSelect } from '../../shared/CategoriaSelect'
-import { SeccionButton } from '../../shared/SeccionButton'
+import { CategoriaSelect } from "../../shared/CategoriaSelect";
+import { SeccionButton } from "../../shared/SeccionButton";
 export const FiltroProductos = () => {
-  
-
-  const { stateProducto: { productos, cantidad }, getProductosContext } = useContext(ProductosContext);
+  const {
+    stateProducto: { productos, cantidad },
+    getProductosContext,
+  } = useContext(ProductosContext);
   const { sidebar } = useContext(SidebarContext);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { productosPorPagina, calcularProductosMostrar } = useCalculoProductosMostrar(); // Obtiene la cantidad de productos por página
-  console.log(productosPorPagina)
+  const { productosPorPagina, calcularProductosMostrar } =
+    useCalculoProductosMostrar(); // Obtiene la cantidad de productos por página
+  console.log(productosPorPagina);
   const categoriaRef = useRef(null);
   const buscadorRef = useRef(null);
 
@@ -30,66 +32,64 @@ export const FiltroProductos = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const parametrosDeConsulta = () => {
-
     return {
       page: searchParams.get("page"),
       filtro: searchParams.get("filtro") ?? "",
       categoria: searchParams.get("categoria") ?? "",
       seccion: searchParams.get("seccion") ?? "",
       incluir_inactivos: searchParams.get("incluir_inactivos"),
-    }
-  }
-  
+    };
+  };
+
+
+
   useEffect(() => {
-
-    
     const cargarProductos = async () => {
-
-   
       toast.loading("Cargando productos...", { id: "loading" });
-      const pageSize = await calcularProductosMostrar(componentProductosRef);
-      console.log(pageSize)
+      const pageSize =
+        productosPorPagina !== 1
+          ? productosPorPagina
+          : await calcularProductosMostrar(componentProductosRef);
+      console.log(pageSize);
       const parametros = parametrosDeConsulta();
 
-      
-      const { success, message } = await getProductosContext({...parametros, page_size: pageSize});
+      const { success, message } = await getProductosContext({
+        ...parametros,
+        page_size: pageSize,
+      });
       if (success) {
         toast.success(message ?? "Productos cargados", { id: "loading" });
         setIsLoading(false); // se desactiva el componente de carga
       } else {
         toast.error(
-          message ?? "Ha ocurrido un error inesperado al cargar los productos", { id: "loading" }
+          message ?? "Ha ocurrido un error inesperado al cargar los productos",
+          { id: "loading" }
         );
       }
     };
-   
+
     cargarProductos();
-    
-    
   }, [searchParams, sidebar]); // si los productos cambian o cambia el fitro se vuelve a cargar los productos
 
- 
-  const filtrar = ({ idSeccion = 'all', filtro, idCategoria = 'all' }) => {
-    
+  const filtrar = ({ idSeccion = "all", filtro, idCategoria = "all" }) => {
     const newParams = { page: 1, incluir_inactivos: false }; // parametros que siempre se envian en la busqueda
 
     if (idSeccion !== "all") {
-      console.log(idSeccion)
+      console.log(idSeccion);
       newParams.seccion = idSeccion;
       categoriaRef.current.value = "all";
       buscadorRef.current.value = "";
     } else if (idCategoria !== "all") {
-      console.log(idCategoria)
+      console.log(idCategoria);
       newParams.categoria = idCategoria;
       buscadorRef.current.value = "";
     } else if (filtro?.trim().length > 0) {
       newParams.filtro = filtro;
       categoriaRef.current.value = "all";
     } else {
-
       return setSearchParams({ page: 1, incluir_inactivos: false }); // si no hay filtro se resetea la busqueda y se muestran todos los productos
     }
-    
+
     setSearchParams(newParams);
   };
   const debounceFiltrar = debounce(filtrar, 400);
@@ -97,8 +97,6 @@ export const FiltroProductos = () => {
   const cambiarPagina = ({ newPage }) => {
     setSearchParams({ page: newPage, incluir_inactivos: true });
   };
-  
-
 
   return (
     <>
@@ -106,8 +104,7 @@ export const FiltroProductos = () => {
         <div className="row pb-1">
           <div className="col-md-6">
             <label htmlFor="categoriaSelect">Filtrar por categoria</label>
-            <CategoriaSelect ref={categoriaRef} filtroCategoria={filtrar}/>
-           
+            <CategoriaSelect ref={categoriaRef} filtroCategoria={filtrar} />
           </div>
           <div className="col-md-6">
             <label htmlFor="buscarSelect">Buscar</label>
@@ -125,16 +122,15 @@ export const FiltroProductos = () => {
         <div className="pb-1 d-flex gap-1 contenedor-secciones">
           <button
             onClick={filtrar}
-            className={`border rounded btn-seleccion ${(productos?.length === productosPorPagina) ? "btn-filtro" : ""}`}
+            className={`border rounded btn-seleccion ${productos?.length === productosPorPagina ? "btn-filtro" : ""}`}
           >
             Todos
           </button>
-          <SeccionButton 
-          filtrarPorSeccion={filtrar}
-          productos={productos}
-          productosPorPagina={productosPorPagina}
+          <SeccionButton
+            filtrarPorSeccion={filtrar}
+            productos={productos}
+            productosPorPagina={productosPorPagina}
           />
-         
         </div>
         {isLoading ? (
           <CargaDeDatos />
