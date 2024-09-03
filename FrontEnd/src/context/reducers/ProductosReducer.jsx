@@ -9,7 +9,6 @@ export const ProductosReducer = (stateProducto, action ) => {
         ...stateProducto,
         productos: payload.productos,
         cantidad: payload.cantidad,
-        page_size: payload.page_size,
       };
     case 'GET_PRODUCTO':
       return {

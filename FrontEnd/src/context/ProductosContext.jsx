@@ -31,7 +31,7 @@ export const ProductosProvider = ({ children }) => {
           payload: {
             productos: res.data.results,
             cantidad: res.data.count,
-            page_size: props.page_size ?? 1,
+
           },
         });
      

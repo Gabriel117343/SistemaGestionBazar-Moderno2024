@@ -24,9 +24,6 @@ export const SeccionButton = ({
     cargarSecciones();
   }, []);
 
-  // memoizar la función para evitar que se ejecute en cada renderizado
-
-
   const verificarCoincidencia = (numero) => {
     if (productos.length !== productosPorPagina) {
       const newClase = productos?.some(

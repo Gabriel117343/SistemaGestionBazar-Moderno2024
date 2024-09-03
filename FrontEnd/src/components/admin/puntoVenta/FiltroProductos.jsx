@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 
 import { ProductosContext } from "../../../context/ProductosContext";
 import CargaDeDatos from "../../../views/CargaDeDatos";
-import { debounce, set } from "lodash";
+import { debounce } from "lodash";
 
 import { ValidarProductos } from "./ListaProductos";
 import { useSearchParams } from "react-router-dom";
@@ -22,40 +22,47 @@ export const FiltroProductos = () => {
   const { sidebar } = useContext(SidebarContext);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { productosPorPagina, calcularProductosMostrar } =
-    useCalculoProductosMostrar(); // Obtiene la cantidad de productos por página
+  const calcularProductosMostrar = useCalculoProductosMostrar(); // Obtiene la cantidad de productos por página
 
   const categoriaRef = useRef(null);
   const buscadorRef = useRef(null);
 
   const componentProductosRef = useRef(null);
 
-  console.log(productos);
+ 
   const parametrosDeConsulta = () => {
     return {
       page: searchParams.get("page"),
+      page_size: searchParams.get("page_size"),
       filtro: searchParams.get("filtro") ?? "",
       categoria: searchParams.get("categoria") ?? "",
       seccion: searchParams.get("seccion") ?? "",
       incluir_inactivos: searchParams.get("incluir_inactivos"),
+     
     };
   };
-
+ 
   useEffect(() => {
-    calcularProductosMostrar(componentProductosRef, sidebar);
+    async function calcular () {
+      const newPageSize = await calcularProductosMostrar(componentProductosRef, sidebar);
+      setSearchParams({ page: 1,incluir_inactivos: false, page_size: newPageSize });
+    }
+    calcular()
+  
   }, [sidebar]);
 
+  console.log(searchParams.get("page_size"))
   useEffect(() => {
     const cargarProductos = async () => {
-      toast.loading("Cargando productos...", { id: "loading" });
+      const productosPorPagina = searchParams.get("page_size");
+      console.log(productosPorPagina)
 
-      if (productosPorPagina === 1) return;
 
       const parametros = parametrosDeConsulta();
-
+      console.log(parametros)
       const { success, message } = await getProductosContext({
         ...parametros,
-        page_size: productosPorPagina,
+      
       });
       if (success) {
         toast.success(message ?? "Productos cargados", { id: "loading" });
@@ -70,10 +77,10 @@ export const FiltroProductos = () => {
     };
 
     cargarProductos();
-  }, [searchParams, productosPorPagina]); // si los productos cambian o cambia el fitro se vuelve a cargar los productos
-  console.log('dsf')
+  }, [searchParams]); // si los productos cambian o cambia el fitro se vuelve a cargar los productos
+
   const filtrar = ({ idSeccion = "all", filtro, idCategoria = "all" }) => {
-    const newParams = { page: 1, incluir_inactivos: false }; // parametros que siempre se envian en la busqueda
+    const newParams = { page: 1, page_size: parseInt(searchParams.get("page_size")), incluir_inactivos: false }; // parametros que siempre se envian en la busqueda
 
     if (idSeccion !== "all") {
       console.log(idSeccion);
@@ -88,7 +95,7 @@ export const FiltroProductos = () => {
       newParams.filtro = filtro;
       categoriaRef.current.value = "all";
     } else {
-      return setSearchParams({ page: 1, incluir_inactivos: false }); // si no hay filtro se resetea la busqueda y se muestran todos los productos
+      return setSearchParams({ page: 1, page_size: parseInt(searchParams.get("page_size")),  incluir_inactivos: false }); // si no hay filtro se resetea la busqueda y se muestran todos los productos
     }
 
     setSearchParams(newParams);
@@ -96,7 +103,7 @@ export const FiltroProductos = () => {
   const debounceFiltrar = debounce(filtrar, 400);
 
   const cambiarPagina = ({ newPage }) => {
-    setSearchParams({ page: newPage, incluir_inactivos: true });
+    setSearchParams({ page: newPage, page_size: parseInt(searchParams.get("page_size")), incluir_inactivos: true });
   };
   console.log("first");
   return (
@@ -123,28 +130,32 @@ export const FiltroProductos = () => {
         <div className="pb-1 d-flex gap-1 contenedor-secciones">
           <button
             onClick={filtrar}
-            className={`border rounded btn-seleccion ${productos?.length === productosPorPagina ? "btn-filtro" : ""}`}
+            className={`border rounded btn-seleccion ${productos?.length === parseInt(searchParams.get("page_size")) ? "btn-filtro" : ""}`}
           >
             Todos
           </button>
           <SeccionButton
             filtrarPorSeccion={filtrar}
             productos={productos}
-            productosPorPagina={productosPorPagina}
+            productosPorPagina={parseInt(searchParams.get("page_size"))}
           />
         </div>
-        {isLoading ? (
-          <CargaDeDatos />
-        ) : (
-          <ValidarProductos
-            productos={productos}
-            currentPage={searchParams.get("page") || 1}
-            cambiarPagina={cambiarPagina}
-            cantidadDatos={cantidad}
-            pageSize={productosPorPagina}
-            ref={componentProductosRef}
-          />
-        )}
+        {/* se agrega un la referencia para obtener el ancho y alto del contenedor de los productos apenas se renderice el componente (para evitar errores de calculo) */}
+        <section className="container-productos" ref={componentProductosRef}>
+          {isLoading ? (
+            <CargaDeDatos />
+          ) : (
+            <ValidarProductos
+              productos={productos}
+              currentPage={searchParams.get("page") || 1}
+              cambiarPagina={cambiarPagina}
+              cantidadDatos={cantidad}
+              pageSize={parseInt(searchParams.get("page_size"))}
+             
+            />
+          )}
+        </section>
+      
       </div>
     </>
   );

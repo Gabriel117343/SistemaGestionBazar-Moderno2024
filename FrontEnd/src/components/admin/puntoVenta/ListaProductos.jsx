@@ -1,21 +1,19 @@
-import { useContext, useEffect, forwardRef } from "react";
+import { useContext, useEffect } from "react";
 import { MagicMotion } from "react-magic-motion";
 import { toast } from "react-hot-toast";
 
 import { CarritoContext } from "../../../context/CarritoContext";
 
 import { PaginationButton } from "../../shared/PaginationButton";
-import useCalculoProductosMostrar from "../../../hooks/useCalculoProductosMostrar";
-import './puntoventa.css'
-export const ListaProductos = forwardRef(({ productos, currentPage, cambiarPagina, cantidadDatos, pageSize }, ref) => {
 
+import "./puntoventa.css";
+export const ListaProductos = (
+  { productos, currentPage, cambiarPagina, cantidadDatos, pageSize }
+) => {
   const { carrito, agregarProductoCarrito } = useContext(CarritoContext);
-  
-  const { productosPorPagina, calcularProductosMostrar } = useCalculoProductosMostrar(); 
-  useEffect(() => {
-    calcularProductosMostrar();
-  }, [])
-  console.log(productosPorPagina)
+
+
+
   const agregarProducto = async (producto) => {
     toast.loading("Agregando al carrito...", { id: "loading" });
     const { success, message } = await agregarProductoCarrito(producto);
@@ -27,9 +25,8 @@ export const ListaProductos = forwardRef(({ productos, currentPage, cambiarPagin
     }
   };
 
-
   return (
-    <article ref={ref} className="container-productos">
+    <article>
       <ul className="productos">
         <MagicMotion duration={0.5}>
           {productos?.map((producto) => {
@@ -41,7 +38,7 @@ export const ListaProductos = forwardRef(({ productos, currentPage, cambiarPagin
             const cantidadCalculada = cantidad - stockProductoCarrito;
             // cantidadCalculada lo que hace es restar la cantidad de productos en stock con la cantidad de productos que ya estan en el carrito
             // Es una forma de representar la cantidad de productos que se pueden agregar, no es la cantidad real que viene del stock del backend
-        
+
             return (
               <li key={producto.id} className="producto">
                 {cantidadCalculada <= 5 && (
@@ -106,7 +103,7 @@ export const ListaProductos = forwardRef(({ productos, currentPage, cambiarPagin
       </div>
     </article>
   );
-});
+};
 const SinProductos = () => {
   return (
     <div className="pt-2">
@@ -114,12 +111,16 @@ const SinProductos = () => {
     </div>
   );
 };
-export const ValidarProductos = forwardRef(({ productos, ...props }, ref) => {
+export const ValidarProductos = ({ productos, ...props }) => {
   const validacion = productos.length > 0;
 
   return (
     <>
-      {validacion ? <ListaProductos productos={productos} {...props} ref={ref}/> : <SinProductos />}
+      {validacion ? (
+        <ListaProductos productos={productos} {...props} />
+      ) : (
+        <SinProductos />
+      )}
     </>
   );
-});
+};

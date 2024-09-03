@@ -33,7 +33,7 @@ export const Carrito = () => {
     actualizarCantidadCarrito,
   } = useContext(CarritoContext);
   const {
-    stateProducto: { productos, page_size },
+    stateProducto: { productos },
     getProductosContext,
   } = useContext(ProductosContext);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -63,11 +63,12 @@ export const Carrito = () => {
   const parametrosDeConsulta = () => {
     return {
       page: searchParams.get("page"),
+      page_size: searchParams.get("page_size"),
       filtro: searchParams.get("filtro") ?? "",
       categoria: searchParams.get("categoria") ?? "",
       seccion: searchParams.get("seccion") ?? "",
       incluir_inactivos: searchParams.get("incluir_inactivos"),
-      page_size: page_size
+
     };
   };
 

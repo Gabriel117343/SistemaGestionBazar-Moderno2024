@@ -1,54 +1,45 @@
-import { useState, useEffect } from "react";
 
+// Nota: llamar este hook solo dentro de un useEffect o una funcion asincrona dado que espera una referencia a un componente del DOM
+// espera una promesa que resuelve un numero entero antes de que se llame a una api o se haga una peticion al servidor
 function useCalculoProductosMostrar() {
-  const [productosPorPagina, setProductosPorPagina] = useState(1);
-
-
-  const calcularProductosMostrar = (componenteRef, sidebar) => {
+  return (componenteRef, sidebar) => {
     const tiempo = sidebar ? 800 : 500;
 
+    return new Promise((resolve) => {
       setTimeout(() => {
-        if (componenteRef.current) {
-          const { width, height } =
-            componenteRef?.current?.getBoundingClientRect();
-          const productoWidth = 171; // Ancho mínimo de cada producto
-          const separacion = 20; // Separación entre productos
-          const productoHeight = 200; // Alto fijo de cada producto (debes definirlo)
+        let totalProductos = 1;
+
+        if (componenteRef?.current) {
+          const { width, height } = componenteRef.current.getBoundingClientRect();
+
+          // tamaños segund la cuadricula grid de los productos
+          const productoWidth = 171;
+          const separacion = 20;
+          const productoHeight = 200;
 
           const columnas = Math.floor(width / (productoWidth + separacion));
-          console.log(columnas);
-
           const filas = Math.floor(height / productoHeight);
 
-          const totalProductos = columnas * filas;
-          console.log(totalProductos);
-
-          setProductosPorPagina(totalProductos);
-      
+          totalProductos = columnas * filas;
         } else {
-          // dado que al cargar el componente el ref no existe, se calcula la cantidad de productos por página de acuerdo al ancho de la ventana
+          // se ejecuta si el componente no esta montado en el DOM 
           if (window.innerWidth < 1200 || window.innerHeight < 500) {
-            console.log("first");
-            setProductosPorPagina(6);
-        
+            totalProductos = 6;
           } else if (window.innerWidth > 1200 && window.innerWidth < 1800) {
-            setProductosPorPagina(8);
-        
+            totalProductos = 8;
           } else {
             if (window.innerWidth > 1800 && window.innerHeight < 850) {
-              setProductosPorPagina(10);
-         
+              totalProductos = 10;
             } else {
-              setProductosPorPagina(15);
-            
+              totalProductos = 15;
             }
           }
         }
-      }, tiempo);
- 
-  };
 
-  return { productosPorPagina, calcularProductosMostrar };
+        resolve(totalProductos);
+      }, tiempo);
+    });
+  };
 }
 
 export default useCalculoProductosMostrar;
