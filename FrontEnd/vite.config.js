@@ -7,7 +7,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src') // Establece la ruta de alias a la carpeta src
+      '@': path.resolve(__dirname, './src'), // Establece la ruta de alias a la carpeta src
+      '@constants': path.resolve(__dirname, './src/constants') // Establece la ruta de alias a la carpeta src/constants
     }
   },
   build: {

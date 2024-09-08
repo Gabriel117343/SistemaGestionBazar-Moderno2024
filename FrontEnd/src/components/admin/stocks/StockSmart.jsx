@@ -1,50 +1,46 @@
 import { useContext, useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ProductosContext } from "../../../context/ProductosContext";
-import { ProveedoresContext } from "../../../context/ProveedoresContext";
 import { ValidarStocks } from "./TablaStocks";
+import { StocksContext } from "../../../context/StocksContext";
+
+import { useSearchParams } from "react-router-dom";
+import { ProveedoresContext } from "../../../context/ProveedoresContext";
 import { toast } from "react-hot-toast";
 import CargaDeDatos from "../../../views/CargaDeDatos";
+
 import { debounce } from "lodash";
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 
 export const StockSmart = () => {
-  const {
-    stateProducto: { productos },
-    getProductosContext,
-  } = useContext(ProductosContext);
-  const {
-    stateProveedor: { proveedores },
-    getProveedoresContext,
-  } = useContext(ProveedoresContext);
-  const [stockFiltrado, setStockFiltrado] = useState(productos); // Nuevo estado para el input de busqueda
+  const { getStocksContext, stocks, cantidad } = useContext(StocksContext);
+  const { getProveedoresContext, proveedores } = useContext(ProveedoresContext);
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [isLoading, setIsLoading] = useState(true);
   const { proveedorId } = useParams();
   const navigate = useNavigate(); // navegar entre rutas
   const inputRef = useRef(null);
   const selectRef = useRef(null);
 
+  const parametrosDeConsulta = () => {
+    return {
+      page: searchParams.get("page") ?? 1,
+      page_size: searchParams.get("page_size") ?? 10,
+      proveedorId: searchParams.get("proveedor") ?? "",
+      filtro: searchParams.get("filtro") ?? "",
+    };
+  };
+
   useEffect(() => {
-    async function cargarProductos() {
-      // se utiliza async/await en lugar de promesas para esperar la respuesta y obtener el mensaje
-      // hace el código más limpio, fácil de entender y rápido
-      toast.loading("Cargando productos...", { id: "loading" });
-      const { success, message } = await getProductosContext();
-      if (!success) {
-        toast.error(
-          message ?? "Ha ocurrido un error inesperado al cargar los productos", { id: "loading", duration: 2000 }
-        );
-      } else {
-        toast.success(message, { id: 'loading' });
-        setIsLoading(false);
-      }
-    }
     async function cargarProveedores() {
-      const { success, message } = await getProveedoresContext()
+      const parametrosConsulta = parametrosDeConsulta();
+      const { success, message } =
+        await getProveedoresContext(parametrosConsulta);
       if (!success) {
+        setIsLoading(false);
         toast.error(
           message ?? "Ha ocurrido un error inesperado al cargar los proveedores"
-        ) 
+        );
       } else {
         // Si hay un proveedorId, actualiza el select y filtra los productos
         if (proveedorId) {
@@ -53,59 +49,43 @@ export const StockSmart = () => {
         }
       }
     }
-    cargarProductos();
+
     cargarProveedores();
   }, []);
 
-  useEffect(() => {
-    if (proveedorId) {
-      selectRef.current.value = proveedorId; // Actualiza el valor del select
-      filtrarPorProveedor(proveedorId); // Filtra los productos basado en el proveedorId
-    }
-  }, [productos]); // Dependencia en productos
+  // useEffect(() => {
+  //   if (proveedorId) {
+  //     selectRef.current.value = proveedorId; // Actualiza el valor del select
+  //     filtrarPorProveedor(proveedorId); // Filtra los productos basado en el proveedorId
+  //   }
+  // }, [productos]); // Dependencia en productos
 
-  const cambiarFiltroNombre = (textoFiltro) => {
+  const filtrarPorProducto = (filtro) => {
     // filtrar por nombre, proveedor o codigo
-    console.log(textoFiltro)
-    if (textoFiltro.trim().length === 0) return setStockFiltrado(productos);
-    selectRef.current.value = "all";
-    let nuevoFiltro = productos.filter((producto) => {
-      return (
-        producto.nombre.toLowerCase().includes(textoFiltro.toLowerCase()) ||
-        producto.proveedor.nombre
-          .toLowerCase()
-          .includes(textoFiltro.toLowerCase()) ||
-        producto.codigo.toLowerCase().includes(textoFiltro.toLowerCase())
-      );
-    });
-    setStockFiltrado(nuevoFiltro);
+
+    const nuevoFiltro = filtro.trim();
+    if (nuevoFiltro.length === 0) {
+      setSearchParams({
+        page: 1,
+        page_size: parseInt(searchParams.get("page_size")),
+      });
+      return;
+    }
+
+    setSearchParams({ page: 1, filtro: nuevoFiltro });
     navigate("/admin/stocks");
   };
 
   const filtrarPorProveedor = (idProveedor) => {
-
-    inputRef.current.value = "";
-    if (idProveedor === "all") {
-      setStockFiltrado(productos);
-      navigate("/admin/stocks");
-      return;
-    } else {
-      // Filtrar por proveedor
-      console.log(productos)
-      let nuevoFiltro = productos.filter((producto) => {
-        return producto.proveedor.id === parseInt(idProveedor);
-      });
-      setStockFiltrado(nuevoFiltro);
-      // Navegar a la ruta con el id del proveedor
-      navigate(`/admin/stocks/${idProveedor}`);
-    }
-    
+    setSearchParams({ page: 1, proveedor: idProveedor });
   };
 
   // Acciones extra
   const refrescarTabla = async () => {
     const toastId = toast.loading("Refrescando", { id: "toastId" });
-    const { success } = await getProductosContext();
+
+    const parametrosConsulta = parametrosDeConsulta();
+    const { success } = await getStocksContext(parametrosConsulta);
     if (success) {
       toast.dismiss(toastId, { id: "toastId" });
       toast.success("Tabla refrescada");
@@ -119,12 +99,8 @@ export const StockSmart = () => {
   const imprimirTabla = () => {
     print();
   };
-  const debounceCambiarFiltroNombre = debounce(cambiarFiltroNombre, 300); // Debounce para retrazar la ejecucion de la funcion cambiarFiltro
-  
+  const debounceFiltrarPorProducto = debounce(filtrarPorProducto, 400); // Debounce para retrazar la ejecucion de la funcion cambiarFiltro
 
-  const filtroActivo =
-    inputRef.current?.value != "" || selectRef.current?.value != "all";
-  
   return (
     <section>
       <div className="d-flex align-items-center mb-2 column">
@@ -137,7 +113,7 @@ export const StockSmart = () => {
             onChange={(e) => filtrarPorProveedor(e.target.value)}
           >
             <option value="all">Todos</option>
-            {proveedores.map((proveedor) => (
+            {proveedores?.map((proveedor) => (
               <option key={proveedor.id} value={proveedor.id}>
                 {proveedor.nombre}
               </option>
@@ -146,7 +122,7 @@ export const StockSmart = () => {
         </div>
         <div className="col-md-9 d-flex align-items-end gap-1">
           <i className="bi bi-search pb-2 pe-1"></i>
-          <div style={{width: '100%'}}>
+          <div style={{ width: "100%" }}>
             <label htmlFor="nombre">Buscar</label>
             <input
               ref={inputRef}
@@ -154,10 +130,10 @@ export const StockSmart = () => {
               className="form-control"
               type="text"
               placeholder="Buscar por nombre, proveedor o codigo"
-              onChange={e => debounceCambiarFiltroNombre(e.target.value)}
+              onChange={(e) => debounceFiltrarPorProducto(e.target.value)}
             />
           </div>
-          
+
           <button
             className="btn btn-outline-primary"
             onClick={debounceRefrescarTabla}
@@ -172,7 +148,7 @@ export const StockSmart = () => {
       {isLoading ? (
         <CargaDeDatos />
       ) : (
-        <ValidarStocks proveedorId={proveedorId} listaStocks={filtroActivo ? stockFiltrado : productos} />
+        <ValidarStocks proveedorId={proveedorId} listaStocks={stocks} />
       )}
     </section>
   );

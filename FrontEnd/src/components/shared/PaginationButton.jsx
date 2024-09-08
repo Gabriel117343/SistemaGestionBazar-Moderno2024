@@ -12,7 +12,7 @@ export const PaginationButton = ({
         <button
           key={index + 1}
           className={`btn ${parseInt(currentPage) === index + 1 ? "btn-info" : "btn-secondary"}`}
-          onClick={() => cambiarPagina({newPage: index + 1})}
+          onClick={() => cambiarPagina({ newPage: index + 1 })}
         >
           {index + 1}
         </button>

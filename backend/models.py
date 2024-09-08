@@ -169,7 +169,7 @@ class Movimiento(models.Model):
 class Stock(models.Model):
     producto = models.OneToOneField(Producto, on_delete=models.CASCADE) # Quiere decir que un producto tiene un stock y un stock pertenece a un producto
 
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     cantidad = models.IntegerField(default=0)
     

@@ -8,7 +8,8 @@ export const StocksReducer = (stateStock, action) => {
     case 'GET_STOCKS':
       return {
         ...stateStock,
-        stocks: payload // guarda los stocks en el estado
+        stocks: payload.results,
+        cantidad: payload.count // guarda la cantidad de stocks en el estado
       }
     case 'GET_STOCK':
       return {

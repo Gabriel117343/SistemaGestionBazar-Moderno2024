@@ -277,6 +277,7 @@ class GetUsuarioLogeado(APIView):
         }
         
         return Response({'usuario': user_data}, status=status.HTTP_200_OK)
+    
 class SendPasswordResetEmailView(APIView):
     permission_classes = [AllowAny]
     print('YYYYYYYYYY')
@@ -411,7 +412,7 @@ class ProductoView(viewsets.ModelViewSet):
         Se sobrescribe el método get_queryset para retornar productos basados en el estado de activación
 
         """
-        queryset = Producto.objects.select_related('proveedor', 'seccion', 'stock')
+        queryset = Producto.objects.select_related('proveedor', 'seccion', 'stock').all()
         
         # Aplica la lógica de incluir_inactivos solo para la acción 'list'
         if self.action == 'list':
@@ -446,8 +447,6 @@ class ProductoView(viewsets.ModelViewSet):
                 paginated_response.data['message'] = 'Productos obtenidos!'
                 return paginated_response
             serializer = self.get_serializer(queryset, many=True)
-
-            # si la paginación no se aplica, se envía la respuesta con todos los productos
 
         except Exception as e:
             return Response({'error': 'Error al obtener los Productos', 'details': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -576,13 +575,47 @@ class SeccionView(viewsets.ModelViewSet):
             return Response({'message': 'Error al actualizar la Seccion', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': 'Error al actualizar la Seccion'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class StockPagination(PageNumberPagination):
+    page_size_query_param = 'page_size'  # Parámetro de consulta para el tamaño de la página
+
 class StockView(viewsets.ModelViewSet):
     serializer_class = StockSerializer
     queryset = Stock.objects.all() # Esto indica que todas las instancias del modelo Stock son el conjunto de datos sobre el que operará esta vista.
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
 
+    pagination_class = StockPagination
     @action(detail=True, methods=['post'])
+    
+    def get_queryset(self):
+        queryset = Stock.objects.select_related('producto').all()
+
+
+        # Si el filtro es un número, se busca por código, de lo contrario, se busca por nombre
+        # adicionalmente se puede filtrar por categoria y seccion
+        filtro = self.request.query_params.get('filtro', None)
+        id_proveedor = self.request.query_params.get('id_producto', None)
+        if filtro:
+            if filtro.isdigit(): # si se busca por el código
+                queryset = queryset.filter(producto__codigo__icontains=filtro)
+            else:
+                queryset = queryset.filter(producto__nombre__icontains=filtro)
+        if id_proveedor:
+            queryset = queryset.filter(producto__proveedor__id__icontains=id_proveedor)
+    
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = self.get_queryset()
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                paginated_response = self.get_paginated_response(serializer.data)
+                paginated_response.data['message'] = 'Stock obtenido!'
+                return paginated_response
+            
+        except Exception as e:
+            return Response({'error': 'Error al obtener el Stock'}, status=status.HTTP_400_BAD_REQUEST)
     def recibir(self, request, pk=None):
         try:
             # Busca el producto en el stock
@@ -590,22 +623,14 @@ class StockView(viewsets.ModelViewSet):
 
             # Aumenta el stock
             stock_item.cantidad = F('cantidad') + request.data.get('cantidad', 0) # F es para obtener el valor actual de la cantidad
-     
+        
             stock_item.updated_at = timezone.now() # Actualiza la fecha de actualización
             stock_item.save() # guarda la cantidad actualizada
 
-            return Response({'message': 'Stock actualizado!'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Stock actualizado correctamente!'}, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response({'error': 'Error al actualizar el stock'}, status=status.HTTP_400_BAD_REQUEST)
-    def list(self, request, *args, **kwargs):
-        try:
-            queryset = self.get_queryset()
-            serializer = self.get_serializer(queryset, many=True)
-            return Response({'data': serializer.data, 'message': 'Stock obtenido!'}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'error': 'Error al obtener el Stock'}, status=status.HTTP_400_BAD_REQUEST)
-
     def update(self, request, *args, **kwargs):
         try:
             instance = self.get_object()

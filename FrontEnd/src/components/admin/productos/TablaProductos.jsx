@@ -89,7 +89,7 @@ const MostrarProductos = ({
           currentPage={currentPage}
           cambiarPagina={cambiarPagina}
           totalDatos={cantidadDatos}
-          cantidadPorPagina={10}
+          cantidadPorPagina={pageSize}
         />
       </div>
     </section>

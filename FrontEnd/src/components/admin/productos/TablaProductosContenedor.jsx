@@ -17,6 +17,7 @@ import useCategoriaStore from "../../../context/store/categoriaStore";
 import CustomModal from "../../../views/CustomModal";
 
 import { useSearchParams } from "react-router-dom";
+import { paginaProductos } from "@constants/defaultParams.js";
 
 export const TablaProductosContenedor = () => {
   const [showModal, setShowModal] = useState(false);
@@ -33,27 +34,27 @@ export const TablaProductosContenedor = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const PAGE_SIZE = 10;
-
   const inputRef = useRef(null);
   const modalRef = useRef(null); // Referencia para el modal
 
+  const parametrosDeConsulta = () => {
+    return {
+      page: searchParams.get("page"),
+      page_size: paginaProductos.page_size ?? searchParams.get("page_size"),
+      filtro: searchParams.get("filtro") ?? "",
+      incluir_inactivos: searchParams.get("incluir_inactivos"),
+    };
+  }
+
   useEffect(() => {
-    // se ejecuta al montar el compoennte y cada vez que cambie el searchParams
-    const incluirInactivos = searchParams.get("incluir_inactivos");
-    const filtro = searchParams.get("filtro") || "";
-    const page = searchParams.get("page");
+
+    const parametros = parametrosDeConsulta();
 
     async function cargarProductos() {
       toast.loading("Cargando productos...", { duration: 2000, id: "toastId" });
       // se utiliza async/await en lugar de promesas para esperar la respuesta y obtener el mensaje
       // hace el código más limpio, fácil de entender y rápido
-      const { success, message } = await getProductosContext({
-        incluirInactivos,
-        page,
-        page_size: PAGE_SIZE,
-        filtro,
-      }); // se ejecuta la funcion getProductos del contexto de los productos
+      const { success, message } = await getProductosContext(parametros); // se ejecuta la funcion getProductos del contexto de los productos
       if (success) {
         setIsLoading(false);
         toast.success(message, { id: "toastId" });
@@ -67,6 +68,7 @@ export const TablaProductosContenedor = () => {
 
     cargarProductos();
   }, [searchParams]);
+
   useEffect(() => {
 
     // se ejecuta la funcion cargarCategorias al montar el componente
@@ -122,10 +124,10 @@ export const TablaProductosContenedor = () => {
 
   const filtrarProductos = (event) => {
     const filtro = event.target.value.trim();
-    // si el filtro esta vacio se reinician los parametros de busqueda
-    if (filtro.length === 0) return setSearchParams({ page: 1, incluir_inactivos: true });
+    // si el filtro esta vacio se reinician los parametros de busqueda por defecto
+    if (filtro.length === 0) return setSearchParams(paginaProductos);
 
-    setSearchParams({...searchParams, filtro, page: 1, incluir_inactivos: true });
+    setSearchParams({...paginaProductos, filtro });
   };
   const debounceFiltrarProductos = debounce(filtrarProductos, 400); // Debounce para retrazar la ejecucion de la funcion
 
@@ -146,7 +148,7 @@ export const TablaProductosContenedor = () => {
     }
   };
   const cambiarPagina = ({ newPage }) => {
-    setSearchParams({ page: newPage, incluir_inactivos: true });
+    setSearchParams({ ...paginaProductos, page: newPage });
   };
   const debounceRefrescarTabla = useRefreshDebounce(refrescarTabla, 2000);
   const imprimirTabla = () => {
@@ -212,7 +214,7 @@ export const TablaProductosContenedor = () => {
           cambiarPagina={cambiarPagina}
           cantidadDatos={cantidad}
           showModal={showModal}
-          pageSize={PAGE_SIZE}
+          pageSize={paginaProductos.page_size}
         />
       )}
 

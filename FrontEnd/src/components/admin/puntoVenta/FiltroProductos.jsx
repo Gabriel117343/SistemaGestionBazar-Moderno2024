@@ -14,6 +14,8 @@ import useCalculoProductosMostrar from "../../../hooks/useCalculoProductosMostra
 // import { withLoadingImage } from '../../../hocs/withLoadingImage'
 import { CategoriaSelect } from "../../shared/CategoriaSelect";
 import { SeccionButton } from "../../shared/SeccionButton";
+import { paginaPuntoVenta } from "@constants/defaultParams";
+
 export const FiltroProductos = () => {
   const {
     stateProducto: { productos, cantidad },
@@ -32,7 +34,7 @@ export const FiltroProductos = () => {
   const parametrosDeConsulta = () => {
     return {
       page: searchParams.get("page"),
-      page_size: searchParams.get("page_size"),
+      page_size: searchParams.get("page_size") ?? paginaPuntoVenta.page_size,
       filtro: searchParams.get("filtro") ?? "",
       categoria: searchParams.get("categoria") ?? "",
       seccion: searchParams.get("seccion") ?? "",
@@ -47,8 +49,7 @@ export const FiltroProductos = () => {
         sidebar
       );
       setSearchParams({
-        page: 1,
-        incluir_inactivos: false,
+        ...paginaPuntoVenta,
         page_size: newPageSize,
       });
     }
@@ -59,9 +60,7 @@ export const FiltroProductos = () => {
     const cargarProductos = async () => {
       const parametros = parametrosDeConsulta();
 
-      const { success, message } = await getProductosContext({
-        ...parametros,
-      });
+      const { success, message } = await getProductosContext(parametros);
       if (success) {
         toast.success(message ?? "Productos cargados", { id: "loading" });
         setIsLoading(false); // se desactiva el componente de carga
@@ -78,18 +77,17 @@ export const FiltroProductos = () => {
 
   const filtrar = ({ idSeccion = "all", filtro, idCategoria = "all" }) => {
     const newParams = {
-      page: 1,
-      page_size: parseInt(searchParams.get("page_size")),
-      incluir_inactivos: false,
-    }; // parametros que siempre se envian en la busqueda
+      ...paginaPuntoVenta,
+      page_size: parseInt(searchParams.get("page_size")), // reemplaza el page_size por defecto
+    };
 
+    // se asigna el valor de la seccion, categoria o filtro al objeto de busqueda
     if (idSeccion !== "all") {
-      console.log(idSeccion);
+
       newParams.seccion = idSeccion;
       categoriaRef.current.value = "all";
       buscadorRef.current.value = "";
     } else if (idCategoria !== "all") {
-      console.log(idCategoria);
       newParams.categoria = idCategoria;
       buscadorRef.current.value = "";
     } else if (filtro?.trim().length > 0) {
@@ -97,9 +95,8 @@ export const FiltroProductos = () => {
       categoriaRef.current.value = "all";
     } else {
       return setSearchParams({
-        page: 1,
-        page_size: parseInt(searchParams.get("page_size")),
-        incluir_inactivos: false,
+        ...paginaPuntoVenta,
+        page_size: parseInt(searchParams.get("page_size"))
       }); // si no hay filtro se resetea la busqueda y se muestran todos los productos
     }
 

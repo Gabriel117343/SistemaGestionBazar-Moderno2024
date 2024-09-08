@@ -89,30 +89,24 @@ class MovimientoSerializer(serializers.ModelSerializer):
 class SeccionNombreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seccion
-        fields = ['nombre']
+        fields = ['id', 'nombre']
+
 class ProveedorNombreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Proveedor
-        fields = ['nombre']
+        fields = ['id', 'nombre']
 
 class ProductoStockSerializer(serializers.ModelSerializer):
-    seccion = serializers.SerializerMethodField()  # Usar SerializerMethodField para obtener el nombre de la sección
-    proveedor = serializers.SerializerMethodField()  # Usar SerializerMethodField para obtener el nombre del proveedor
+    seccion = SeccionNombreSerializer(read_only=True)  # Usar SeccionNombreSerializer para obtener el id y nombre de la sección
+    proveedor = ProveedorNombreSerializer(read_only=True)  # Usar ProveedorNombreSerializer para obtener el id y nombre del proveedor
 
     class Meta:  # metadatos del modelo ProductoStock para serializar los datos
         model = Producto
         fields = ['id', 'nombre', 'codigo', 'seccion', 'proveedor']
 
-    def get_seccion(self, obj):
-        return obj.seccion.nombre if obj.seccion else None  # Obtener el nombre de la sección
-
-    def get_proveedor(self, obj):
-        return obj.proveedor.nombre if obj.proveedor else None  # Obtener el nombre del proveedor
-
-
 class StockSerializer(serializers.ModelSerializer):
-    producto = ProductoStockSerializer(read_only=True) # se 
- 
+    producto = ProductoStockSerializer(read_only=True)  # Anidar ProductoStockSerializer
+
     class Meta:
         model = Stock
         fields = ['id', 'cantidad', 'updated_at', 'producto']
