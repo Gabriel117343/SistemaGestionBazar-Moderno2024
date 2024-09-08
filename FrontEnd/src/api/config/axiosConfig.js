@@ -17,10 +17,15 @@ export const createApiInstance = (path='') => {
 
   apiInstance.interceptors.request.use(config => {
     const patronLogin = /\/login/;
-
-    // Si ya tiene un token de acceso en el header, no se agrega otro o si se está en la ruta de inicio de sesión se omite
-    if (Object.hasOwn(config.headers, 'Authorization' || patronLogin.test(config.baseURL))) return config;
-
+    // Si ya tiene un token de acceso en el header, no se agrega otro
+    if (Object.hasOwn(config.headers, 'Authorization')) return config;
+    // Si la solicitud es para el login, se elimina cualquier token de acceso que se tenga en el header
+    if (patronLogin.test(config.baseURL)) {
+      console.log('dfsjk')
+      config.headers.Authorization = '';
+      return config;
+    }
+    // en caso haya un token de accesso se agrega automáticamente al header de la solicitud
     const token = localStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

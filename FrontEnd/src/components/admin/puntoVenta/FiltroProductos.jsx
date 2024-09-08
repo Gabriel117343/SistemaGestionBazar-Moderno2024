@@ -29,7 +29,6 @@ export const FiltroProductos = () => {
 
   const componentProductosRef = useRef(null);
 
- 
   const parametrosDeConsulta = () => {
     return {
       page: searchParams.get("page"),
@@ -38,36 +37,34 @@ export const FiltroProductos = () => {
       categoria: searchParams.get("categoria") ?? "",
       seccion: searchParams.get("seccion") ?? "",
       incluir_inactivos: searchParams.get("incluir_inactivos"),
-     
     };
   };
- 
+
   useEffect(() => {
-    async function calcular () {
-      const newPageSize = await calcularProductosMostrar(componentProductosRef, sidebar);
-      setSearchParams({ page: 1,incluir_inactivos: false, page_size: newPageSize });
+    async function calcular() {
+      const newPageSize = await calcularProductosMostrar(
+        componentProductosRef,
+        sidebar
+      );
+      setSearchParams({
+        page: 1,
+        incluir_inactivos: false,
+        page_size: newPageSize,
+      });
     }
-    calcular()
-  
+    calcular();
   }, [sidebar]);
 
-  console.log(searchParams.get("page_size"))
   useEffect(() => {
     const cargarProductos = async () => {
-      const productosPorPagina = searchParams.get("page_size");
-      console.log(productosPorPagina)
-
-
       const parametros = parametrosDeConsulta();
-      console.log(parametros)
+
       const { success, message } = await getProductosContext({
         ...parametros,
-      
       });
       if (success) {
         toast.success(message ?? "Productos cargados", { id: "loading" });
         setIsLoading(false); // se desactiva el componente de carga
-      
       } else {
         toast.error(
           message ?? "Ha ocurrido un error inesperado al cargar los productos",
@@ -80,7 +77,11 @@ export const FiltroProductos = () => {
   }, [searchParams]); // si los productos cambian o cambia el fitro se vuelve a cargar los productos
 
   const filtrar = ({ idSeccion = "all", filtro, idCategoria = "all" }) => {
-    const newParams = { page: 1, page_size: parseInt(searchParams.get("page_size")), incluir_inactivos: false }; // parametros que siempre se envian en la busqueda
+    const newParams = {
+      page: 1,
+      page_size: parseInt(searchParams.get("page_size")),
+      incluir_inactivos: false,
+    }; // parametros que siempre se envian en la busqueda
 
     if (idSeccion !== "all") {
       console.log(idSeccion);
@@ -95,7 +96,11 @@ export const FiltroProductos = () => {
       newParams.filtro = filtro;
       categoriaRef.current.value = "all";
     } else {
-      return setSearchParams({ page: 1, page_size: parseInt(searchParams.get("page_size")),  incluir_inactivos: false }); // si no hay filtro se resetea la busqueda y se muestran todos los productos
+      return setSearchParams({
+        page: 1,
+        page_size: parseInt(searchParams.get("page_size")),
+        incluir_inactivos: false,
+      }); // si no hay filtro se resetea la busqueda y se muestran todos los productos
     }
 
     setSearchParams(newParams);
@@ -103,7 +108,11 @@ export const FiltroProductos = () => {
   const debounceFiltrar = debounce(filtrar, 400);
 
   const cambiarPagina = ({ newPage }) => {
-    setSearchParams({ page: newPage, page_size: parseInt(searchParams.get("page_size")), incluir_inactivos: true });
+    setSearchParams({
+      page: newPage,
+      page_size: parseInt(searchParams.get("page_size")),
+      incluir_inactivos: true,
+    });
   };
   console.log("first");
   return (
@@ -151,11 +160,9 @@ export const FiltroProductos = () => {
               cambiarPagina={cambiarPagina}
               cantidadDatos={cantidad}
               pageSize={parseInt(searchParams.get("page_size"))}
-             
             />
           )}
         </section>
-      
       </div>
     </>
   );

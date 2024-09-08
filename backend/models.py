@@ -168,7 +168,9 @@ class Movimiento(models.Model):
     # Otros campos relevantes para la venta
 class Stock(models.Model):
     producto = models.OneToOneField(Producto, on_delete=models.CASCADE) # Quiere decir que un producto tiene un stock y un stock pertenece a un producto
-    descripcion = models.CharField(max_length=255, default='Sin descripción')
+
+    updated_at = models.DateTimeField(auto_now=True)
+
     cantidad = models.IntegerField(default=0)
     
 

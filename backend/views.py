@@ -59,7 +59,7 @@ import pytz # para obtener la zona horaria
 from django.db.models import Q
 User = get_user_model() # esto es para obtener el modelo de usuario que se está utilizando en el proyecto
 
-
+Stock
 
 
 # Middleware para rastrea la última actividad de los usuarios y actualiza la última actividad en cada solicitud de las vistas de la API
@@ -590,9 +590,12 @@ class StockView(viewsets.ModelViewSet):
 
             # Aumenta el stock
             stock_item.cantidad = F('cantidad') + request.data.get('cantidad', 0) # F es para obtener el valor actual de la cantidad
+     
+            stock_item.updated_at = timezone.now() # Actualiza la fecha de actualización
             stock_item.save() # guarda la cantidad actualizada
 
             return Response({'message': 'Stock actualizado!'}, status=status.HTTP_200_OK)
+
         except Exception as e:
             return Response({'error': 'Error al actualizar el stock'}, status=status.HTTP_400_BAD_REQUEST)
     def list(self, request, *args, **kwargs):
@@ -606,8 +609,10 @@ class StockView(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
+            instance.updated_at = timezone.now()
             serializer = self.get_serializer(instance, data=request.data, partial=True) # partial=True para permitir actualizaciones parciales
             if serializer.is_valid():
+               
                 self.perform_update(serializer) # Actualiza el Stock
                 return Response({'data': serializer.data, 'message': 'Stock actualizado correctamente!'}, status=status.HTTP_200_OK)
             return Response({'message': 'Error al actualizar el Stock', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import CargaDeDatos from "../../../views/CargaDeDatos";
 import { debounce } from "lodash";
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
+
 export const StockSmart = () => {
   const {
     stateProducto: { productos },

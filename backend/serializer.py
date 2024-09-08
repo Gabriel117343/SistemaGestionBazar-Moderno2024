@@ -85,11 +85,39 @@ class MovimientoSerializer(serializers.ModelSerializer):
 
         fields = '__all__'
 
+# ------------------- Api Stock (anidación de datos de producto)-------------------
+class SeccionNombreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Seccion
+        fields = ['nombre']
+class ProveedorNombreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Proveedor
+        fields = ['nombre']
+
+class ProductoStockSerializer(serializers.ModelSerializer):
+    seccion = serializers.SerializerMethodField()  # Usar SerializerMethodField para obtener el nombre de la sección
+    proveedor = serializers.SerializerMethodField()  # Usar SerializerMethodField para obtener el nombre del proveedor
+
+    class Meta:  # metadatos del modelo ProductoStock para serializar los datos
+        model = Producto
+        fields = ['id', 'nombre', 'codigo', 'seccion', 'proveedor']
+
+    def get_seccion(self, obj):
+        return obj.seccion.nombre if obj.seccion else None  # Obtener el nombre de la sección
+
+    def get_proveedor(self, obj):
+        return obj.proveedor.nombre if obj.proveedor else None  # Obtener el nombre del proveedor
+
+
 class StockSerializer(serializers.ModelSerializer):
-    
+    producto = ProductoStockSerializer(read_only=True) # se 
+ 
     class Meta:
         model = Stock
-        fields = ['id', 'cantidad', 'descripcion']
+        fields = ['id', 'cantidad', 'updated_at', 'producto']
+# ------------------- Stock -------------------
+
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categoria

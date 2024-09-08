@@ -20,7 +20,7 @@ export const StocksProvider = ({ children }) => {
     
     try {
       const res = await getAllStocks(TOKEN_ACCESO) // res para referenciarse al response del servidor
-      console.log(res)
+      console.log(res.data)
       if (res.status === 200 || res.status === 201) {
         dispatch({
           type: 'GET_STOCKS',
