@@ -407,6 +407,7 @@ class ProductoView(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
     
     pagination_class = ProductoPagination  # Usar la clase de paginación personalizada en lugar de la predeterminada en esta vista
+    
     def get_queryset(self):
         """
         Se sobrescribe el método get_queryset para retornar productos basados en el estado de activación
@@ -416,7 +417,7 @@ class ProductoView(viewsets.ModelViewSet):
         
         # Aplica la lógica de incluir_inactivos solo para la acción 'list'
         if self.action == 'list':
-            incluir_inactivos = self.request.query_params.get('incluir_inactivos', 'no').lower() == 'si'
+            incluir_inactivos = self.request.query_params.get('incluir_inactivos', 'false').lower() == 'true'
             if not incluir_inactivos:
                 queryset = queryset.filter(estado=True)
         # Filtra por nombre del producto si se proporciona
@@ -424,7 +425,7 @@ class ProductoView(viewsets.ModelViewSet):
         categoria = self.request.query_params.get('categoria', None) # id de la categoria
         seccion = self.request.query_params.get('seccion', None) # id de la seccion
         print('Seccion:', seccion)
-        if filtro:
+        if filtro is not None:
             if filtro.isdigit(): # isdigit() devuelve True si el filtro es un número, lo que indica que se está buscando por código
                 queryset = queryset.filter(codigo__icontains=filtro)
             else:
@@ -586,16 +587,16 @@ class StockView(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
 
     pagination_class = StockPagination
-    @action(detail=True, methods=['post'])
-    
+
     def get_queryset(self):
         queryset = Stock.objects.select_related('producto').all()
-
+       
 
         # Si el filtro es un número, se busca por código, de lo contrario, se busca por nombre
         # adicionalmente se puede filtrar por categoria y seccion
         filtro = self.request.query_params.get('filtro', None)
-        id_proveedor = self.request.query_params.get('id_producto', None)
+        id_proveedor = self.request.query_params.get('proveedor', None)
+
         if filtro:
             if filtro.isdigit(): # si se busca por el código
                 queryset = queryset.filter(producto__codigo__icontains=filtro)
@@ -603,7 +604,7 @@ class StockView(viewsets.ModelViewSet):
                 queryset = queryset.filter(producto__nombre__icontains=filtro)
         if id_proveedor:
             queryset = queryset.filter(producto__proveedor__id__icontains=id_proveedor)
-    
+        return queryset
     def list(self, request, *args, **kwargs):
         try:
             queryset = self.get_queryset()
@@ -613,8 +614,10 @@ class StockView(viewsets.ModelViewSet):
                 paginated_response = self.get_paginated_response(serializer.data)
                 paginated_response.data['message'] = 'Stock obtenido!'
                 return paginated_response
+            serializer = self.get_serializer(queryset, many=True)
             
         except Exception as e:
+            print('Error:', e)
             return Response({'error': 'Error al obtener el Stock'}, status=status.HTTP_400_BAD_REQUEST)
     def recibir(self, request, pk=None):
         try:

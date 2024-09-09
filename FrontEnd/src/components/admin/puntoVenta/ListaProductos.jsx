@@ -7,12 +7,14 @@ import { CarritoContext } from "../../../context/CarritoContext";
 import { PaginationButton } from "../../shared/PaginationButton";
 
 import "./puntoventa.css";
-export const ListaProductos = (
-  { productos, currentPage, cambiarPagina, cantidadDatos, pageSize }
-) => {
+export const ListaProductos = ({
+  productos,
+  currentPage,
+  cambiarPagina,
+  cantidadDatos,
+  pageSize,
+}) => {
   const { carrito, agregarProductoCarrito } = useContext(CarritoContext);
-
-
 
   const agregarProducto = async (producto) => {
     toast.loading("Agregando al carrito...", { id: "loading" });

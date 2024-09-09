@@ -1,7 +1,7 @@
 import { MagicMotion } from "react-magic-motion";
 import "./styles.css";
 import { PaginationButton } from "../../shared/PaginationButton";
-
+import { useId } from "react";
 const MostrarProductos = ({
   listaProductos,
   borrarProducto,
@@ -12,24 +12,26 @@ const MostrarProductos = ({
   showModal,
   pageSize,
 }) => {
+  const id = useId(); // Genera un id único para la tabla de productos, el mismo en server y client
+
   return (
     <section>
       <table
         className="table table-striped table-hover mb-0"
-        id="tabla-productos"
+        id={`${id}-tabla-productos`}
         style={{ filter: showModal && "blur(0.7px)" }}
       >
         <thead>
           <tr>
-            <th>#</th>
-            <th>Nombre</th>
-            <th>Sección</th>
-            <th>Código</th>
-            <th>Categoría</th>
-            <th>Precio</th>
-            <th>Proveedor</th>
-            <th>Estado</th>
-            <th colSpan={2} className="text-center">
+            <th id={`${id}-th-#`}>#</th>
+            <th id={`${id}-th-nombre`}>Nombre</th>
+            <th id={`${id}-th-seccion`}>Sección</th>
+            <th id={`${id}-th-codigo`}>Código</th>
+            <th id={`${id}-th-categoria`}>Categoría</th>
+            <th id={`${id}-th-precio`}>Precio</th>
+            <th id={`${id}-th-proveedor`}>Proveedor</th>
+            <th id={`${id}-th-estado`}>Estado</th>
+            <th id={`${id}-th-opciones`} colSpan={2} className="text-center">
               Opciones
             </th>
           </tr>
@@ -39,14 +41,32 @@ const MostrarProductos = ({
           <MagicMotion>
             {listaProductos.map((producto, index) => (
               <tr key={producto.id}>
-                <td>{(currentPage - 1) * pageSize + index + 1}</td>
-                <td className="text-capitalize">{producto.nombre}</td>
-                <td>{producto.seccion.nombre}</td>
-                <td>{producto.codigo}</td>
-                <td className="text-capitalize">{producto.categoria.nombre}</td>
-                <td>$ {producto.precio}</td>
-                <td>{producto.proveedor.nombre}</td>
-                <td>
+                <td id={`${id}-td-#-${producto.id}`}>
+                  {(currentPage - 1) * pageSize + index + 1}
+                </td>
+                <td
+                  id={`${id}-td-nombre-${producto.id}`}
+                  className="text-capitalize"
+                >
+                  {producto.nombre}
+                </td>
+                <td id={`${id}-td-seccion-${producto.id}`}>
+                  {producto.seccion.nombre}
+                </td>
+                <td id={`${id}-td-codigo-${producto.id}`}>{producto.codigo}</td>
+                <td
+                  id={`${id}-td-categoria-${producto.id}`}
+                  className="text-capitalize"
+                >
+                  {producto.categoria.nombre}
+                </td>
+                <td id={`${id}-td-precio-${producto.id}`}>
+                  $ {producto.precio}
+                </td>
+                <td id={`${id}-td-proveedor-${producto.id}`}>
+                  {producto.proveedor.nombre}
+                </td>
+                <td id={`${id}-td-estado-${producto.id}`}>
                   {producto.estado ? (
                     <div
                       style={{ borderRadius: "35px" }}
@@ -63,7 +83,7 @@ const MostrarProductos = ({
                     </div>
                   )}
                 </td>
-                <td className="text-center">
+                <td id={`${id}-td-opciones-edicion-${producto.id}`} className="text-center">
                   <button
                     className="btn btn-info"
                     onClick={() => edicionProducto(producto.id)}
@@ -71,7 +91,7 @@ const MostrarProductos = ({
                     <i className="bi bi-pencil-square"></i>
                   </button>
                 </td>
-                <td className="text-center">
+                <td id={`${id}-td-opciones-borrar-${producto.id}`} className="text-center">
                   <button
                     className="btn btn-danger"
                     onClick={() => borrarProducto(producto.id)}

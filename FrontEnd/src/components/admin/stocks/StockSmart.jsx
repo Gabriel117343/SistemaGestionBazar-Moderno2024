@@ -12,8 +12,8 @@ import { debounce } from "lodash";
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 
 export const StockSmart = () => {
-  const { getStocksContext, stocks, cantidad } = useContext(StocksContext);
-  const { getProveedoresContext, proveedores } = useContext(ProveedoresContext);
+  const { getStocksContext, stateStock: { stocks, cantidad } } = useContext(StocksContext);
+  const { getProveedoresContext, stateProveedor: { proveedores } } = useContext(ProveedoresContext);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -33,11 +33,10 @@ export const StockSmart = () => {
 
   useEffect(() => {
     async function cargarProveedores() {
-      const parametrosConsulta = parametrosDeConsulta();
+    
       const { success, message } =
-        await getProveedoresContext(parametrosConsulta);
+        await getProveedoresContext();
       if (!success) {
-        setIsLoading(false);
         toast.error(
           message ?? "Ha ocurrido un error inesperado al cargar los proveedores"
         );
@@ -52,6 +51,22 @@ export const StockSmart = () => {
 
     cargarProveedores();
   }, []);
+  useEffect(() => {
+    async function cargarStock () {
+
+      const parametrosConsulta = parametrosDeConsulta();
+      const { success, message } = await getStocksContext(parametrosConsulta);
+      if (!success) {
+        setIsLoading(false);
+        toast.error(
+          message ?? "Ha ocurrido un error inesperado al cargar los stocks"
+        );
+      } else {
+        setIsLoading(false);
+      }
+    }
+    cargarStock()
+  }, [])
 
   // useEffect(() => {
   //   if (proveedorId) {

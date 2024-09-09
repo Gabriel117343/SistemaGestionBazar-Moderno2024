@@ -6,7 +6,6 @@ export const StocksContext = createContext() // crea el contexto
 
 export const StocksProvider = ({ children }) => {
   
-
   const initialState = {
     stocks: [],
     cantidad: 0,
@@ -15,13 +14,12 @@ export const StocksProvider = ({ children }) => {
   const [stateStock, dispatch] = useReducer(StocksReducer, initialState) // creando el reducer de los stocks
   // ASI TENGO TODO EL CODIGO DE LOS USUARIOS EN UN SOLO LUGAR Y NO TENGO QUE IMPORTAR LAS FUNCIONES EN CADA COMPONENTE QUE LAS NECESITE
   // UNICAMENTE SE PASAN LOS PARAMETROS QUE NECESITAN LAS FUNCIONES
-  
 
   const getStocksContext = async (props) => {
-    console.log('first')
+
     try {
       const res = await getAllStocks(props) // res para referenciarse al response del servidor
-      console.log(res.data)
+
       if (res.status === 200) {
         dispatch({
           type: 'GET_STOCKS',
@@ -33,7 +31,9 @@ export const StocksProvider = ({ children }) => {
         return ({ success: true, message: res.data.message })
         // return ({ success: true, message: 'Usuario obtenido' }) > Asi se puede retornar un mensaje de exito sin necesidad de obtenerlo del response del servidor
       }
+      return ({ success: false, message: res.data.error })
     } catch (error) { // si hay un error en la peticion se ejecuta este bloque que captura el response del servidor
+  
       console.error(error)
       return ({ success: false, message: error.response.data.error })
     }

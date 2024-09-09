@@ -23,6 +23,7 @@ export const FiltroProductos = () => {
   } = useContext(ProductosContext);
   const { sidebar } = useContext(SidebarContext);
   const [isLoading, setIsLoading] = useState(true);
+
   const [searchParams, setSearchParams] = useSearchParams();
   const calcularProductosMostrar = useCalculoProductosMostrar(); // Obtiene la cantidad de productos por página
 
@@ -48,9 +49,11 @@ export const FiltroProductos = () => {
         componentProductosRef,
         sidebar
       );
+      const filtroActual = searchParams.get("filtro");
       setSearchParams({
         ...paginaPuntoVenta,
         page_size: newPageSize,
+        ...(filtroActual && { filtro: filtroActual }), // siempre y cuando haya un filtro se agrega al objeto de busqueda
       });
     }
     calcular();
@@ -60,6 +63,7 @@ export const FiltroProductos = () => {
     const cargarProductos = async () => {
       const parametros = parametrosDeConsulta();
 
+      toast.loading("Cargando productos...", { id: "loading" }); 
       const { success, message } = await getProductosContext(parametros);
       if (success) {
         toast.success(message ?? "Productos cargados", { id: "loading" });
@@ -73,7 +77,7 @@ export const FiltroProductos = () => {
     };
 
     cargarProductos();
-  }, [searchParams]); // si los productos cambian o cambia el fitro se vuelve a cargar los productos
+  }, [searchParams]); // si los parametros de busqueda cambian se vuelve a cargar los productos
 
   const filtrar = ({ idSeccion = "all", filtro, idCategoria = "all" }) => {
     const newParams = {
@@ -83,7 +87,6 @@ export const FiltroProductos = () => {
 
     // se asigna el valor de la seccion, categoria o filtro al objeto de busqueda
     if (idSeccion !== "all") {
-
       newParams.seccion = idSeccion;
       categoriaRef.current.value = "all";
       buscadorRef.current.value = "";
@@ -96,7 +99,7 @@ export const FiltroProductos = () => {
     } else {
       return setSearchParams({
         ...paginaPuntoVenta,
-        page_size: parseInt(searchParams.get("page_size"))
+        page_size: parseInt(searchParams.get("page_size")),
       }); // si no hay filtro se resetea la busqueda y se muestran todos los productos
     }
 
@@ -111,6 +114,7 @@ export const FiltroProductos = () => {
       incluir_inactivos: true,
     });
   };
+
   console.log("first");
   return (
     <>
@@ -127,6 +131,7 @@ export const FiltroProductos = () => {
               type="text"
               id="buscarSelect"
               className="form-control"
+              defaultValue={searchParams.get("filtro")}
               placeholder="Ej: Arroz Miraflores"
               onChange={(e) => debounceFiltrar({ filtro: e.target.value })}
             />
@@ -134,6 +139,7 @@ export const FiltroProductos = () => {
         </div>
 
         <div className="pb-1 d-flex gap-1 contenedor-secciones">
+          
           <button
             onClick={filtrar}
             className={`border rounded btn-seleccion ${productos?.length === parseInt(searchParams.get("page_size")) ? "btn-filtro" : ""}`}

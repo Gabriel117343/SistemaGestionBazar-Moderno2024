@@ -20,8 +20,8 @@ export const ProveedoresProvider = ({ children }) => {
     
     try {
       const res = await getAllProveedores(TOKEN_ACCESO) // res para referenciarse al response del servidor
-
-      if (res.status === 200 || res.status === 201) {
+  
+      if (res.status === 200) {
         dispatch({
           type: 'GET_PROVEEDORES',
           payload: res.data.data
@@ -29,6 +29,7 @@ export const ProveedoresProvider = ({ children }) => {
         return ({ success: true, message: res.data.message })
         // return ({ success: true, message: 'Usuario obtenido' }) > Asi se puede retornar un mensaje de exito sin necesidad de obtenerlo del response del servidor
       }
+      return ({ success: false, message: res.data.error })
     } catch (error) { // si hay un error en la peticion se ejecuta este bloque que captura el response del servidor
       console.error(error)
       return ({ success: false, message: error.response.data.error })
@@ -40,7 +41,7 @@ export const ProveedoresProvider = ({ children }) => {
       const res = await getProveedor(id, TOKEN_ACCESO)
     
       console.log(res.status)
-      if (res.status === 200 || res.status === 201) {
+      if (res.status === 200) {
         dispatch({
           type: 'GET_PROVEEDOR',
           payload: res.data
@@ -58,7 +59,7 @@ export const ProveedoresProvider = ({ children }) => {
       const res = await createProveedor(proveedor, TOKEN_ACCESO)
       console.log(res)
       console.log(res)
-      if (res.status === 200 || res.status === 201) {
+      if (res.status === 201) {
         dispatch({
           type: 'CREATE_PROVEEDOR',
           payload: res.data.data

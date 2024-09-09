@@ -1,4 +1,4 @@
-import { useEffect, useContext, useMemo } from "react";
+import { useEffect, useContext, useCallback } from "react";
 import { SeccionesContext } from "../../context/SeccionesContext";
 import { toast } from "react-hot-toast";
 import "./shared.css";
@@ -26,16 +26,20 @@ export const SeccionButton = ({
 
   const verificarCoincidencia = (numero) => {
     if (productos.length !== productosPorPagina) {
-      const newClase = productos?.some(
-        (producto) => producto?.seccion?.numero === numero
-      )
-        ? "btn-filtro"
-        : "";
+  
+        const newClase = productos?.some(
+          (producto) => producto?.seccion?.numero === numero
+        )
+          ? "btn-filtro"
+          : "";
 
-      return newClase;
+        return newClase;
+
     }
     return "";
   };
+  // memorizar la función para evitar que se vuelva a verificar la conincidencia en cada renderizado
+
   return (
     <>
       {secciones?.map((seccion) => (

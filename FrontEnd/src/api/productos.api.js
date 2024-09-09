@@ -6,6 +6,7 @@ const productosApi = createApiInstance('usuarios/datos/v1/productos') // la urls
 
 export const getAllProductos = ({ incluir_inactivos, page, page_size, filtro, categoria, seccion }) => {
 
+
   return productosApi.get('/', {
     params: {
       incluir_inactivos: incluir_inactivos,

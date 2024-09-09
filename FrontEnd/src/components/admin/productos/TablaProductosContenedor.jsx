@@ -1,19 +1,22 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { ValidarProductos } from "./TablaProductos";
-import Swal from "sweetalert2";
-import { toast } from "react-hot-toast";
 import { ProductosContext } from "../../../context/ProductosContext";
 import "./styles.css";
-import { Modal } from "react-bootstrap";
+
 import { FormEdicion } from "./FormEdicion";
 import { FormRegistroProductos } from "./FormRegistroProductos";
 import { debounce } from "lodash";
-import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
+
 // Para la UI
 import CargaDeDatos from "../../../views/CargaDeDatos";
 import { ButtonNew } from "../../shared/ButtonNew";
+import Swal from "sweetalert2";
+import { toast } from "react-hot-toast";
+import { Modal } from "react-bootstrap";
+
 import useCategoriaStore from "../../../context/store/categoriaStore";
 ("../../../context/store/categoriaStore");
+import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 import CustomModal from "../../../views/CustomModal";
 
 import { useSearchParams } from "react-router-dom";
@@ -44,10 +47,9 @@ export const TablaProductosContenedor = () => {
       filtro: searchParams.get("filtro") ?? "",
       incluir_inactivos: searchParams.get("incluir_inactivos"),
     };
-  }
+  };
 
   useEffect(() => {
-
     const parametros = parametrosDeConsulta();
 
     async function cargarProductos() {
@@ -70,7 +72,6 @@ export const TablaProductosContenedor = () => {
   }, [searchParams]);
 
   useEffect(() => {
-
     // se ejecuta la funcion cargarCategorias al montar el componente
     async function cargarCategorias() {
       const TOKEN_ACCESO = localStorage.getItem("accessToken");
@@ -127,16 +128,16 @@ export const TablaProductosContenedor = () => {
     // si el filtro esta vacio se reinician los parametros de busqueda por defecto
     if (filtro.length === 0) return setSearchParams(paginaProductos);
 
-    setSearchParams({...paginaProductos, filtro });
+    setSearchParams({ ...paginaProductos, filtro });
   };
   const debounceFiltrarProductos = debounce(filtrarProductos, 400); // Debounce para retrazar la ejecucion de la funcion
 
   // Acciones extra
   const refrescarTabla = async () => {
     toast.loading("Refrescando", { id: "toastId" });
-    const { success, message } = await getProductosContext({
-      incluirInactivos: true,
-    });
+
+    const parametros = parametrosDeConsulta();
+    const { success, message } = await getProductosContext(parametros);
     if (success) {
       toast.dismiss({ id: "toastId" });
       toast.success("Tabla refrescada", { id: "toastId" });
@@ -186,6 +187,8 @@ export const TablaProductosContenedor = () => {
             ref={inputRef}
             className="form-control"
             type="text"
+            /** En caso de que se recargue la página se mantienen el filtro consistente con la url **/
+            defaultValue={searchParams.get("filtro")}
             placeholder="Buscar producto por nombre o código"
             onChange={debounceFiltrarProductos}
           />
