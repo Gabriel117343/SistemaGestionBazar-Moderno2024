@@ -61,6 +61,7 @@ export const FiltroProductos = () => {
 
   useEffect(() => {
     const cargarProductos = async () => {
+      if (!searchParams.get("page_size")) return // si no hay un page_size no se hace nada
       const parametros = parametrosDeConsulta();
 
       toast.loading("Cargando productos...", { id: "loading" }); 
@@ -115,7 +116,6 @@ export const FiltroProductos = () => {
     });
   };
 
-  console.log("first");
   return (
     <>
       <div className="col-md-8">
