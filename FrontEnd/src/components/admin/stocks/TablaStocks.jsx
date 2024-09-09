@@ -1,19 +1,17 @@
-import { useState } from "react";
 import { MagicMotion } from "react-magic-motion";
 import ContadorAnimado from "../../shared/magic_ui/ContadorAnimado";
 import { PaginationButton } from "../../shared/PaginationButton";
-import useFiltroDatosMostrar from "../../../hooks/useFiltroDatosMostrar";
-export const TablaStocks = ({ listaStocks, proveedorId }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  // Se establece la cantidad de productos a mostrar por pagina
-  const cantidadStocks = 10;
-  // se crea una copia superficial de la lista y se invierte para mostrar los Stocks mas recientes primero
-  const stocksMostrar = useFiltroDatosMostrar({
-    currentPage,
-    datosPorPagina: cantidadStocks,
-    datos: listaStocks.toReversed(),
-  });
 
+export const TablaStocks = ({
+  listaStocks,
+  proveedorId,
+  currentPage,
+  cambiarPagina,
+  cantidadDatos,
+  pageSize,
+}) => {
+  console.log(pageSize)
+  console.log(proveedorId)
   return (
     <article>
       <table className="table table-striped table-hover mb-0">
@@ -32,8 +30,9 @@ export const TablaStocks = ({ listaStocks, proveedorId }) => {
         </thead>
         <tbody>
           {!proveedorId ? (
+            // es necesario que se ejecute una animación u otra, pero no ambas al mismo tiempo porque causaría un error en la librería de animación de react-magic-motion
             <MagicMotion>
-              {stocksMostrar?.map((stock, index) => (
+              {listaStocks?.map((stock, index) => (
                 <tr key={stock.id}>
                   <td scope="row">{(currentPage - 1) * 10 + index + 1}</td>
                   <td>{stock.producto.codigo}</td>
@@ -45,15 +44,14 @@ export const TablaStocks = ({ listaStocks, proveedorId }) => {
               ))}
             </MagicMotion>
           ) : (
-            stocksMostrar?.map((producto, index) => (
-              <tr key={producto.id}>
+            listaStocks?.map((stock, index) => (
+              <tr key={stock.id}>
                 <td scope="row">{(currentPage - 1) * 10 + index + 1}</td>
                 <td>{stock.producto.codigo}</td>
                 <td>{stock.producto.nombre}</td>
                 <td>{stock.producto.proveedor.nombre}</td>
                 <td>{stock.producto.seccion.nombre}</td>
-                <td>{producto.descripcion}</td>
-                {producto.stock.cantidad === 0 ? (
+                {stock.cantidad === 0 ? (
                   <td className="text-center">{stock.cantidad}</td>
                 ) : (
                   <td className="text-center">
@@ -73,9 +71,9 @@ export const TablaStocks = ({ listaStocks, proveedorId }) => {
 
         <PaginationButton
           currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          totalDatos={listaStocks.length}
-          cantidadPorPagina={cantidadStocks}
+          cambiarPagina={cambiarPagina}
+          totalDatos={cantidadDatos}
+          cantidadPorPagina={pageSize}
         />
       </div>
     </article>
@@ -107,13 +105,12 @@ const SinStocks = () => {
   );
 };
 
-export const ValidarStocks = ({ listaStocks, proveedorId }) => {
-  console.log(listaStocks);
+export const ValidarStocks = ({ listaStocks, ...props }) => {
   const validacion = listaStocks.length > 0; // si listaStocks es mayor a 0
   // sera true o false
   // RENDERIZADO CONDICIONAL
   return validacion ? (
-    <TablaStocks listaStocks={listaStocks} proveedorId={proveedorId} />
+    <TablaStocks listaStocks={listaStocks} {...props} />
   ) : (
     <SinStocks />
   );

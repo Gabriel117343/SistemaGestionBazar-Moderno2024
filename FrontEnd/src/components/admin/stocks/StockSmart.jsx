@@ -10,10 +10,17 @@ import CargaDeDatos from "../../../views/CargaDeDatos";
 
 import { debounce } from "lodash";
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
+import { paginaStock } from "@constants/defaultParams.js";
 
 export const StockSmart = () => {
-  const { getStocksContext, stateStock: { stocks, cantidad } } = useContext(StocksContext);
-  const { getProveedoresContext, stateProveedor: { proveedores } } = useContext(ProveedoresContext);
+  const {
+    getStocksContext,
+    stateStock: { stocks, cantidad },
+  } = useContext(StocksContext);
+  const {
+    getProveedoresContext,
+    stateProveedor: { proveedores },
+  } = useContext(ProveedoresContext);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -26,47 +33,45 @@ export const StockSmart = () => {
     return {
       page: searchParams.get("page") ?? 1,
       page_size: searchParams.get("page_size") ?? 10,
-      proveedorId: searchParams.get("proveedor") ?? "",
+      proveedorId: searchParams.get("proveedor") || proveedorId || "",
       filtro: searchParams.get("filtro") ?? "",
+      proveedor: searchParams.get("proveedor") ?? "",
     };
   };
 
   useEffect(() => {
+    async function cargarStock() {
+      const parametrosConsulta = parametrosDeConsulta();
+
+      toast.loading("Cargando", { id: "loading" });
+      const { success, message } = await getStocksContext(parametrosConsulta);
+      if (success) {
+        setIsLoading(false);
+        toast.success(message ?? "Stocks cargados correctamente", {
+          id: "loading",
+        });
+      } else {
+        toast.error(
+          message ?? "Ha ocurrido un error inesperado al cargar los stocks",
+          { id: "loading" }
+        );
+      }
+    }
+    cargarStock();
+  }, [searchParams, proveedorId]); // en caso se reciba un parametro de proveedorId se ejecuta el useEffect
+
+  useEffect(() => {
     async function cargarProveedores() {
-    
-      const { success, message } =
-        await getProveedoresContext();
+      const { success, message } = await getProveedoresContext();
       if (!success) {
         toast.error(
           message ?? "Ha ocurrido un error inesperado al cargar los proveedores"
         );
-      } else {
-        // Si hay un proveedorId, actualiza el select y filtra los productos
-        if (proveedorId) {
-          selectRef.current.value = proveedorId; // Actualiza el valor del select
-          filtrarPorProveedor(proveedorId); // Filtra los productos basado en el proveedorId
-        }
       }
     }
 
     cargarProveedores();
   }, []);
-  useEffect(() => {
-    async function cargarStock () {
-
-      const parametrosConsulta = parametrosDeConsulta();
-      const { success, message } = await getStocksContext(parametrosConsulta);
-      if (!success) {
-        setIsLoading(false);
-        toast.error(
-          message ?? "Ha ocurrido un error inesperado al cargar los stocks"
-        );
-      } else {
-        setIsLoading(false);
-      }
-    }
-    cargarStock()
-  }, [])
 
   // useEffect(() => {
   //   if (proveedorId) {
@@ -76,23 +81,55 @@ export const StockSmart = () => {
   // }, [productos]); // Dependencia en productos
 
   const filtrarPorProducto = (filtro) => {
-    // filtrar por nombre, proveedor o codigo
-
     const nuevoFiltro = filtro.trim();
+    const proveedor = searchParams.get("proveedor");
+
+    // en caso haya un filtro por proveedor, se mantiene de lo contrario se elimina
     if (nuevoFiltro.length === 0) {
       setSearchParams({
-        page: 1,
-        page_size: parseInt(searchParams.get("page_size")),
+        ...paginaStock,
+        ...(proveedor && { proveedor: proveedor }),
       });
       return;
     }
 
-    setSearchParams({ page: 1, filtro: nuevoFiltro });
-    navigate("/admin/stocks");
+    setSearchParams({
+      ...paginaStock,
+      ...(proveedor && { proveedor: proveedor }),
+      filtro: nuevoFiltro,
+    });
+    // navigate("/admin/stocks");
   };
 
   const filtrarPorProveedor = (idProveedor) => {
-    setSearchParams({ page: 1, proveedor: idProveedor });
+    const filtroActivo = searchParams.get("filtro");
+
+    // en caso haya un filtro activo, se mantiene de lo contrario se elimina
+    if (idProveedor === "all") {
+      setSearchParams({
+        ...paginaStock,
+        ...(filtroActivo && { filtro: filtroActivo }),
+      });
+      return;
+    }
+    setSearchParams({
+      ...paginaStock,
+      proveedor: idProveedor,
+      ...(filtroActivo && { filtro: filtroActivo }),
+    });
+  };
+
+  const cambiarPagina = ({ newPage }) => {
+    const proveedor = searchParams.get("proveedor");
+    const filtroActivo = searchParams.get("filtro");
+
+    // en caso haya un filtro por proveedor, se mantiene de lo contrario se elimina
+    setSearchParams({
+      page: newPage,
+      page_size: searchParams.get("page_size"),
+      ...(proveedor && { proveedor: proveedor }),
+      ...(filtroActivo && { filtro: filtroActivo }),
+    });
   };
 
   // Acciones extra
@@ -144,7 +181,8 @@ export const StockSmart = () => {
               id="nombre"
               className="form-control"
               type="text"
-              placeholder="Buscar por nombre, proveedor o codigo"
+              placeholder="Buscar por nombre o proveedor"
+              defaultValue={searchParams.get("filtro")}
               onChange={(e) => debounceFiltrarPorProducto(e.target.value)}
             />
           </div>
@@ -163,7 +201,14 @@ export const StockSmart = () => {
       {isLoading ? (
         <CargaDeDatos />
       ) : (
-        <ValidarStocks proveedorId={proveedorId} listaStocks={stocks} />
+        <ValidarStocks
+          listaStocks={stocks}
+          proveedorId={proveedorId ?? parseInt(searchParams.get("proveedor"))}
+          currentPage={searchParams.get("page") || 1}
+          cambiarPagina={cambiarPagina}
+          cantidadDatos={cantidad}
+          pageSize={parseInt(searchParams.get("page_size"))}
+        />
       )}
     </section>
   );

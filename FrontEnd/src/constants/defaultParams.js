@@ -12,7 +12,7 @@ export const paginaProductos = {
   incluir_inactivos: true,
 }
 
-export const paginaStocks = {
+export const paginaStock = {
   page: 1,
   page_size: 10,
 }

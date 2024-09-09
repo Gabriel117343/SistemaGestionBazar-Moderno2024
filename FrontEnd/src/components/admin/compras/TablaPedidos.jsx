@@ -10,6 +10,7 @@ import ReactToPrint from "react-to-print";
 import { useNavigate } from "react-router-dom";
 import { PaginationButton } from "../../shared/PaginationButton";
 import useFiltroDatosMostrar from "../../../hooks/useFiltroDatosMostrar";
+import { paginaStock } from '@constants/defaultParams.js';
 
 const MostrarPedidos = forwardRef(
   ({ refrescar, listaPedidos, componentRef }, ref) => {
@@ -61,8 +62,10 @@ const MostrarPedidos = forwardRef(
           confirmButtonColor: "#3085d6", //
         }).finally(() => {
           refrescar(); // se refresca la tabla para mostrar el cambio
+
+          // Se redirige a la pagina de stocks con el proveedor del pedido seleccionado
           setTimeout(() => {
-            navigate(`/admin/stocks/${pedido.proveedor.id}`);
+            navigate(`/admin/stocks?page=${paginaStock.page}&page_size${paginaStock.page_size}&proveedor=${pedido.proveedor.id}`);
           }, 1000);
         });
       } else {

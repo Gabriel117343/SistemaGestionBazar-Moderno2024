@@ -149,7 +149,14 @@ export const TablaProductosContenedor = () => {
     }
   };
   const cambiarPagina = ({ newPage }) => {
-    setSearchParams({ ...paginaProductos, page: newPage });
+    const filtroActivo = searchParams.get("filtro");
+
+    // en caso haya un filtro activo, se mantiene de lo contrario se elimina
+    setSearchParams({
+      page: newPage,
+      page_size: searchParams.get("page_size"),
+      ...(filtroActivo && { filtro: filtroActivo }),
+    });
   };
   const debounceRefrescarTabla = useRefreshDebounce(refrescarTabla, 2000);
   const imprimirTabla = () => {
