@@ -57,6 +57,7 @@ from django.utils.deprecation import MiddlewareMixin
 from rest_framework.documentation import include_docs_urls
 import pytz # para obtener la zona horaria
 from django.db.models import Q
+from django.db.models.functions import Lower
 User = get_user_model() # esto es para obtener el modelo de usuario que se está utilizando en el proyecto
 
 Stock
@@ -294,18 +295,50 @@ class SendPasswordResetEmailView(APIView):
             fail_silently=False,
         )
         return Response({'message': 'Correo electrónico de restablecimiento de contraseña enviado'})
-    
+
+class UsuarioPagination(PageNumberPagination):
+    page_size_query_param = 'page_size'  # Parámetro de consulta para el tamaño de la página
 
 class UsuarioView(viewsets.ModelViewSet): # este método es para listar, crear, actualizar y eliminar usuarios desde la api en React
     serializer_class = UsuarioSerializer #Esto indica que UsuarioSerializer se utilizará para serializar y deserializar instancias del modelo Usuario.
-    queryset = Usuario.objects.all() # Esto indica que todas las instancias del modelo Usuario son el conjunto de datos sobre el que operará esta vista.
-    
+
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
+
+    pagination_class = UsuarioPagination  # Usar la clase de paginación personalizada en lugar de la predeterminada en esta vista
+
+    # se sobrescribe el método get_queryset para filtrar y ordenar los usuarios
+    def get_queryset(self):
+        queryset = Usuario.objects.all()
+
+        filtro = self.request.query_params.get('filtro', None)
+        orden = self.request.query_params.get('orden', None)
+
+        # por rut, nombre, o correo
+        if filtro is not None:
+            queryset = queryset.filter(Q(rut__icontains=filtro) | Q(nombre__icontains=filtro) | Q(email__icontains=filtro))
+        # Ordenar por nombre ascendente o descendente
+
+        if orden is not None:
+            if orden == 'a-z':
+                queryset = queryset.order_by(Lower('nombre').desc())
+            elif orden == 'z-a':
+                queryset = queryset.order_by(Lower('nombre').asc())
+        return queryset
+
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response({'data': serializer.data, 'message': 'Usuarios obtenidos!'}, status=status.HTTP_200_OK)
+
+        try:
+            queryset = self.get_queryset()
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                paginated_response = self.get_paginated_response(serializer.data)
+                paginated_response.data['message'] = 'Usuarios obtenidos!'
+                return paginated_response
+            serializer = self.get_serializer(queryset, many=True)
+        except Exception as e:
+            return Response({'error': 'Error al obtener los usuarios', 'details': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         if instance.imagen and hasattr(instance.imagen, 'path'):

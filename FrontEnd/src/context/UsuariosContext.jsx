@@ -1,7 +1,6 @@
 import { createContext, useReducer } from 'react'
 import { UsuariosReducer } from './reducers/UsuariosReducer'
 import { getAllUsers, getUser, createUser, deleteUser, updateUser } from '../api/usuarios.api'
-import { LoginContext } from './LoginContext'
 
 export const UsuariosContext = createContext() // creando el contexto de los usuarios para poder usarlo en cualquier componente
 
@@ -9,6 +8,7 @@ export const UsuariosProvider = ({ children }) => {
 
   const initialState = {
     usuarios: [],
+    cantidad: 0,
     usuarioSeleccionado: null
   } // estado inicial de los usuarios para el Reducer de los usuarios
 
@@ -20,14 +20,19 @@ export const UsuariosProvider = ({ children }) => {
   // UNICAMENTE SE PASAN LOS PARAMETROS QUE NECESITAN LAS FUNCIONES
 
   const TOKEN_ACCESO = localStorage.getItem('accessToken');
-  const getUsuarios = async () => {
+  const getUsuarios = async (props) => {
+    // |page|, |page_size|, |filtro|, |orden|
+
     try {
-      const res = await getAllUsers(TOKEN_ACCESO) // res para referenciarse al response del servidor
+      const res = await getAllUsers(props) // res para referenciarse al response del servidor
       console.log(res)
       if (res.status === 200) {
         dispatch({
           type: 'GET_USUARIOS',
-          payload: res.data.data
+          payload: {
+            usuarios: res.data.results,
+            cantidad: res.data.count
+          }
         })
         return ({ success: true, message: res.data.message })
         // return ({ success: true, message: 'Usuario obtenido' }) > Asi se puede retornar un mensaje de exito sin necesidad de obtenerlo del response del servidor

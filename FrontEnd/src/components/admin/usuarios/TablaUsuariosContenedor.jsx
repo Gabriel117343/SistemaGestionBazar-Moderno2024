@@ -2,51 +2,86 @@ import React, { useContext, useEffect, useState, useRef } from "react";
 import { ValidarUsuarios } from "./TablaUsuarios";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
+
 import { UsuariosContext } from "../../../context/UsuariosContext";
 import "./styles.css";
 import { Modal } from "react-bootstrap";
 import { FormularioEdicion } from "./FormularioEdicion";
+
 import { FormRegistroUsuarios } from "./FormRegistroUsuarios";
 import { debounce } from "lodash";
 /** Para la UI */
 import { ButtonNew } from "../../shared/ButtonNew";
-import CargaDeDatos from '../../../views/CargaDeDatos'
+import CargaDeDatos from "../../../views/CargaDeDatos";
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
-export const TablaUsuariosContenedor = () => {
+import { useSearchParams } from "react-router-dom";
+import Select, { components } from "react-select";
 
+import { paginaUsuarios } from "@constants/defaultParams.js";
+
+export const TablaUsuariosContenedor = () => {
   const {
-    stateUsuario: { usuarios },
+    stateUsuario: { usuarios, cantidad },
     deleteUsuario,
     getUsuario,
     getUsuarios,
   } = useContext(UsuariosContext);
-  
+
   const [showModal, setShowModal] = useState(false);
   const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
-  
+
   const [isLoading, setIsLoading] = useState(true);
+
   const [usuariosFiltrados, setUsuariosFiltrados] = useState(usuarios); // Nuevo estado para el input de busqueda
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const inputFiltroRef = useRef(null);
-  useEffect(() => { 
+
+  const options = [
+    {
+      value: "a-z",
+      label: "A-Z",
+      icon: <i className="bi bi-sort-alpha-up-alt"></i>,
+    },
+    {
+      value: "z-a",
+      label: "Z-A",
+      icon: <i className="bi bi-sort-alpha-down-alt"></i>,
+    },
+  ];
+
+  const parametrosDeConsulta = () => {
+    return {
+      page: searchParams.get("page") ?? 1,
+      page_size: searchParams.get("page_size") ?? 10,
+      orden: searchParams.get("orden") ?? "",
+      filtro: searchParams.get("filtro") ?? "",
+    };
+  };
+
+  useEffect(() => {
     toast.dismiss({ id: "toastId" });
-    
-    async function cargarUsuarios () {
-      toast.loading("Cargando Usuarios...", { duration: 2000, id: "toastId"});
-      // se utiliza async/await en lugar de promesas para esperar la respuesta y obtener el mensaje
-      // hace el código más limpio, fácil de entender y rápido
-      const { success, message } = await getUsuarios();
+
+    async function cargarUsuarios() {
+      const parametros = parametrosDeConsulta();
+
+      toast.loading("Cargando Usuarios...", { duration: 2000, id: "toastId" });
+      const { success, message } = await getUsuarios(parametros);
       if (success) {
         setIsLoading(false);
         toast.success(message, { id: "toastId" });
         setIsLoading(false);
       } else {
-        toast.error(message ?? "Ha ocurrido un error inesperado al cargar los Usuarios", { id: "toastId" });
+        toast.error(
+          message ?? "Ha ocurrido un error inesperado al cargar los Usuarios",
+          { id: "toastId" }
+        );
       }
     }
-    cargarUsuarios()
-  }, []);
+    cargarUsuarios();
+  }, [searchParams]);
 
   const borrarPersona = (id) => {
     async function confirmar() {
@@ -61,13 +96,13 @@ export const TablaUsuariosContenedor = () => {
         cancelButtonColor: "#d33",
       });
       if (aceptar.isConfirmed) {
-        toast.loading("Eliminando...", { duration: 2000, id: 'loading' });
+        toast.loading("Eliminando...", { duration: 2000, id: "loading" });
         setTimeout(async () => {
           const { success, message } = await deleteUsuario(id);
           if (success) {
-            toast.success(message, { id: 'loading'});
+            toast.success(message, { id: "loading" });
           } else {
-            toast.error(message, { id: 'loading', duration: 2000 });
+            toast.error(message, { id: "loading", duration: 2000 });
           }
         }, 2000);
       }
@@ -86,22 +121,39 @@ export const TablaUsuariosContenedor = () => {
     setShowModal(false); // Cerrar la modal de edicion
   };
   const cambiarFiltro = (filtro) => {
-    if (filtro.trim().length === 0) {
-      setUsuariosFiltrados(usuarios);
-      return
+    const ordenActivo = searchParams.get("orden");
+    if (filtro.length === 0) {
+      setSearchParams({
+        ...paginaUsuarios,
+        ...(ordenActivo && { orden: ordenActivo }),
+      });
+      return;
     }
-    const resultadoFiltro = usuarios.filter(usuario => {
-      return usuario.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
-        usuario.apellido.toLowerCase().includes(filtro.toLowerCase()) ||
-        usuario.rut.toLowerCase().includes(filtro.toLowerCase()) ||
-        usuario.email.toLowerCase().includes(filtro.toLowerCase()) ||
-        usuario.telefono.toLowerCase().includes(filtro.toLowerCase()) ||
-        usuario.rol.toLowerCase().includes(filtro.toLowerCase())
+    setSearchParams({
+      ...paginaUsuarios,
+      ...(ordenActivo && { orden: ordenActivo }),
+      filtro: filtro,
     })
-    setUsuariosFiltrados(resultadoFiltro);
-
   };
-  const debounceCambiarFiltro = debounce(cambiarFiltro, 300); // Debounce para retrazar la ejecucion de la funcion cambiarFiltro
+  const debounceCambiarFiltro = debounce(cambiarFiltro, 400); // Debounce para retrazar la ejecucion de la funcion cambiarFiltro
+
+  const handleOrdenarChange = (selectedOption) => {
+    const filtroActivo = searchParams.get("filtro");
+
+    // si la opción seleccionada es vacía, se elimina el parámetro orden y se mantiene el filtro activo si es que hay uno
+    if (selectedOption === "") {
+      return setSearchParams({
+        ...paginaUsuarios,
+        ...(filtroActivo && { filtro: filtroActivo }),
+      });
+    }
+
+    setSearchParams({
+      ...paginaUsuarios,
+      orden: selectedOption,
+      ...(filtroActivo && { filtro: filtroActivo }),
+    });
+  };
   // Acciones
   const refrescarTabla = async () => {
     const toastId = toast.loading("Refrescando", { id: "toastId" });
@@ -119,6 +171,7 @@ export const TablaUsuariosContenedor = () => {
     print();
   };
   const filtroActivo = inputFiltroRef.current?.value.length > 0;
+
   return (
     <section>
       <div className="row d-flex mb-2">
@@ -129,13 +182,41 @@ export const TablaUsuariosContenedor = () => {
         </div>
         <div className="col-md-10 d-flex gap-2 align-items-center">
           <i class="bi bi-search"></i>
+
           <input
             ref={inputFiltroRef}
             className="form-control"
             type="text"
-            placeholder="Buscar por nombre, apellido, edad, telefono, rut, email..."
-            onChange={e => debounceCambiarFiltro(e.target.value)}
+            placeholder="Buscar por rut, nombre, apellido o correo."
+            onChange={(e) => debounceCambiarFiltro(e.target.value)}
           />
+
+          <div className=" d-flex align-items-center gap-2 flex-row">
+            <label htmlFor="orden">Orden:</label>
+
+            {!searchParams.get("orden") && <i class="bi bi-arrow-down-up"></i>}
+            {options.map((option) => {
+              const ordenActual = searchParams.get("orden") ?? "";
+              if (option.value === ordenActual) {
+                return <>{option.icon}</>;
+              }
+            })}
+            <select
+              id="orden"
+              name="orden"
+              className="form-select"
+              onChange={(e) => handleOrdenarChange(e.target.value)}
+              style={{ width: 115 }}
+            >
+              <option value="">Ninguno</option>
+              {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <button
             className="btn btn-outline-primary btn-nuevo-animacion"
             onClick={debounceRefrescarTabla}
@@ -152,14 +233,13 @@ export const TablaUsuariosContenedor = () => {
       </div>
       {isLoading ? (
         <CargaDeDatos />
-      )
-      : (
+      ) : (
         <ValidarUsuarios
-        listaPersonas={filtroActivo ? usuariosFiltrados : usuarios}
-        borrarPersona={borrarPersona}
-        edicionUsuario={edicionUsuario}
-        showModal={showModal}
-      />
+          listaPersonas={usuarios}
+          borrarPersona={borrarPersona}
+          edicionUsuario={edicionUsuario}
+          showModal={showModal}
+        />
       )}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton className="bg-info">

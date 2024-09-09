@@ -181,7 +181,7 @@ export const StockSmart = () => {
               id="nombre"
               className="form-control"
               type="text"
-              placeholder="Buscar por nombre o proveedor"
+              placeholder="Buscar por códiog, nombre o proveedor"
               defaultValue={searchParams.get("filtro")}
               onChange={(e) => debounceFiltrarPorProducto(e.target.value)}
             />
@@ -203,7 +203,7 @@ export const StockSmart = () => {
       ) : (
         <ValidarStocks
           listaStocks={stocks}
-          proveedorId={proveedorId ?? parseInt(searchParams.get("proveedor"))}
+          proveedorId={proveedorId ?? parseInt( !searchParams.get("filtro") && searchParams.get("proveedor"))}
           currentPage={searchParams.get("page") || 1}
           cambiarPagina={cambiarPagina}
           cantidadDatos={cantidad}

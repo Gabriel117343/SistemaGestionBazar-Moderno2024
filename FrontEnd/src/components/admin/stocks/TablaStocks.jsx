@@ -10,8 +10,7 @@ export const TablaStocks = ({
   cantidadDatos,
   pageSize,
 }) => {
-  console.log(pageSize)
-  console.log(proveedorId)
+
   return (
     <article>
       <table className="table table-striped table-hover mb-0">
