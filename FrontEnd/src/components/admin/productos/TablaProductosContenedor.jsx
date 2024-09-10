@@ -21,7 +21,7 @@ import CustomModal from "../../../views/CustomModal";
 
 import { useSearchParams } from "react-router-dom";
 import { paginaProductos } from "@constants/defaultParams.js";
-
+import { ordenPorIniciales } from '@constants/defaultOptionsFilter.js'
 export const TablaProductosContenedor = () => {
   const [showModal, setShowModal] = useState(false);
   const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
@@ -46,6 +46,7 @@ export const TablaProductosContenedor = () => {
       page_size: paginaProductos.page_size ?? searchParams.get("page_size"),
       filtro: searchParams.get("filtro") ?? "",
       incluir_inactivos: searchParams.get("incluir_inactivos"),
+      orden: searchParams.get("orden") ?? "",
     };
   };
 
@@ -148,14 +149,31 @@ export const TablaProductosContenedor = () => {
       });
     }
   };
+  const handleOrdenarChange = (selectedOption) => {
+    const filtroActivo = searchParams.get("filtro");
+    if (selectedOption === "") {
+      setSearchParams({
+        ...paginaProductos,
+        ...(filtroActivo && { filtro: filtroActivo }),
+      });
+      return;
+    }
+    setSearchParams({
+      ...paginaProductos,
+      orden: selectedOption,
+      ...(filtroActivo && { filtro: filtroActivo }),
+    });
+  }
   const cambiarPagina = ({ newPage }) => {
     const filtroActivo = searchParams.get("filtro");
-
+    const ordenActivo = searchParams.get("orden");
     // en caso haya un filtro activo, se mantiene de lo contrario se elimina
     setSearchParams({
       page: newPage,
       page_size: searchParams.get("page_size"),
+      incluir_inactivos: searchParams.get("incluir_inactivos"),
       ...(filtroActivo && { filtro: filtroActivo }),
+      ...(ordenActivo && { orden: ordenActivo }),
     });
   };
   const debounceRefrescarTabla = useRefreshDebounce(refrescarTabla, 2000);
@@ -165,22 +183,7 @@ export const TablaProductosContenedor = () => {
 
   return (
     <section className="pt-2">
-      <CustomModal
-        ref={modalRef}
-        show={showModal}
-        onHide={() => setShowModal(false)}
-      >
-        <CustomModal.Header>
-          <h2>Título del Modal</h2>
-        </CustomModal.Header>
-        <CustomModal.Body>
-          <FormEdicion
-            producto={productoSeleccionado}
-            cerrarModal={cerrarModal}
-            categorias={categorias}
-          />
-        </CustomModal.Body>
-      </CustomModal>
+
 
       <div className="row d-flex mb-2">
         <div className="col-md-2">
@@ -189,16 +192,41 @@ export const TablaProductosContenedor = () => {
           </ButtonNew>
         </div>
         <div className="col-md-10 d-flex align-items-center gap-2">
-          <i className="bi bi-search"></i>
+          <label htmlFor="filtro"> <i className="bi bi-search"></i></label>
+     
           <input
             ref={inputRef}
             className="form-control"
+            id="filtro"
             type="text"
             /** En caso de que se recargue la página se mantienen el filtro consistente con la url **/
             defaultValue={searchParams.get("filtro")}
             placeholder="Buscar producto por nombre o código"
             onChange={debounceFiltrarProductos}
           />
+           <label htmlFor="orden">Orden:</label>
+
+          {!searchParams.get("orden") && <i className="bi bi-arrow-down-up"></i>}
+          {ordenPorIniciales.map((option) => {
+            const ordenActual = searchParams.get("orden") ?? "";
+            if (option.value === ordenActual) {
+              return <i className={option.classIcon}/>
+            }
+          })}
+          <select
+            id="orden"
+            name="orden"
+            className="form-select w-auto"
+            onChange={(e) => handleOrdenarChange(e.target.value)}
+            defaultValue={searchParams.get("orden")}
+          >
+            <option value="">Ninguno</option>
+            {ordenPorIniciales.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
           <button
             className="btn btn-outline-primary btn-nuevo-animacion"
             onClick={debounceRefrescarTabla}

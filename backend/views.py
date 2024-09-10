@@ -59,8 +59,7 @@ import pytz # para obtener la zona horaria
 from django.db.models import Q
 from django.db.models.functions import Lower
 User = get_user_model() # esto es para obtener el modelo de usuario que se está utilizando en el proyecto
-
-Stock
+from django.db.models import Sum
 
 
 # Middleware para rastrea la última actividad de los usuarios y actualiza la última actividad en cada solicitud de las vistas de la API
@@ -435,7 +434,7 @@ class ProductoPagination(PageNumberPagination):
     
 class ProductoView(viewsets.ModelViewSet):
     serializer_class = ProductoSerializer
-    queryset = Producto.objects.all() # Esto indica que todas las instancias del modelo Producto son el conjunto de datos sobre el que operará esta vista.
+
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
     
@@ -457,7 +456,8 @@ class ProductoView(viewsets.ModelViewSet):
         filtro = self.request.query_params.get('filtro', None)
         categoria = self.request.query_params.get('categoria', None) # id de la categoria
         seccion = self.request.query_params.get('seccion', None) # id de la seccion
-        print('Seccion:', seccion)
+        orden = self.request.query_params.get('orden', None)
+      
         if filtro is not None:
             if filtro.isdigit(): # isdigit() devuelve True si el filtro es un número, lo que indica que se está buscando por código
                 queryset = queryset.filter(codigo__icontains=filtro)
@@ -467,6 +467,28 @@ class ProductoView(viewsets.ModelViewSet):
             queryset = queryset.filter(categoria__id=categoria)
         if seccion:
             queryset = queryset.filter(seccion__id=seccion)
+
+        # Ordenar por nombre ascendente o descendente
+        if orden is not None:
+            if orden == 'a-z':
+                queryset = queryset.order_by(Lower('nombre').desc())
+            elif orden == 'z-a':
+                queryset = queryset.order_by(Lower('nombre').asc())
+            elif orden == 'ventas' or orden == 'ventas-desc':
+                # Anotar la cantidad total de ventas para cada producto solo si se ordena por ventas (evita los calculos innecesarios)
+                queryset = queryset.annotate(total_ventas=Sum('ventaproducto__cantidad'))
+                if orden == 'ventas':
+                    queryset = queryset.order_by('-total_ventas')
+                else:
+                    queryset = queryset.order_by('total_ventas')
+            elif orden == 'stock':
+                queryset = queryset.order_by('-stock__cantidad')
+            elif orden == 'stock-desc':
+                queryset = queryset.order_by('stock__cantidad')
+            elif orden == 'precio':
+                queryset = queryset.order_by('-precio')
+            elif orden == 'precio-desc':
+                queryset = queryset.order_by('precio')
         return queryset
 
     def list(self, request, *args, **kwargs):

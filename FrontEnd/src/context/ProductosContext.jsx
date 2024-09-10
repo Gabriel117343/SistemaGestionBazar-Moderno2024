@@ -20,7 +20,7 @@ export const ProductosProvider = ({ children }) => {
 
  
   const getProductosContext = async (props) => {
-    '|incluir_inactivos|filtro|page|page_size|seccion|categoria'
+    '|incluir_inactivos|filtro|page|page_size|seccion|categoria|orden'
 
     try {
       const res = await getAllProductos(props) // res para referenciarse al response del servidor

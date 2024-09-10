@@ -1,19 +1,24 @@
-import { useState } from "react";
 import { MagicMotion } from "react-magic-motion";
 import "./styles.css";
-import { PaginationButton } from '../../shared/PaginationButton'
-import useFiltroDatosMostrar from '../../../hooks/useFiltroDatosMostrar'
-export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, showModal}) => {
- 
-  const [currentPage, setCurrentPage] = useState(1);
+import { PaginationButton } from "../../shared/PaginationButton";
 
-  // Se define la cantidad de usuarios a mostrar por pagina
-  const cantidadUsuarios = 10;
-  
-  const usuariosMostrar = useFiltroDatosMostrar({ currentPage, datosPorPagina: cantidadUsuarios, datos: listaPersonas.toReversed() })
+export const MostrarTabla = ({
+  listaUsuarios,
+  borrarUsario,
+  edicionUsuario,
+  currentPage,
+  cambiarPagina,
+  cantidadDatos,
+  pageSize,
+  showModal,
+}) => {
   return (
     <section>
-      <table className="table table-striped table-hover mb-0" id="tabla-usuarios" style={{filter: showModal && 'blur(0.7px)'}}>
+      <table
+        className="table table-striped table-hover mb-0"
+        id="tabla-usuarios"
+        style={{ filter: showModal && "blur(0.7px)" }}
+      >
         <thead className="border-bottom">
           <tr>
             {/* <th>Imagen</th> */}
@@ -33,45 +38,49 @@ export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, sho
         </thead>
         <tbody>
           <MagicMotion>
-            {usuariosMostrar.map((person, index) => (
-              <tr key={person.id}>
-                {/* <th className=' pt-0 pb-0'><img className='usuario-imagen p-0 m-0' src={person.imagen ? person.imagen : 'https://w7.pngwing.com/pngs/807/180/png-transparent-user-account-resume-curriculum-vitae-europe-others-service-resume-logo-thumbnail.png'} alt='imagen' /></th> */}
-                <td>{(currentPage - 1) * cantidadUsuarios + index + 1}</td>
-                <td>{person.rut}</td>
-                <td className="text-capitalize">{person.nombre}</td>
-                <td>{person.apellido}</td>
-                <td>{person.telefono}</td>
-                <td>{person.email}</td>
-                {/** Aqui se asignara un icono dependiendo del estado de la persona, por horario y si esta activo */}
-                <td className="text-capitalize">{person.rol}</td>
-                {person.jornada === "vespertino" && (
+            {listaUsuarios.map((usuario, index) => {
+              const primerNombre = usuario.nombre.split(" ")[0];
+              const primerApellido = usuario.apellido.split(" ")[0];
+
+             return (
+              <tr key={usuario.id}>
+                {/* <th className=' pt-0 pb-0'><img className='usuario-imagen p-0 m-0' src={usuario.imagen ? usuario.imagen : 'https://w7.pngwing.com/pngs/807/180/png-transparent-user-account-resume-curriculum-vitae-europe-others-service-resume-logo-thumbnail.png'} alt='imagen' /></th> */}
+                <td>{(currentPage - 1) * pageSize + index + 1}</td>
+                <td>{usuario.rut}</td>
+                <td className="text-capitalize">{primerNombre}</td>
+                <td>{primerApellido}</td>
+                <td>{usuario.telefono}</td>
+                <td>{usuario.email}</td>
+                {/** Aqui se asignara un icono dependiendo del estado de la usuario, por horario y si esta activo */}
+                <td className="text-capitalize">{usuario.rol}</td>
+                {usuario.jornada === "vespertino" && (
                   <td className="text-center animacion-i">
                     <i className="bi bi-moon text-info" />
                   </td>
                 )}
-                {person.jornada === "duirno" && (
+                {usuario.jornada === "duirno" && (
                   <td className="text-center animacion-i">
                     <i className="bi bi-sun text-warning" />
                   </td>
                 )}
-                {person.jornada === "mixto" && (
+                {usuario.jornada === "mixto" && (
                   <td className="text-center animacion-i">
                     <i className="bi bi-moon text-info"></i>
                     <i className="bi bi-sun text-warning"></i>
                   </td>
                 )}
                 <td className="text-center animacion-i">
-                  {person.is_active === true ? (
+                  {usuario.is_active === true ? (
                     <i className="bi bi-building-fill-up text-success" />
                   ) : (
                     <i className="bi bi-building-fill-slash text-danger" />
                   )}
                 </td>
-                
+
                 <td>
                   <button
                     className="btn btn-sm btn-info animacion-boton"
-                    onClick={() => edicionUsuario(person.id)}
+                    onClick={() => edicionUsuario(usuario.id)}
                   >
                     Editar <i className="bi bi-pencil text-white" />
                   </button>
@@ -79,24 +88,23 @@ export const MostrarTabla = ({ listaPersonas, borrarPersona, edicionUsuario, sho
                 <td>
                   <button
                     className="btn btn-sm btn-danger animacion-boton"
-                    onClick={() => borrarPersona(person.id)}
+                    onClick={() => borrarUsario(usuario.id)}
                   >
                     <i className="bi bi-person-x" /> Eliminar
                   </button>
                 </td>
               </tr>
-            ))}
+            )})}
           </MagicMotion>
         </tbody>
       </table>
 
       <div className="pagination-buttons mb-3 mt-1 animacion-numeros d-flex gap-1">
- 
         <PaginationButton
           currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          totalDatos={listaPersonas.length}
-          cantidadPorPagina={cantidadUsuarios}
+          cambiarPagina={cambiarPagina}
+          totalDatos={cantidadDatos}
+          cantidadPorPagina={pageSize}
         />
       </div>
     </section>
@@ -127,18 +135,11 @@ export const SinUsuarios = () => {
     </section>
   );
 };
-export const ValidarUsuarios = ({
-  listaPersonas,
-  ...props
-}) => {
-
-  const persona = listaPersonas?.length > 0;
-  // si persona es igual a true o false
-  return persona ? (
-    <MostrarTabla
-      listaPersonas={listaPersonas}
-      {...props}
-    />
+export const ValidarUsuarios = ({ listaUsuarios, ...props }) => {
+  const usuario = listaUsuarios?.length > 0;
+  // si usuario es igual a true o false
+  return usuario ? (
+    <MostrarTabla listaUsuarios={listaUsuarios} {...props} />
   ) : (
     <SinUsuarios />
   );

@@ -15,7 +15,7 @@ import useCalculoProductosMostrar from "../../../hooks/useCalculoProductosMostra
 import { CategoriaSelect } from "../../shared/CategoriaSelect";
 import { SeccionButton } from "../../shared/SeccionButton";
 import { paginaPuntoVenta } from "@constants/defaultParams";
-
+import { ordenPorProductos } from "@constants/defaultOptionsFilter";
 export const FiltroProductos = () => {
   const {
     stateProducto: { productos, cantidad },
@@ -40,6 +40,7 @@ export const FiltroProductos = () => {
       categoria: searchParams.get("categoria") ?? "",
       seccion: searchParams.get("seccion") ?? "",
       incluir_inactivos: searchParams.get("incluir_inactivos"),
+      orden: searchParams.get("orden") ?? "",
     };
   };
 
@@ -61,10 +62,10 @@ export const FiltroProductos = () => {
 
   useEffect(() => {
     const cargarProductos = async () => {
-      if (!searchParams.get("page_size")) return // si no hay un page_size no se hace nada
+      toast.loading("Cargando productos...", { id: "loading" });
+      if (!searchParams.get("page_size")) return; // si no hay un page_size no se hace nada
       const parametros = parametrosDeConsulta();
 
-      toast.loading("Cargando productos...", { id: "loading" }); 
       const { success, message } = await getProductosContext(parametros);
       if (success) {
         toast.success(message ?? "Productos cargados", { id: "loading" });
@@ -81,9 +82,11 @@ export const FiltroProductos = () => {
   }, [searchParams]); // si los parametros de busqueda cambian se vuelve a cargar los productos
 
   const filtrar = ({ idSeccion = "all", filtro, idCategoria = "all" }) => {
+    const ordenActual = searchParams.get("orden");
     const newParams = {
       ...paginaPuntoVenta,
-      page_size: parseInt(searchParams.get("page_size")), // reemplaza el page_size por defecto
+      page_size: parseInt(searchParams.get("page_size")),
+      ...(ordenActual && { orden: ordenActual }),
     };
 
     // se asigna el valor de la seccion, categoria o filtro al objeto de busqueda
@@ -101,12 +104,33 @@ export const FiltroProductos = () => {
       return setSearchParams({
         ...paginaPuntoVenta,
         page_size: parseInt(searchParams.get("page_size")),
+        ...(ordenActual && { orden: ordenActual }),
       }); // si no hay filtro se resetea la busqueda y se muestran todos los productos
     }
 
     setSearchParams(newParams);
   };
   const debounceFiltrar = debounce(filtrar, 400);
+
+  const handleOrdenarChange = (selectedOption) => {
+    const filtroActivo = searchParams.get("filtro");
+    const categoriaActiva = searchParams.get("categoria");
+
+    if (selectedOption === "") {
+      return setSearchParams({
+        ...paginaPuntoVenta,
+        ...(filtroActivo && { filtro: filtroActivo }),
+        ...(categoriaActiva && { categoria: categoriaActiva }),
+      });
+    }
+
+    setSearchParams({
+      ...paginaPuntoVenta,
+      orden: selectedOption,
+      ...(filtroActivo && { filtro: filtroActivo }),
+      ...(categoriaActiva && { categoria: categoriaActiva }),
+    });
+  };
 
   const cambiarPagina = ({ newPage }) => {
     setSearchParams({
@@ -120,12 +144,14 @@ export const FiltroProductos = () => {
     <>
       <div className="col-md-8">
         <div className="row pb-1">
-          <div className="col-md-6">
-            <label htmlFor="categoriaSelect">Filtrar por categoria</label>
+          <div className="col-md-3  d-flex justify-content-center align-items-center gap-2">
+            <label htmlFor="categoriaSelect">Categoria </label>
             <CategoriaSelect ref={categoriaRef} filtroCategoria={filtrar} />
           </div>
-          <div className="col-md-6">
-            <label htmlFor="buscarSelect">Buscar</label>
+          <div className="col-md-9 d-flex justify-content-center align-items-center gap-2">
+            <label htmlFor="buscarSelect">   <i className="bi bi-search"></i></label>
+         
+
             <input
               ref={buscadorRef}
               type="text"
@@ -135,11 +161,35 @@ export const FiltroProductos = () => {
               placeholder="Ej: Arroz Miraflores"
               onChange={(e) => debounceFiltrar({ filtro: e.target.value })}
             />
+            <label htmlFor="orden">Orden:</label>
+
+            {!searchParams.get("orden") && (
+              <i className="bi bi-arrow-down-up"></i>
+            )}
+            {ordenPorProductos.map((option) => {
+              const ordenActual = searchParams.get("orden") ?? "";
+              if (option.value === ordenActual) {
+                return <i className={option.classIcon} />;
+              }
+            })}
+            <select
+              id="orden"
+              name="orden"
+              className="form-select w-auto"
+              onChange={(e) => handleOrdenarChange(e.target.value)}
+              defaultValue={searchParams.get("orden")}
+            >
+              <option value="">Ninguno</option>
+              {ordenPorProductos.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
         <div className="pb-1 d-flex gap-1 contenedor-secciones">
-          
           <button
             onClick={filtrar}
             className={`border rounded btn-seleccion ${productos?.length === parseInt(searchParams.get("page_size")) ? "btn-filtro" : ""}`}

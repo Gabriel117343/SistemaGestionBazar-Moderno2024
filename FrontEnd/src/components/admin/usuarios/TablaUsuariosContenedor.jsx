@@ -15,10 +15,9 @@ import { ButtonNew } from "../../shared/ButtonNew";
 import CargaDeDatos from "../../../views/CargaDeDatos";
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 import { useSearchParams } from "react-router-dom";
-import Select, { components } from "react-select";
 
 import { paginaUsuarios } from "@constants/defaultParams.js";
-
+import { ordenPorIniciales } from "@constants/defaultOptionsFilter.js";
 export const TablaUsuariosContenedor = () => {
   const {
     stateUsuario: { usuarios, cantidad },
@@ -33,24 +32,9 @@ export const TablaUsuariosContenedor = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const [usuariosFiltrados, setUsuariosFiltrados] = useState(usuarios); // Nuevo estado para el input de busqueda
-
   const [searchParams, setSearchParams] = useSearchParams();
 
   const inputFiltroRef = useRef(null);
-
-  const options = [
-    {
-      value: "a-z",
-      label: "A-Z",
-      icon: <i className="bi bi-sort-alpha-up-alt"></i>,
-    },
-    {
-      value: "z-a",
-      label: "Z-A",
-      icon: <i className="bi bi-sort-alpha-down-alt"></i>,
-    },
-  ];
 
   const parametrosDeConsulta = () => {
     return {
@@ -83,7 +67,7 @@ export const TablaUsuariosContenedor = () => {
     cargarUsuarios();
   }, [searchParams]);
 
-  const borrarPersona = (id) => {
+  const borrarUsuario = (id) => {
     async function confirmar() {
       const aceptar = await Swal.fire({
         title: "¿Estás seguro?",
@@ -133,7 +117,7 @@ export const TablaUsuariosContenedor = () => {
       ...paginaUsuarios,
       ...(ordenActivo && { orden: ordenActivo }),
       filtro: filtro,
-    })
+    });
   };
   const debounceCambiarFiltro = debounce(cambiarFiltro, 400); // Debounce para retrazar la ejecucion de la funcion cambiarFiltro
 
@@ -154,6 +138,18 @@ export const TablaUsuariosContenedor = () => {
       ...(filtroActivo && { filtro: filtroActivo }),
     });
   };
+  const cambiarPagina = ({ newPage }) => {
+    const filtroActivo = searchParams.get("filtro");
+    const ordenActivo = searchParams.get("orden");
+
+    // se mantienen los parametros de busqueda activos si es que hay alguno, sino se eliminan
+    setSearchParams({
+      page: newPage,
+      page_size: parseInt(searchParams.get("page_size")),
+      ...(filtroActivo && { filtro: filtroActivo }),
+      ...(ordenActivo && { orden: ordenActivo }),
+    });
+  };
   // Acciones
   const refrescarTabla = async () => {
     const toastId = toast.loading("Refrescando", { id: "toastId" });
@@ -170,7 +166,6 @@ export const TablaUsuariosContenedor = () => {
   const imprimirTabla = () => {
     print();
   };
-  const filtroActivo = inputFiltroRef.current?.value.length > 0;
 
   return (
     <section>
@@ -180,42 +175,45 @@ export const TablaUsuariosContenedor = () => {
             Nuevo
           </ButtonNew>
         </div>
-        <div className="col-md-10 d-flex gap-2 align-items-center">
-          <i class="bi bi-search"></i>
+        <div className="col-md-10 d-flex align-items-center gap-2">
+          <label htmlFor="filtro"><i className="bi bi-search"></i></label>
+          
 
           <input
             ref={inputFiltroRef}
             className="form-control"
             type="text"
+            id="filtro"
+            defaultValue={searchParams.get("filtro")}
             placeholder="Buscar por rut, nombre, apellido o correo."
             onChange={(e) => debounceCambiarFiltro(e.target.value)}
           />
 
-          <div className=" d-flex align-items-center gap-2 flex-row">
-            <label htmlFor="orden">Orden:</label>
+          <label htmlFor="orden">Orden:</label>
 
-            {!searchParams.get("orden") && <i class="bi bi-arrow-down-up"></i>}
-            {options.map((option) => {
-              const ordenActual = searchParams.get("orden") ?? "";
-              if (option.value === ordenActual) {
-                return <>{option.icon}</>;
-              }
-            })}
-            <select
-              id="orden"
-              name="orden"
-              className="form-select"
-              onChange={(e) => handleOrdenarChange(e.target.value)}
-              style={{ width: 115 }}
-            >
-              <option value="">Ninguno</option>
-              {options.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          {!searchParams.get("orden") && (
+            <i className="bi bi-arrow-down-up"></i>
+          )}
+          {ordenPorIniciales.map((option) => {
+            const ordenActual = searchParams.get("orden") ?? "";
+            if (option.value === ordenActual) {
+              return <i className={option.classIcon} />;
+            }
+          })}
+          <select
+            id="orden"
+            name="orden"
+            className="form-select w-auto"
+            onChange={(e) => handleOrdenarChange(e.target.value)}
+            defaultValue={searchParams.get("orden")}
+          >
+            <option value="">Ninguno</option>
+            {ordenPorIniciales.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
           <button
             className="btn btn-outline-primary btn-nuevo-animacion"
@@ -227,7 +225,7 @@ export const TablaUsuariosContenedor = () => {
             className="btn btn-outline-primary btn-nuevo-animacion"
             onClick={imprimirTabla}
           >
-            <i class="bi bi-printer"></i>
+            <i className="bi bi-printer"></i>
           </button>
         </div>
       </div>
@@ -235,8 +233,12 @@ export const TablaUsuariosContenedor = () => {
         <CargaDeDatos />
       ) : (
         <ValidarUsuarios
-          listaPersonas={usuarios}
-          borrarPersona={borrarPersona}
+          listaUsuarios={usuarios}
+          borrarUsuario={borrarUsuario}
+          currentPage={searchParams.get("page") || 1}
+          cambiarPagina={cambiarPagina}
+          cantidadDatos={cantidad}
+          pageSize={parseInt(searchParams.get("page_size"))}
           edicionUsuario={edicionUsuario}
           showModal={showModal}
         />
@@ -268,7 +270,7 @@ export const TablaUsuariosContenedor = () => {
   );
   // return (
   //   <section className='pt-2'>
-  //     <ValidarUsuarios listaPersonas={stateUsuario.usuarios} borrarPersona={borrarPersona} edicionUsuario={edicionUsuario}/>
+  //     <ValidarUsuarios listaUsuarios={stateUsuario.usuarios} borrarUsuario={borrarUsuario} edicionUsuario={edicionUsuario}/>
 
   //   </section>
   // )
