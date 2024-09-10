@@ -109,7 +109,7 @@ export const ListaProductos = ({
 const SinProductos = () => {
   return (
     <div className="pt-2">
-      <h1 className="text-center pt-4">No se han econtrado Productos..</h1>
+      <h1 className="text-center pt-4">No se han encontrado Productos..</h1>
     </div>
   );
 };

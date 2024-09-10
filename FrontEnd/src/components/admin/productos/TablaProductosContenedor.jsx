@@ -21,7 +21,7 @@ import CustomModal from "../../../views/CustomModal";
 
 import { useSearchParams } from "react-router-dom";
 import { paginaProductos } from "@constants/defaultParams.js";
-import { ordenPorIniciales } from '@constants/defaultOptionsFilter.js'
+import { ordenPorProductos } from "@constants/defaultOptionsFilter.js";
 export const TablaProductosContenedor = () => {
   const [showModal, setShowModal] = useState(false);
   const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
@@ -126,10 +126,19 @@ export const TablaProductosContenedor = () => {
 
   const filtrarProductos = (event) => {
     const filtro = event.target.value.trim();
+    const ordenActual = searchParams.get("orden");
     // si el filtro esta vacio se reinician los parametros de busqueda por defecto
-    if (filtro.length === 0) return setSearchParams(paginaProductos);
+    if (filtro.length === 0)
+      return setSearchParams({
+        ...paginaProductos,
+        ...(ordenActual && { orden: ordenActual }),
+      });
 
-    setSearchParams({ ...paginaProductos, filtro });
+    setSearchParams({
+      ...paginaProductos,
+      ...(ordenActual && { orden: ordenActual }),
+      filtro,
+    });
   };
   const debounceFiltrarProductos = debounce(filtrarProductos, 400); // Debounce para retrazar la ejecucion de la funcion
 
@@ -163,7 +172,7 @@ export const TablaProductosContenedor = () => {
       orden: selectedOption,
       ...(filtroActivo && { filtro: filtroActivo }),
     });
-  }
+  };
   const cambiarPagina = ({ newPage }) => {
     const filtroActivo = searchParams.get("filtro");
     const ordenActivo = searchParams.get("orden");
@@ -183,8 +192,6 @@ export const TablaProductosContenedor = () => {
 
   return (
     <section className="pt-2">
-
-
       <div className="row d-flex mb-2">
         <div className="col-md-2">
           <ButtonNew onClick={() => setShowRegistroModal(true)}>
@@ -192,8 +199,11 @@ export const TablaProductosContenedor = () => {
           </ButtonNew>
         </div>
         <div className="col-md-10 d-flex align-items-center gap-2">
-          <label htmlFor="filtro"> <i className="bi bi-search"></i></label>
-     
+          <label htmlFor="filtro">
+            {" "}
+            <i className="bi bi-search"></i>
+          </label>
+
           <input
             ref={inputRef}
             className="form-control"
@@ -204,13 +214,15 @@ export const TablaProductosContenedor = () => {
             placeholder="Buscar producto por nombre o código"
             onChange={debounceFiltrarProductos}
           />
-           <label htmlFor="orden">Orden:</label>
+          <label htmlFor="orden">Orden:</label>
 
-          {!searchParams.get("orden") && <i className="bi bi-arrow-down-up"></i>}
-          {ordenPorIniciales.map((option) => {
+          {!searchParams.get("orden") && (
+            <i className="bi bi-arrow-down-up"></i>
+          )}
+          {ordenPorProductos.map((option) => {
             const ordenActual = searchParams.get("orden") ?? "";
             if (option.value === ordenActual) {
-              return <i className={option.classIcon}/>
+              return <i className={option.classIcon} />;
             }
           })}
           <select
@@ -221,7 +233,7 @@ export const TablaProductosContenedor = () => {
             defaultValue={searchParams.get("orden")}
           >
             <option value="">Ninguno</option>
-            {ordenPorIniciales.map((option) => (
+            {ordenPorProductos.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -256,18 +268,18 @@ export const TablaProductosContenedor = () => {
         />
       )}
 
-      <Modal onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton className="bg-info">
-          <Modal.Title>Editar producto</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      <CustomModal ref={modalRef} show={showModal} onHide={() => setShowModal(false)}>
+        <CustomModal.Header>
+          <h2>Título del Modal</h2>
+        </CustomModal.Header>
+        <CustomModal.Body>
           <FormEdicion
-            producto={productoSeleccionado}
-            cerrarModal={cerrarModal}
-            categorias={categorias}
-          />
-        </Modal.Body>
-      </Modal>
+              producto={productoSeleccionado}
+              cerrarModal={cerrarModal}
+              categorias={categorias}
+            />
+        </CustomModal.Body>
+      </CustomModal>
       <Modal
         show={showRegistroModal}
         onHide={() => setShowRegistroModal(false)}

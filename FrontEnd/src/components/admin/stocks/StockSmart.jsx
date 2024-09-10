@@ -11,7 +11,7 @@ import CargaDeDatos from "../../../views/CargaDeDatos";
 import { debounce } from "lodash";
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 import { paginaStock } from "@constants/defaultParams.js";
-
+import { ordenPorStock } from "@constants/defaultOptionsFilter";
 export const StockSmart = () => {
   const {
     getStocksContext,
@@ -36,6 +36,7 @@ export const StockSmart = () => {
       proveedorId: searchParams.get("proveedor") || proveedorId || "",
       filtro: searchParams.get("filtro") ?? "",
       proveedor: searchParams.get("proveedor") ?? "",
+      orden: searchParams.get("orden") ?? "",
     };
   };
 
@@ -132,6 +133,15 @@ export const StockSmart = () => {
     });
   };
 
+  const handleOrdenarChange = (selectedOption) => {
+    const filtroActual = searchParams.get("filtro");
+    setSearchParams({
+      ...paginaStock,
+      orden: selectedOption,
+      ...(filtroActual && { filtro: filtroActual }),
+    })
+  }
+
   // Acciones extra
   const refrescarTabla = async () => {
     const toastId = toast.loading("Refrescando", { id: "toastId" });
@@ -155,8 +165,9 @@ export const StockSmart = () => {
 
   return (
     <section>
-      <div className="d-flex align-items-center mb-2 column">
-        <div className="col-md-3 pe-4">
+      <div className="d-flex row  mb-2">
+        <div className="col-md-3 pe-4 d-flex align-items-center gap-2">
+
           <label htmlFor="proveedor">Proveedor</label>
           <select
             ref={selectRef}
@@ -172,20 +183,45 @@ export const StockSmart = () => {
             ))}
           </select>
         </div>
-        <div className="col-md-9 d-flex align-items-end gap-1">
-          <i className="bi bi-search pb-2 pe-1"></i>
-          <div style={{ width: "100%" }}>
-            <label htmlFor="nombre">Buscar</label>
+        <div className="col-md-9 d-flex align-items-center gap-2">
+          
+
+            <label htmlFor="nombre"><i className="bi bi-search pb-2 pe-1"></i></label>
             <input
               ref={inputRef}
               id="nombre"
               className="form-control"
               type="text"
-              placeholder="Buscar por códiog, nombre o proveedor"
+              placeholder="Buscar por código, nombre o proveedor"
               defaultValue={searchParams.get("filtro")}
               onChange={(e) => debounceFiltrarPorProducto(e.target.value)}
             />
-          </div>
+            <label htmlFor="orden">Orden:</label>
+
+            {!searchParams.get("orden") && (
+              <i className="bi bi-arrow-down-up"></i>
+            )}
+            {ordenPorStock.map((option) => {
+              const ordenActual = searchParams.get("orden") ?? "";
+              if (option.value === ordenActual) {
+                return <i className={option.classIcon} />;
+              }
+            })}
+            <select
+              id="orden"
+              name="orden"
+              className="form-select w-auto"
+              onChange={(e) => handleOrdenarChange(e.target.value)}
+              defaultValue={searchParams.get("orden")}
+            >
+              <option value="">Ninguno</option>
+              {ordenPorStock.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+      
 
           <button
             className="btn btn-outline-primary"
@@ -203,7 +239,12 @@ export const StockSmart = () => {
       ) : (
         <ValidarStocks
           listaStocks={stocks}
-          proveedorId={proveedorId ?? parseInt( !searchParams.get("filtro") && searchParams.get("proveedor"))}
+          proveedorId={
+            proveedorId ??
+            parseInt(
+              !searchParams.get("filtro") && searchParams.get("proveedor")
+            )
+          }
           currentPage={searchParams.get("page") || 1}
           cambiarPagina={cambiarPagina}
           cantidadDatos={cantidad}

@@ -17,7 +17,7 @@ import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 import { useSearchParams } from "react-router-dom";
 
 import { paginaUsuarios } from "@constants/defaultParams.js";
-import { ordenPorIniciales } from "@constants/defaultOptionsFilter.js";
+import { ordenPorUsuarios } from "@constants/defaultOptionsFilter.js";
 export const TablaUsuariosContenedor = () => {
   const {
     stateUsuario: { usuarios, cantidad },
@@ -194,7 +194,7 @@ export const TablaUsuariosContenedor = () => {
           {!searchParams.get("orden") && (
             <i className="bi bi-arrow-down-up"></i>
           )}
-          {ordenPorIniciales.map((option) => {
+          {ordenPorUsuarios.map((option) => {
             const ordenActual = searchParams.get("orden") ?? "";
             if (option.value === ordenActual) {
               return <i className={option.classIcon} />;
@@ -208,7 +208,7 @@ export const TablaUsuariosContenedor = () => {
             defaultValue={searchParams.get("orden")}
           >
             <option value="">Ninguno</option>
-            {ordenPorIniciales.map((option) => (
+            {ordenPorUsuarios.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>

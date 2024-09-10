@@ -315,14 +315,36 @@ class UsuarioView(viewsets.ModelViewSet): # este método es para listar, crear, 
 
         # por rut, nombre, o correo
         if filtro is not None:
-            queryset = queryset.filter(Q(rut__icontains=filtro) | Q(nombre__icontains=filtro) | Q(email__icontains=filtro))
-        # Ordenar por nombre ascendente o descendente
+            queryset = queryset.filter(
+                Q(rut__icontains=filtro) |
+                Q(nombre__icontains=filtro) |
+                Q(email__icontains=filtro)
+            )
 
+        # Ordenar por nombre ascendente o descendente
         if orden is not None:
             if orden == 'a-z':
-                queryset = queryset.order_by(Lower('nombre').desc())
-            elif orden == 'z-a':
                 queryset = queryset.order_by(Lower('nombre').asc())
+            elif orden == 'z-a':
+                queryset = queryset.order_by(Lower('nombre').desc())
+            # Por activos o inactivos
+            elif orden == 'activos':
+                queryset = queryset.filter(is_active=True)
+            elif orden == 'inactivos':
+                queryset = queryset.filter(is_active=False)
+            # Por antiguo o reciente
+            elif orden == 'nuevos':
+                queryset = queryset.order_by('created_at')
+            elif orden == 'antiguos':
+                queryset = queryset.order_by('-created_at')
+            # Por rol
+            elif orden == 'admin':
+                queryset = queryset.filter(rol='administrador')
+            elif orden == 'vendedor':
+                queryset = queryset.filter(rol='vendedor')
+            elif orden == 'actividad':
+                queryset = queryset.order_by('-ultima_actividad')
+
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -471,9 +493,9 @@ class ProductoView(viewsets.ModelViewSet):
         # Ordenar por nombre ascendente o descendente
         if orden is not None:
             if orden == 'a-z':
-                queryset = queryset.order_by(Lower('nombre').desc())
-            elif orden == 'z-a':
                 queryset = queryset.order_by(Lower('nombre').asc())
+            elif orden == 'z-a':
+                queryset = queryset.order_by(Lower('nombre').desc())
             elif orden == 'ventas' or orden == 'ventas-desc':
                 # Anotar la cantidad total de ventas para cada producto solo si se ordena por ventas (evita los calculos innecesarios)
                 queryset = queryset.annotate(total_ventas=Sum('ventaproducto__cantidad'))
@@ -489,6 +511,10 @@ class ProductoView(viewsets.ModelViewSet):
                 queryset = queryset.order_by('-precio')
             elif orden == 'precio-desc':
                 queryset = queryset.order_by('precio')
+            elif orden == 'activos':
+                queryset = queryset.filter(estado=True)
+            elif orden == 'inactivos':
+                queryset = queryset.filter(estado=False)
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -637,7 +663,6 @@ class StockPagination(PageNumberPagination):
 
 class StockView(viewsets.ModelViewSet):
     serializer_class = StockSerializer
-    queryset = Stock.objects.all() # Esto indica que todas las instancias del modelo Stock son el conjunto de datos sobre el que operará esta vista.
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
 
@@ -651,7 +676,7 @@ class StockView(viewsets.ModelViewSet):
         # adicionalmente se puede filtrar por categoria y seccion
         filtro = self.request.query_params.get('filtro', None)
         id_proveedor = self.request.query_params.get('proveedor', None)
-
+        orden = self.request.query_params.get('orden', None)
         if filtro:
             if filtro.isdigit(): # si se busca por el código
                 queryset = queryset.filter(producto__codigo__icontains=filtro)
@@ -659,6 +684,16 @@ class StockView(viewsets.ModelViewSet):
                 queryset = queryset.filter(producto__nombre__icontains=filtro)
         if id_proveedor:
             queryset = queryset.filter(producto__proveedor__id__icontains=id_proveedor)
+         # Ordenación
+        if orden:
+            if orden == 'stock':
+                queryset = queryset.order_by('-cantidad')
+            elif orden == 'stock-desc':
+                queryset = queryset.order_by('cantidad')
+            elif orden == 'stock-entrada':
+                queryset = queryset.order_by('-updated_at')
+            elif orden == 'stock-critico':
+                queryset = queryset.filter(cantidad__gte=1, cantidad__lte=10).order_by('cantidad')
         return queryset
     def list(self, request, *args, **kwargs):
         try:
@@ -1092,7 +1127,7 @@ class TransformarDatosView(APIView):
 
 # Ej: http://127.0.0.1:8000/usuarios/ventas_categoria/?fecha_inicio=2024-08-26&fecha_fin=2024-08-28
 
-
+Stock
 # Clase para poder paginar cada vista
 class StandardResultsSetPagination(PageNumberPagination):
   

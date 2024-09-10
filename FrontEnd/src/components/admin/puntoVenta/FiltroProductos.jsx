@@ -15,7 +15,7 @@ import useCalculoProductosMostrar from "../../../hooks/useCalculoProductosMostra
 import { CategoriaSelect } from "../../shared/CategoriaSelect";
 import { SeccionButton } from "../../shared/SeccionButton";
 import { paginaPuntoVenta } from "@constants/defaultParams";
-import { ordenPorProductos } from "@constants/defaultOptionsFilter";
+import { ordenPorProductosVenta } from "@constants/defaultOptionsFilter";
 export const FiltroProductos = () => {
   const {
     stateProducto: { productos, cantidad },
@@ -63,7 +63,9 @@ export const FiltroProductos = () => {
   useEffect(() => {
     const cargarProductos = async () => {
       toast.loading("Cargando productos...", { id: "loading" });
+
       if (!searchParams.get("page_size")) return; // si no hay un page_size no se hace nada
+
       const parametros = parametrosDeConsulta();
 
       const { success, message } = await getProductosContext(parametros);
@@ -101,6 +103,7 @@ export const FiltroProductos = () => {
       newParams.filtro = filtro;
       categoriaRef.current.value = "all";
     } else {
+
       return setSearchParams({
         ...paginaPuntoVenta,
         page_size: parseInt(searchParams.get("page_size")),
@@ -119,6 +122,7 @@ export const FiltroProductos = () => {
     if (selectedOption === "") {
       return setSearchParams({
         ...paginaPuntoVenta,
+        page_size: parseInt(searchParams.get("page_size")),
         ...(filtroActivo && { filtro: filtroActivo }),
         ...(categoriaActiva && { categoria: categoriaActiva }),
       });
@@ -126,6 +130,7 @@ export const FiltroProductos = () => {
 
     setSearchParams({
       ...paginaPuntoVenta,
+      page_size: parseInt(searchParams.get("page_size")),
       orden: selectedOption,
       ...(filtroActivo && { filtro: filtroActivo }),
       ...(categoriaActiva && { categoria: categoriaActiva }),
@@ -166,7 +171,7 @@ export const FiltroProductos = () => {
             {!searchParams.get("orden") && (
               <i className="bi bi-arrow-down-up"></i>
             )}
-            {ordenPorProductos.map((option) => {
+            {ordenPorProductosVenta.map((option) => {
               const ordenActual = searchParams.get("orden") ?? "";
               if (option.value === ordenActual) {
                 return <i className={option.classIcon} />;
@@ -180,7 +185,7 @@ export const FiltroProductos = () => {
               defaultValue={searchParams.get("orden")}
             >
               <option value="">Ninguno</option>
-              {ordenPorProductos.map((option) => (
+              {ordenPorProductosVenta.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
