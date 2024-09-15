@@ -117,7 +117,7 @@ class ResetPasswordView(APIView):
             return Response({'error': 'Contraseña restablecida con éxito'}, status=200)
         else:
             return Response({'error': 'Hubo un error al actualizar la contraseña' }, status=400)
-        
+        Usuario
 class LoginView(APIView):
     print('ejecuando Login...')
     permission_classes = [AllowAny] # esto es para permitir cualquier usuario porque el usuario no está autenticado cuando se logea

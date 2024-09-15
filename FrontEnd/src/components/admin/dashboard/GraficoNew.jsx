@@ -1,7 +1,5 @@
-
+"use client"
 import * as React from "react"
-import '../../../styles/tailwind-component.css'; // Añade el archivo CSS específico y tailwindcss
-import { cn } from "@/lib/utils"; // Importa la función `cn`
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 import {
   Card,
@@ -11,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
-
+  ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
@@ -132,9 +130,9 @@ const chartConfig = {
     color: "hsl(var(--chart-2))",
   },
 } 
-export const Grafico = () => {
+export const GraficosNew = () => {
   const [timeRange, setTimeRange] = React.useState("90d")
-  const filteredData = chartData?.filter((item) => {
+  const filteredData = chartData.filter((item) => {
     const date = new Date(item.date)
     const now = new Date()
     let daysToSubtract = 90

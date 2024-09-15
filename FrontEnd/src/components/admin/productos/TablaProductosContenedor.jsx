@@ -219,10 +219,10 @@ export const TablaProductosContenedor = () => {
           {!searchParams.get("orden") && (
             <i className="bi bi-arrow-down-up"></i>
           )}
-          {ordenPorProductos.map((option) => {
+          {ordenPorProductos.map((option, index) => {
             const ordenActual = searchParams.get("orden") ?? "";
             if (option.value === ordenActual) {
-              return <i className={option.classIcon} />;
+              return <i key={index} className={option.classIcon} />;
             }
           })}
           <select

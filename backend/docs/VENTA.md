@@ -13,7 +13,7 @@ Se recibe una solicitud de venta con los siguientes datos:
 - **cliente_id**: Identificador del cliente que realiza la compra.
 - **vendedor**: Usuario que realiza la venta.
 - **total**: Precio total de la venta.
-- **info_venta_json**: Información detallada de la venta en formato JSON (transformada en el FrontEnd).
+- **info_venta_json**: Información detallada de la venta en formato JSON (transformada en el FrontEnd).(solo se recive no se guarda en el modelo Venta)
 
 ### Uso de `transaction.atomic`
 

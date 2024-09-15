@@ -5,10 +5,14 @@ import path from 'path' // Asegúrate de importar 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  css: {
+    postcss: './postcss.config.js',
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'), // Establece la ruta de alias a la carpeta src
-      '@constants': path.resolve(__dirname, './src/constants') // Establece la ruta de alias a la carpeta src/constants
+      '@constants': path.resolve(__dirname, './src/constants'), // Establece la ruta de alias a la carpeta src/constants
+      '@components': path.resolve(__dirname, './src/components') // Establece la ruta de alias a la carpeta src/components
     }
   },
   build: {

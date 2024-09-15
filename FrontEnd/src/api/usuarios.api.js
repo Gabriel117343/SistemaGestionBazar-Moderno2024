@@ -11,7 +11,7 @@ export const getAllUsers = ({ page, page_size, orden, filtro }) => {
       page: page,
       page_size: page_size,
       orden: orden,
-      filtro: filtro
+      filtro: filtro 
     }
   }) // > nueva forma
 }
