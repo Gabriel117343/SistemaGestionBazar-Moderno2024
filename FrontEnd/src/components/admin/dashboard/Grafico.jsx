@@ -30,7 +30,7 @@ import {
 
 import useDatosVentas from '../../../context/store/useDatosVentas'
 import { toast } from 'react-hot-toast'
-import { format, sub } from 'date-fns'
+import { format, sub,  } from 'date-fns'
 
 export const description = "An interactive area chart"
 
@@ -100,7 +100,7 @@ export const Grafico = () => {
             Showing total visitors for the last 3 months
           </CardDescription>
         </div>
-        <Select value={searchParams.get('dias')} onValueChange={handleRangoTiempo}>
+        <Select defaultValue={searchParams.get('dias')} onValueChange={handleRangoTiempo}>
           <SelectTrigger
             className="w-[160px] rounded-lg sm:ml-auto"
             aria-label="Select a value"
@@ -108,8 +108,8 @@ export const Grafico = () => {
             <SelectValue placeholder="Last 3 months" />
           </SelectTrigger>
           <SelectContent className="rounded-xl">
-            <SelectItem value={9} className="rounded-lg">
-              Últimos 9 días
+            <SelectItem value={15} className="rounded-lg">
+              Últimos 15 días
             </SelectItem>
             <SelectItem value={3} className="rounded-lg">
               Últimos 3 días
@@ -151,6 +151,7 @@ export const Grafico = () => {
                   stopOpacity={0.1}
                 />
               </linearGradient>
+        
             </defs>
             <CartesianGrid vertical={false} />
             <XAxis
@@ -161,7 +162,7 @@ export const Grafico = () => {
               minTickGap={32}
               tickFormatter={(value) => {
                 const date = new Date(value)
-                return date.toLocaleDateString("en-US", {
+                return date.toLocaleDateString("es-CL", {
                   month: "short",
                   day: "numeric",
                 })
@@ -172,7 +173,7 @@ export const Grafico = () => {
               content={
                 <ChartTooltipContent
                   labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
+                    return new Date(value).toLocaleDateString("es-CL", {
                       month: "short",
                       day: "numeric",
                     })
@@ -182,19 +183,27 @@ export const Grafico = () => {
               }
             />
             <Area
-              dataKey="mobile"
+              dataKey="nombre"
               type="natural"
               fill="url(#fillMobile)"
               stroke="var(--color-mobile)"
               stackId="a"
             />
             <Area
-              dataKey="desktop"
+              dataKey="total"
               type="natural"
               fill="url(#fillDesktop)"
               stroke="var(--color-desktop)"
               stackId="a"
             />
+            <Area
+              dataKey="fecha"
+              type="natural"
+              fill="url(#fillDesktop)"
+              stroke="var(--color-desktop)"
+              stackId="a"
+            />
+      
             <ChartLegend content={<ChartLegendContent />} />
           </AreaChart>
         </ChartContainer>

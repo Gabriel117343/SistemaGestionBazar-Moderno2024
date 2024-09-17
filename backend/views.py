@@ -38,7 +38,7 @@ from django.utils.encoding import smart_str # para recuperar contraseña
 from django.utils.http import urlsafe_base64_decode # para recuperar contraseña
 from rest_framework.decorators import api_view
 from django.contrib.sites.shortcuts import get_current_site # para obtener el dominio actual http://localhost:8000
-from datetime import datetime, time # para saber la fecha actual
+from datetime import datetime, time, timedelta # para saber la fecha actual
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action
 from rest_framework.exceptions import AuthenticationFailed
@@ -1157,7 +1157,8 @@ class VentaCategoriaAPIView(APIView):
             # Convertir las fechas a objetos datetime con zona horaria
             tz = pytz.timezone('America/Santiago')  # O la zona horaria que estés usando
             fecha_inicio = timezone.make_aware(datetime.strptime(fecha_inicio, '%Y-%m-%d'), tz)
-            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'), tz)
+             # Se suma un día a la fecha fin y se resta un segundo para que la fecha fin sea hasta las 23:59:59
+            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'), tz) + timedelta(days=1) - timedelta(seconds=1)
             queryset = queryset.filter(fecha__range=[fecha_inicio, fecha_fin])
         # _id indica que se está filtrando por la clave foránea de la entidad relacionada osea el ID de la entidad ej: categoria_id
         if categoria_id:
@@ -1201,7 +1202,8 @@ class VentaProductoAPIView(APIView):
             # Convertir las fechas a objetos datetime con zona horaria
             tz = pytz.timezone('America/Santiago')  # O la zona horaria que estés usando
             fecha_inicio = timezone.make_aware(datetime.strptime(fecha_inicio, '%Y-%m-%d'), tz)
-            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'), tz)
+            # Se suma un día a la fecha fin y se resta un segundo para que la fecha fin sea hasta las 23:59:59
+            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'), tz) + timedelta(days=1) - timedelta(seconds=1)
             queryset = queryset.filter(fecha__range=[fecha_inicio, fecha_fin])
         
         if producto_id:
@@ -1246,7 +1248,8 @@ class VentaProveedorAPIView(APIView):
             # Convertir las fechas a objetos datetime con zona horaria
             tz = pytz.timezone('America/Santiago')  # O la zona horaria que estés usando
             fecha_inicio = timezone.make_aware(datetime.strptime(fecha_inicio, '%Y-%m-%d'), tz)
-            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'), tz)
+             # Se suma un día a la fecha fin y se resta un segundo para que la fecha fin sea hasta las 23:59:59
+            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'), tz) + timedelta(days=1) - timedelta(seconds=1)
             queryset = queryset.filter(fecha__range=[fecha_inicio, fecha_fin])
         
         if proveedor_id:
@@ -1291,7 +1294,8 @@ class VentaSeccionAPIView(APIView):
             # Convertir las fechas a objetos datetime con zona horaria
             tz = pytz.timezone('America/Santiago')
             fecha_inicio = timezone.make_aware(datetime.strptime(fecha_inicio, '%Y-%m-%d'), tz)
-            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'), tz)
+             # Se suma un día a la fecha fin y se resta un segundo para que la fecha fin sea hasta las 23:59:59
+            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'), tz) + timedelta(days=1) - timedelta(seconds=1)
             queryset = queryset.filter(fecha__range=[fecha_inicio, fecha_fin])
         if seccion_id:
             queryset = queryset.filter(entidad_id=seccion_id)
