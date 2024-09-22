@@ -159,9 +159,7 @@ export const TablaProductosContenedor = () => {
       ...(ordenActivo && { orden: ordenActivo }),
     });
   };
-  const debounceRefrescarTabla = useRefreshDebounce(refrescarTabla, 2000);
-
-  // Acciones extra
+  
   const refrescarTabla = async () => {
     toast.loading("Refrescando", { id: "toastId" });
 
@@ -177,6 +175,9 @@ export const TablaProductosContenedor = () => {
       });
     }
   };
+  const debounceRefrescarTabla = useRefreshDebounce(refrescarTabla, 2000);
+
+  // Acciones extra
   const imprimirTabla = () => {
     print();
   };

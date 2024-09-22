@@ -5,8 +5,14 @@ import { SeccionesContext } from "../../../context/SeccionesContext";
 import toast from "react-hot-toast";
 
 import { confirmarCategoria, confirmarSeccion } from "./messages/ConfirmacionCambios";
+
+const TOTAL_DATA = {
+  page: 1,
+  page_size: 20, // hasta 20 productos por pagina
+}
+
 export const FormEdicion = ({ cerrarModal, producto, categorias }) => {
-  const { id, nombre, seccion, proveedor, precio, estado, imagen } = producto;
+  const { id, nombre, proveedor, precio, estado, imagen } = producto;
   const { actualizarProductoContext } = useContext(ProductosContext);
   const {
     stateProveedor: { proveedores },
@@ -25,12 +31,24 @@ export const FormEdicion = ({ cerrarModal, producto, categorias }) => {
   );
   const [seccionSeleccionada, setSeccionSeleccionada] = useState(producto?.seccion?.id);
   useEffect(() => {
-    const cargar = () => {
-      getProveedoresContext(); // obtiene los proveedores
-      getSeccionesContext(); // obtiene las secciones
+    async function cargarSecciones () {
+
+      const { success, message} = await getSeccionesContext(TOTAL_DATA); // obtiene las secciones
+      if (!success) {
+        toast.error(message ?? 'Error al cargar las secciones');
+      }
     };
-    cargar();
+    cargarSecciones();
   }, []);
+  useEffect(() => {
+    async function cargarProveedores() {
+      const { success, message } = await getProveedoresContext(TOTAL_DATA);
+      if (!success) {
+        toast.error(message ?? 'Error al cargar los proveedores');
+      }
+    }
+    cargarProveedores();
+  })
   const idFormAdmin = useId(); // buena practica para generar id unicos
   const enviarFormulario = async (event) => {
     event.preventDefault();
