@@ -112,36 +112,26 @@ export const ListaSeccionesContenedor = () => {
 
   const cambiarFiltro = (filtro) => {
     const ordenActivo = searchParams.get("orden");
-    if (filtro.length === 0) {
-      setSearchParams({
-        ...paginaSecciones,
-        ...(ordenActivo && { orden: ordenActivo }),
-      });
-      return;
-    }
+    const newFiltro = filtro.trim();
     setSearchParams({
       ...paginaSecciones,
+      // Propagación condicional de objetos
       ...(ordenActivo && { orden: ordenActivo }),
-      filtro: filtro,
-    });
+      ...(newFiltro && { filtro: newFiltro }),
+    })
   };
+  const debounceCambiarFiltro = debounce(cambiarFiltro, 400); // retrasa la ejucion de la funcion cambiar filtro por 300 milisegundos
 
   const handleOrdenarChange = (selectedOption) => {
     const filtroActivo = searchParams.get("filtro");
 
     // si la opción seleccionada es vacía, se elimina el parámetro orden y se mantiene el filtro activo si es que hay uno
-    if (selectedOption === "") {
-      return setSearchParams({
-        ...paginaSecciones,
-        ...(filtroActivo && { filtro: filtroActivo }),
-      });
-    }
 
     setSearchParams({
       ...paginaSecciones,
-      orden: selectedOption,
+      ...(selectedOption && { orden: selectedOption }),
       ...(filtroActivo && { filtro: filtroActivo }),
-    });
+    })
   };
   const cambiarPagina = ({ newPage }) => {
     const filtroActivo = searchParams.get("filtro");
@@ -151,11 +141,12 @@ export const ListaSeccionesContenedor = () => {
     setSearchParams({
       page: newPage,
       page_size: parseInt(searchParams.get("page_size")),
+      // propagación condicional de objetos
       ...(filtroActivo && { filtro: filtroActivo }),
       ...(ordenActivo && { orden: ordenActivo }),
     });
   };
-  const debounceCambiarFiltro = debounce(cambiarFiltro, 300); // retrasa la ejucion de la funcion cambiar filtro por 300 milisegundos
+
   // ACCIONES EXTRA ------------------
   const refrescarTabla = async () => {
     toast.loading("Actualizando tabla...", { id: "loading" });
