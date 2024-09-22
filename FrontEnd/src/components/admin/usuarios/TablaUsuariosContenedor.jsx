@@ -153,13 +153,15 @@ export const TablaUsuariosContenedor = () => {
   // Acciones
   const refrescarTabla = async () => {
     const toastId = toast.loading("Refrescando", { id: "toastId" });
-    const { success } = await getUsuarios();
+    
+    const parametros = parametrosDeConsulta();
+    const { success, message } = await getUsuarios(parametros);
     if (success) {
       toast.dismiss(toastId, { id: "toastId" });
       toast.success("Tabla refrescada");
     } else {
       toast.dismiss(toastId, { id: "toastId" });
-      toast.error("error al refrescar la Tabla");
+      toast.error(message ?? "error al refrescar la Tabla");
     }
   };
   const debounceRefrescarTabla = useRefreshDebounce(refrescarTabla, 2000);
