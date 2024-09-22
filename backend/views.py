@@ -640,9 +640,9 @@ class SeccionView(viewsets.ModelViewSet):
 
         if orden is not None:
             if orden == 'a-z':
-                queryset = queryset.order_by(Lower('nombre').desc())
-            elif orden == 'z-a':
                 queryset = queryset.order_by(Lower('nombre').asc())
+            elif orden == 'z-a':
+                queryset = queryset.order_by(Lower('nombre').desc())
 
             elif orden in ['ventas', 'ventas-desc']:
                 # Anotar la cantidad total de ventas para cada sección solo si se ordena por ventas

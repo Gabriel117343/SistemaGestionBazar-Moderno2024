@@ -41,11 +41,11 @@ export const MostrarTabla = ({
             {listaUsuarios.map((usuario, index) => {
               const primerNombre = usuario.nombre.split(" ")[0];
               const primerApellido = usuario.apellido.split(" ")[0];
-
+              const indexUsuario = (currentPage - 1) * pageSize + (index + 1);
              return (
               <tr key={usuario.id}>
                 {/* <th className=' pt-0 pb-0'><img className='usuario-imagen p-0 m-0' src={usuario.imagen ? usuario.imagen : 'https://w7.pngwing.com/pngs/807/180/png-transparent-user-account-resume-curriculum-vitae-europe-others-service-resume-logo-thumbnail.png'} alt='imagen' /></th> */}
-                <td>{(currentPage - 1) * pageSize + index + 1}</td>
+                <td>{indexUsuario}</td>
                 <td>{usuario.rut}</td>
                 <td className="text-capitalize">{primerNombre}</td>
                 <td>{primerApellido}</td>

@@ -104,48 +104,42 @@ export const TablaUsuariosContenedor = () => {
     setShowRegistroModal(false); // Cerrar la modal de registro
     setShowModal(false); // Cerrar la modal de edicion
   };
+
   const cambiarFiltro = (filtro) => {
     const ordenActivo = searchParams.get("orden");
-    if (filtro.length === 0) {
-      setSearchParams({
-        ...paginaUsuarios,
-        ...(ordenActivo && { orden: ordenActivo }),
-      });
-      return;
-    }
+    const newFiltro = filtro.trim()
+
     setSearchParams({
       ...paginaUsuarios,
+      // Propagación condicional de propiedades
       ...(ordenActivo && { orden: ordenActivo }),
-      filtro: filtro,
+      ...(newFiltro && { filtro: newFiltro }),
     });
+
   };
-  const debounceCambiarFiltro = debounce(cambiarFiltro, 400); // Debounce para retrazar la ejecucion de la funcion cambiarFiltro
+  const debounceCambiarFiltro = debounce(cambiarFiltro, 400); // El usuario debe esperar 400ms para que se ejecute la función
+
 
   const handleOrdenarChange = (selectedOption) => {
     const filtroActivo = searchParams.get("filtro");
-
     // si la opción seleccionada es vacía, se elimina el parámetro orden y se mantiene el filtro activo si es que hay uno
-    if (selectedOption === "") {
-      return setSearchParams({
-        ...paginaUsuarios,
-        ...(filtroActivo && { filtro: filtroActivo }),
-      });
-    }
 
-    setSearchParams({
+    const newOrden = {
       ...paginaUsuarios,
-      orden: selectedOption,
+      ...(selectedOption && { orden: selectedOption }),
       ...(filtroActivo && { filtro: filtroActivo }),
-    });
+    };
+    setSearchParams(newOrden);
   };
+
   const cambiarPagina = ({ newPage }) => {
     const filtroActivo = searchParams.get("filtro");
     const ordenActivo = searchParams.get("orden");
 
-    // se mantienen los parametros de busqueda activos si es que hay alguno, sino se eliminan
     setSearchParams({
       page: newPage,
       page_size: parseInt(searchParams.get("page_size")),
+      // Propagación condicional de propiedades, si son true se agregan al objeto, sino no se agregan
       ...(filtroActivo && { filtro: filtroActivo }),
       ...(ordenActivo && { orden: ordenActivo }),
     });
@@ -153,7 +147,7 @@ export const TablaUsuariosContenedor = () => {
   // Acciones
   const refrescarTabla = async () => {
     const toastId = toast.loading("Refrescando", { id: "toastId" });
-    
+
     const parametros = parametrosDeConsulta();
     const { success, message } = await getUsuarios(parametros);
     if (success) {
@@ -178,7 +172,9 @@ export const TablaUsuariosContenedor = () => {
           </ButtonNew>
         </div>
         <div className="col-md-10 d-flex align-items-center gap-2">
-          <label htmlFor="filtro"><i className="bi bi-search"></i></label>
+          <label htmlFor="filtro">
+            <i className="bi bi-search"></i>
+          </label>
 
           <input
             ref={inputFiltroRef}
