@@ -10,7 +10,6 @@ export const TablaStocks = ({
   cantidadDatos,
   pageSize,
 }) => {
-
   return (
     <article>
       <table className="table table-striped table-hover mb-0">
@@ -31,34 +30,40 @@ export const TablaStocks = ({
           {!proveedorId ? (
             // es necesario que se ejecute una animación u otra, pero no ambas al mismo tiempo porque causaría un error en la librería de animación de react-magic-motion
             <MagicMotion>
-              {listaStocks?.map((stock, index) => (
+              {listaStocks?.map((stock, index) => {
+                const contador = (currentPage - 1) * 10 + index + 1;
+                return (
+                  <tr key={stock.id}>
+                    <td scope="row">{contador}</td>
+                    <td>{stock.producto.codigo}</td>
+                    <td>{stock.producto.nombre}</td>
+                    <td>{stock.producto.proveedor.nombre}</td>
+                    <td>{stock.producto.seccion.nombre}</td>
+                    <td className="text-center">{stock.cantidad}</td>
+                  </tr>
+                );
+              })}
+            </MagicMotion>
+          ) : (
+            listaStocks?.map((stock, index) => {
+              const contador = (currentPage - 1) * 10 + index + 1;
+              return (
                 <tr key={stock.id}>
-                  <td scope="row">{(currentPage - 1) * 10 + index + 1}</td>
+                  <td scope="row">{contador}</td>
                   <td>{stock.producto.codigo}</td>
                   <td>{stock.producto.nombre}</td>
                   <td>{stock.producto.proveedor.nombre}</td>
                   <td>{stock.producto.seccion.nombre}</td>
-                  <td className="text-center">{stock.cantidad}</td>
+                  {stock.cantidad === 0 ? (
+                    <td className="text-center">{stock.cantidad}</td>
+                  ) : (
+                    <td className="text-center">
+                      <ContadorAnimado value={stock.cantidad} />
+                    </td>
+                  )}
                 </tr>
-              ))}
-            </MagicMotion>
-          ) : (
-            listaStocks?.map((stock, index) => (
-              <tr key={stock.id}>
-                <td scope="row">{(currentPage - 1) * 10 + index + 1}</td>
-                <td>{stock.producto.codigo}</td>
-                <td>{stock.producto.nombre}</td>
-                <td>{stock.producto.proveedor.nombre}</td>
-                <td>{stock.producto.seccion.nombre}</td>
-                {stock.cantidad === 0 ? (
-                  <td className="text-center">{stock.cantidad}</td>
-                ) : (
-                  <td className="text-center">
-                    <ContadorAnimado value={stock.cantidad} />
-                  </td>
-                )}
-              </tr>
-            ))
+              );
+            })
           )}
         </tbody>
       </table>

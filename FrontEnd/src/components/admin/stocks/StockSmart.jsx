@@ -104,19 +104,13 @@ export const StockSmart = () => {
 
   const filtrarPorProveedor = (idProveedor) => {
     const filtroActivo = searchParams.get("filtro");
-
+    const ordenActivo = searchParams.get("orden");
     // en caso haya un filtro activo, se mantiene de lo contrario se elimina
-    if (idProveedor === "all") {
-      setSearchParams({
-        ...paginaStock,
-        ...(filtroActivo && { filtro: filtroActivo }),
-      });
-      return;
-    }
     setSearchParams({
       ...paginaStock,
-      proveedor: idProveedor,
+      ...(idProveedor !== "all" ? { proveedor: idProveedor } : {}), // si el proveedor es all, se elimina del objeto de busqueda
       ...(filtroActivo && { filtro: filtroActivo }),
+      ...(ordenActivo && { orden: ordenActivo }),
     });
   };
 
@@ -137,10 +131,10 @@ export const StockSmart = () => {
     const filtroActual = searchParams.get("filtro");
     setSearchParams({
       ...paginaStock,
-      orden: selectedOption,
+      ...(selectedOption && { orden: selectedOption }),
       ...(filtroActual && { filtro: filtroActual }),
-    })
-  }
+    });
+  };
 
   // Acciones extra
   const refrescarTabla = async () => {
@@ -167,13 +161,13 @@ export const StockSmart = () => {
     <section>
       <div className="d-flex row  mb-2">
         <div className="col-md-3 pe-4 d-flex align-items-center gap-2">
-
           <label htmlFor="proveedor">Proveedor</label>
           <select
             ref={selectRef}
             id="proveedor"
             className="form-select"
             onChange={(e) => filtrarPorProveedor(e.target.value)}
+            value={proveedorId ?? searchParams.get("proveedor")}
           >
             <option value="all">Todos</option>
             {proveedores?.map((proveedor) => (
@@ -184,44 +178,43 @@ export const StockSmart = () => {
           </select>
         </div>
         <div className="col-md-9 d-flex align-items-center gap-2">
-          
+          <label htmlFor="nombre">
+            <i className="bi bi-search pb-2 pe-1"></i>
+          </label>
+          <input
+            ref={inputRef}
+            id="nombre"
+            className="form-control"
+            type="text"
+            placeholder="Buscar por código, nombre o proveedor"
+            defaultValue={searchParams.get("filtro")}
+            onChange={(e) => debounceFiltrarPorProducto(e.target.value)}
+          />
+          <label htmlFor="orden">Orden:</label>
 
-            <label htmlFor="nombre"><i className="bi bi-search pb-2 pe-1"></i></label>
-            <input
-              ref={inputRef}
-              id="nombre"
-              className="form-control"
-              type="text"
-              placeholder="Buscar por código, nombre o proveedor"
-              defaultValue={searchParams.get("filtro")}
-              onChange={(e) => debounceFiltrarPorProducto(e.target.value)}
-            />
-            <label htmlFor="orden">Orden:</label>
-
-            {!searchParams.get("orden") && (
-              <i className="bi bi-arrow-down-up"></i>
-            )}
-            {ordenPorStock.map((option) => {
-              const ordenActual = searchParams.get("orden") ?? "";
-              if (option.value === ordenActual) {
-                return <i className={option.classIcon} />;
-              }
-            })}
-            <select
-              id="orden"
-              name="orden"
-              className="form-select w-auto"
-              onChange={(e) => handleOrdenarChange(e.target.value)}
-              defaultValue={searchParams.get("orden")}
-            >
-              <option value="">Ninguno</option>
-              {ordenPorStock.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-      
+          {!searchParams.get("orden") && (
+            <i className="bi bi-arrow-down-up"></i>
+          )}
+          {ordenPorStock.map((option) => {
+            const ordenActual = searchParams.get("orden") ?? "";
+            if (option.value === ordenActual) {
+              return <i className={option.classIcon} />;
+            }
+          })}
+          <select
+            id="orden"
+            name="orden"
+            className="form-select w-auto"
+            onChange={(e) => handleOrdenarChange(e.target.value)}
+            defaultValue={searchParams.get("orden")}
+          >
+            <option value="">Ninguno</option>
+            {ordenPorStock.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
           <button
             className="btn btn-outline-primary"
