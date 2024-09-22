@@ -124,23 +124,42 @@ export const TablaProductosContenedor = () => {
     setShowModal(false);
   };
 
-  const filtrarProductos = (event) => {
-    const filtro = event.target.value.trim();
+  const filtrarProductos = (filtro) => {
+    const newFiltro = filtro.trim().toLowerCase();
     const ordenActual = searchParams.get("orden");
     // si el filtro esta vacio se reinician los parametros de busqueda por defecto
-    if (filtro.length === 0)
-      return setSearchParams({
-        ...paginaProductos,
-        ...(ordenActual && { orden: ordenActual }),
-      });
-
     setSearchParams({
       ...paginaProductos,
+      // propagación condicional de objetos
       ...(ordenActual && { orden: ordenActual }),
-      filtro,
+      ...(newFiltro && { filtro: newFiltro }),
     });
   };
   const debounceFiltrarProductos = debounce(filtrarProductos, 400); // Debounce para retrazar la ejecucion de la funcion
+
+  const handleOrdenarChange = (selectedOption) => {
+    const filtroActivo = searchParams.get("filtro");
+    // Nota: recordar que si un valor es "" su valor en el operador && es false
+    setSearchParams({
+      ...paginaProductos,
+      // propagación condicional de objetos
+      ...(selectedOption && { orden: selectedOption }),
+      ...(filtroActivo && { filtro: filtroActivo }),
+    });
+  };
+  const cambiarPagina = ({ newPage }) => {
+    const filtroActivo = searchParams.get("filtro");
+    const ordenActivo = searchParams.get("orden");
+    // en caso haya un filtro activo, se mantiene de lo contrario se elimina
+    setSearchParams({
+      page: newPage,
+      page_size: searchParams.get("page_size"),
+      incluir_inactivos: searchParams.get("incluir_inactivos"),
+      ...(filtroActivo && { filtro: filtroActivo }),
+      ...(ordenActivo && { orden: ordenActivo }),
+    });
+  };
+  const debounceRefrescarTabla = useRefreshDebounce(refrescarTabla, 2000);
 
   // Acciones extra
   const refrescarTabla = async () => {
@@ -158,34 +177,6 @@ export const TablaProductosContenedor = () => {
       });
     }
   };
-  const handleOrdenarChange = (selectedOption) => {
-    const filtroActivo = searchParams.get("filtro");
-    if (selectedOption === "") {
-      setSearchParams({
-        ...paginaProductos,
-        ...(filtroActivo && { filtro: filtroActivo }),
-      });
-      return;
-    }
-    setSearchParams({
-      ...paginaProductos,
-      orden: selectedOption,
-      ...(filtroActivo && { filtro: filtroActivo }),
-    });
-  };
-  const cambiarPagina = ({ newPage }) => {
-    const filtroActivo = searchParams.get("filtro");
-    const ordenActivo = searchParams.get("orden");
-    // en caso haya un filtro activo, se mantiene de lo contrario se elimina
-    setSearchParams({
-      page: newPage,
-      page_size: searchParams.get("page_size"),
-      incluir_inactivos: searchParams.get("incluir_inactivos"),
-      ...(filtroActivo && { filtro: filtroActivo }),
-      ...(ordenActivo && { orden: ordenActivo }),
-    });
-  };
-  const debounceRefrescarTabla = useRefreshDebounce(refrescarTabla, 2000);
   const imprimirTabla = () => {
     print();
   };
@@ -212,7 +203,7 @@ export const TablaProductosContenedor = () => {
             /** En caso de que se recargue la página se mantienen el filtro consistente con la url **/
             defaultValue={searchParams.get("filtro")}
             placeholder="Buscar producto por nombre o código"
-            onChange={debounceFiltrarProductos}
+            onChange={(e) => debounceFiltrarProductos(e.target.value)}
           />
           <label htmlFor="orden">Orden:</label>
 
@@ -268,16 +259,20 @@ export const TablaProductosContenedor = () => {
         />
       )}
 
-      <CustomModal ref={modalRef} show={showModal} onHide={() => setShowModal(false)}>
+      <CustomModal
+        ref={modalRef}
+        show={showModal}
+        onHide={() => setShowModal(false)}
+      >
         <CustomModal.Header>
           <h2>Título del Modal</h2>
         </CustomModal.Header>
         <CustomModal.Body>
           <FormEdicion
-              producto={productoSeleccionado}
-              cerrarModal={cerrarModal}
-              categorias={categorias}
-            />
+            producto={productoSeleccionado}
+            cerrarModal={cerrarModal}
+            categorias={categorias}
+          />
         </CustomModal.Body>
       </CustomModal>
       <Modal
