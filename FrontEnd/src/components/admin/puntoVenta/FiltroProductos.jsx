@@ -50,10 +50,15 @@ export const FiltroProductos = () => {
         componentProductosRef,
         sidebar
       );
+    
+      const categoriaActual = searchParams.get("categoria");
+      const ordenActual = searchParams.get("orden");
       const filtroActual = searchParams.get("filtro");
       setSearchParams({
         ...paginaPuntoVenta,
         page_size: newPageSize,
+        ...(categoriaActual && { categoria: categoriaActual }),
+        ...(ordenActual && { orden: ordenActual }),
         ...(filtroActual && { filtro: filtroActual }), // siempre y cuando haya un filtro se agrega al objeto de busqueda
       });
     }
@@ -119,29 +124,26 @@ export const FiltroProductos = () => {
     const filtroActivo = searchParams.get("filtro");
     const categoriaActiva = searchParams.get("categoria");
 
-    if (selectedOption === "") {
-      return setSearchParams({
-        ...paginaPuntoVenta,
-        page_size: parseInt(searchParams.get("page_size")),
-        ...(filtroActivo && { filtro: filtroActivo }),
-        ...(categoriaActiva && { categoria: categoriaActiva }),
-      });
-    }
-
     setSearchParams({
       ...paginaPuntoVenta,
       page_size: parseInt(searchParams.get("page_size")),
-      orden: selectedOption,
-      ...(filtroActivo && { filtro: filtroActivo }),
+      // Propagación condicional de objetos, solo se agregara si hay un filtro activo o una categoria activa
       ...(categoriaActiva && { categoria: categoriaActiva }),
+      ...(selectedOption && { orden: selectedOption }),
+      ...(filtroActivo && { filtro: filtroActivo }),
+   
     });
   };
 
   const cambiarPagina = ({ newPage }) => {
+    const filtroActivo = searchParams.get("filtro");  
+    const categoriaActiva = searchParams.get("categoria");
     setSearchParams({
+      ...paginaPuntoVenta,
       page: newPage,
       page_size: parseInt(searchParams.get("page_size")),
-      incluir_inactivos: true,
+      ...(categoriaActiva && { categoria: categoriaActiva }),
+      ...(filtroActivo && { filtro: filtroActivo }),
     });
   };
 
@@ -151,7 +153,7 @@ export const FiltroProductos = () => {
         <div className="row pb-1">
           <div className="col-md-3  d-flex justify-content-center align-items-center gap-2">
             <label htmlFor="categoriaSelect">Categoría </label>
-            <CategoriaSelect ref={categoriaRef} filtroCategoria={filtrar} />
+            <CategoriaSelect parametroCategoria={searchParams.get('categoria')} ref={categoriaRef} filtroCategoria={filtrar} />
           </div>
           <div className="col-md-9 d-flex justify-content-center align-items-center gap-2">
             <label htmlFor="buscarSelect">   <i className="bi bi-search"></i></label>

@@ -75,8 +75,7 @@ export const TablaProductosContenedor = () => {
   useEffect(() => {
     // se ejecuta la funcion cargarCategorias al montar el componente
     async function cargarCategorias() {
-      const TOKEN_ACCESO = localStorage.getItem("accessToken");
-      const { success, message } = await geAllCategoriasStore(TOKEN_ACCESO);
+      const { success, message } = await geAllCategoriasStore();
       if (!success) {
         toast.error(message ?? "Error inesperado al cargar las categorias");
       }
