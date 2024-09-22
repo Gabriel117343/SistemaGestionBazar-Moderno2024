@@ -2,11 +2,14 @@ import { createApiInstance } from './config/axiosConfig';
 
 const seccionesApi = createApiInstance('usuarios/datos/v1/secciones') // la urls por defectos
 // ESTE ES EL CRUD DE SECCIONES
-export const getAllSecciones = (token) => {
+export const getAllSecciones = ({ page, page_size, orden, filtro }) => {
 
   return seccionesApi.get('/', {
-    headers: {
-      Authorization: `Bearer ${token}`
+    params: {
+      page,
+      page_size,
+      orden,
+      filtro
     }
   })
 }

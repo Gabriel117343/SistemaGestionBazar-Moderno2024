@@ -616,17 +616,53 @@ class CategoriaView(viewsets.ModelViewSet):
             return Response({'data': serializer.data, 'message': 'Categorías obtenidas!'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': 'Error al obtener las Categorías'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class SeccionPagination(PageNumberPagination):
+    page_size_query_param = 'page_size'  # Parámetro de consulta para el tamaño de la página
 
 class SeccionView(viewsets.ModelViewSet):
     serializer_class = SeccionSerializer
-    queryset = Seccion.objects.all() # Esto indica que todas las instancias del modelo Seccion son el conjunto de datos sobre el que operará esta vista.
+ 
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
+
+    pagination_class = SeccionPagination
+
+    def get_queryset(self):
+        queryset = Seccion.objects.all()
+        filtro = self.request.query_params.get('filtro', None)
+        orden = self.request.query_params.get('orden', None)
+        if filtro:
+            if filtro.isdigit():
+                queryset = queryset.filter(numero__icontains=filtro)
+            else:
+                queryset = queryset.filter(nombre__icontains=filtro)
+
+        if orden is not None:
+            if orden == 'a-z':
+                queryset = queryset.order_by(Lower('nombre').desc())
+            elif orden == 'z-a':
+                queryset = queryset.order_by(Lower('nombre').asc())
+
+            elif orden in ['ventas', 'ventas-desc']:
+                # Anotar la cantidad total de ventas para cada sección solo si se ordena por ventas
+                queryset = queryset.annotate(total_ventas=Sum('ventaseccion__cantidad'))
+                if orden == 'ventas':
+                    queryset = queryset.order_by('-total_ventas')
+                else:
+                    queryset = queryset.order_by('total_ventas')
+        return queryset
     def list(self, request, *args, **kwargs):
         try:
             queryset = self.get_queryset()
+            page = self.paginate_queryset(queryset)
+
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                paginated_response = self.get_paginated_response(serializer.data)
+                paginated_response.data['message'] = 'Secciones obtenidas!'
+                return paginated_response
             serializer = self.get_serializer(queryset, many=True)
-            return Response({'data': serializer.data, 'message': 'Secciones obtenidas!'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': 'Error al obtener las Secciones'}, status=status.HTTP_400_BAD_REQUEST)
     def destroy(self, request, *args, **kwargs):
@@ -1127,7 +1163,6 @@ class TransformarDatosView(APIView):
 
 # Ej: http://127.0.0.1:8000/usuarios/ventas_categoria/?fecha_inicio=2024-08-26&fecha_fin=2024-08-28
 
-Stock
 # Clase para poder paginar cada vista
 class StandardResultsSetPagination(PageNumberPagination):
   

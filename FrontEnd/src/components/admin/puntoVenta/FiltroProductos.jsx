@@ -150,7 +150,7 @@ export const FiltroProductos = () => {
       <div className="col-md-8">
         <div className="row pb-1">
           <div className="col-md-3  d-flex justify-content-center align-items-center gap-2">
-            <label htmlFor="categoriaSelect">Categoria </label>
+            <label htmlFor="categoriaSelect">Categoría </label>
             <CategoriaSelect ref={categoriaRef} filtroCategoria={filtrar} />
           </div>
           <div className="col-md-9 d-flex justify-content-center align-items-center gap-2">

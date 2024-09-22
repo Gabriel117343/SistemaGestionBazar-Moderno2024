@@ -2,50 +2,68 @@ import { useContext, useEffect, useState, useRef } from "react";
 import { ValidarSecciones } from "./ListaSecciones";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
+
 import { SeccionesContext } from "../../../context/SeccionesContext";
 import "./secciones.css";
 import { Modal } from "react-bootstrap";
 import { FormEdicion } from "./FormEdicion";
+
 import { FormRegistroSecciones } from "./FormRegistroSecciones";
 import { debounce } from "lodash";
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 import { ButtonNew } from "../../shared/ButtonNew";
-import CargaDeDatos from '../../../views/CargaDeDatos'
+
+import CargaDeDatos from "../../../views/CargaDeDatos";
+import { useSearchParams } from "react-router-dom";
+import { paginaSecciones } from "@constants/defaultParams";
+import { ordenPorSecciones } from "@constants/defaultOptionsFilter";
 
 export const ListaSeccionesContenedor = () => {
-
   const {
-    stateSeccion: { secciones, seccionSeleccionada },
+    stateSeccion: { secciones, cantidad, seccionSeleccionada },
     eliminarSeccionContext,
     getSeccionContext,
     getSeccionesContext,
     actualizarSeccionContext,
     crearSeccionContext,
   } = useContext(SeccionesContext);
+
   const [showModal, setShowModal] = useState(false);
   const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
 
-  const [isLoading, setIsLoading] = useState(true)
-  const [seccionesFiltradas, setSeccionesFiltradas] = useState(secciones);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const imputFiltroRef = useRef(null); // Referencia al input de busqueda
 
+  const parametrosDeConsulta = () => {
+    return {
+      page: searchParams.get("page") ?? 1,
+      page_size: searchParams.get("page_size") ?? 10,
+      orden: searchParams.get("orden") ?? "",
+      filtro: searchParams.get("filtro") ?? "",
+    };
+  };
+
   useEffect(() => {
-    toast.dismiss({ id: "loading" });
-    async function cargar () {
-      toast.loading('Cargando...', { duration: 2000, id: "loading" });
-      // se utiliza async/await en lugar de promesas para esperar la respuesta y obtener el mensaje
-      // hace el código más limpio, fácil de entender y rápido
-      const { success, message} = await getSeccionesContext(); // se ejecuta la funcion getProductos del contexto de los productos
+    async function cargar() {
+      toast.loading("Cargando...", { duration: 2000, id: "loading" });
+
+      const parametros = parametrosDeConsulta();
+      const { success, message } = await getSeccionesContext(parametros); // se ejecuta la funcion getProductos del contexto de los productos
 
       if (success) {
         setIsLoading(false);
-        toast.success(message, { id: 'loading' });
+        toast.success(message, { id: "loading" });
       } else {
-        toast.error(message ?? 'Ha ocurrido un error inesperado al cargar las Secciones', { duration: 2000, id: 'loading' });
+        toast.error(
+          message ?? "Ha ocurrido un error inesperado al cargar las Secciones",
+          { duration: 2000, id: "loading" }
+        );
       }
-    };
+    }
     cargar();
-  }, []);
+  }, [searchParams]);
 
   const borrarSeccion = (id) => {
     async function confirmar() {
@@ -66,7 +84,11 @@ export const ListaSeccionesContenedor = () => {
           if (success) {
             toast.success(message, { id: "loading" });
           } else {
-            toast.error(message ?? 'Ha ocurrido un error inesperado al eliminar la Sección', { id: "loading" });
+            toast.error(
+              message ??
+                "Ha ocurrido un error inesperado al eliminar la Sección",
+              { id: "loading" }
+            );
           }
         }, 2000);
       }
@@ -87,19 +109,57 @@ export const ListaSeccionesContenedor = () => {
     setShowModal(false);
     setShowRegistroModal(false); // Cerrar la modal de registro
   };
+
   const cambiarFiltro = (filtro) => {
-    if (filtro.trim().length === 0) return setSeccionesFiltradas(secciones); // si el input esta vacio no se filtra nada y se muestra la lista completa
-    const nuevaLista = secciones.filter(seccion => {
-      return seccion.nombre.toLowerCase().includes(filtro.toLowerCase()) || seccion.numero.toString().toLowerCase().includes(filtro.toLowerCase()) || seccion.descripcion.toLowerCase().includes(filtro.toLowerCase())
-    })
-    setSeccionesFiltradas(nuevaLista);
+    const ordenActivo = searchParams.get("orden");
+    if (filtro.length === 0) {
+      setSearchParams({
+        ...paginaSecciones,
+        ...(ordenActivo && { orden: ordenActivo }),
+      });
+      return;
+    }
+    setSearchParams({
+      ...paginaSecciones,
+      ...(ordenActivo && { orden: ordenActivo }),
+      filtro: filtro,
+    });
+  };
+
+  const handleOrdenarChange = (selectedOption) => {
+    const filtroActivo = searchParams.get("filtro");
+
+    // si la opción seleccionada es vacía, se elimina el parámetro orden y se mantiene el filtro activo si es que hay uno
+    if (selectedOption === "") {
+      return setSearchParams({
+        ...paginaSecciones,
+        ...(filtroActivo && { filtro: filtroActivo }),
+      });
+    }
+
+    setSearchParams({
+      ...paginaSecciones,
+      orden: selectedOption,
+      ...(filtroActivo && { filtro: filtroActivo }),
+    });
+  };
+  const cambiarPagina = ({ newPage }) => {
+    const filtroActivo = searchParams.get("filtro");
+    const ordenActivo = searchParams.get("orden");
+
+    // se mantienen los parametros de busqueda activos si es que hay alguno, sino se eliminan
+    setSearchParams({
+      page: newPage,
+      page_size: parseInt(searchParams.get("page_size")),
+      ...(filtroActivo && { filtro: filtroActivo }),
+      ...(ordenActivo && { orden: ordenActivo }),
+    });
   };
   const debounceCambiarFiltro = debounce(cambiarFiltro, 300); // retrasa la ejucion de la funcion cambiar filtro por 300 milisegundos
   // ACCIONES EXTRA ------------------
   const refrescarTabla = async () => {
-    
     toast.loading("Actualizando tabla...", { id: "loading" });
-    const { success } = await getSeccionesContext()
+    const { success } = await getSeccionesContext();
     toast.dismiss("loading");
 
     if (success) {
@@ -112,25 +172,54 @@ export const ListaSeccionesContenedor = () => {
   const imprimirTabla = () => {
     print();
   };
-  const busquedaActiva = imputFiltroRef.current?.value.trim().length > 0;
+
   return (
     <section className="pt-2">
-      <div className="row">
+      <div className="d-flex row mb-2">
         <div className="col-md-2">
           <ButtonNew onClick={() => setShowRegistroModal(true)}>
             Nueva
           </ButtonNew>
         </div>
 
-        <div className="col-md-10 d-flex align-items-center gap-3">
-          <i className="bi bi-search"></i>
+        <div className="col-md-10 d-flex align-items-center gap-2">
+          <label htmlFor="filtro">
+            <i className="bi bi-search"></i>
+          </label>
+
           <input
             ref={imputFiltroRef}
-            onChange={e => debounceCambiarFiltro(e.target.value)}
+            defaultValue={searchParams.get("filtro") ?? ""}
+            onChange={(e) => debounceCambiarFiltro(e.target.value)}
             className="form-control"
             type="text"
-            placeholder="Buscar por nombre, numero, descripcion..."
+            placeholder="Buscar por nombre o por numero..."
           />
+          <label htmlFor="orden">Orden:</label>
+          {!searchParams.get("orden") && (
+            <i className="bi-bi-arrow-down-up"></i>
+          )}
+          {ordenPorSecciones.map((option) => {
+            const ordenActual = searchParams.get("orden") ?? "";
+            if (option.value === ordenActual) {
+              return <i className={option.classIcon}></i>;
+            }
+          })}
+          <select
+            id="orden"
+            name="orden"
+            className="form-select w-auto"
+            onChange={(e) => handleOrdenarChange(e.target.value)}
+            defaultValue={searchParams.get("orden") ?? ""}
+          >
+            <option value="">Ninguno</option>
+            {ordenPorSecciones.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+
           <button
             className="btn btn-outline-primary btn-nuevo-animacion"
             onClick={debounceRefrescarTabla}
@@ -145,18 +234,21 @@ export const ListaSeccionesContenedor = () => {
           </button>
         </div>
       </div>
-      {
-        isLoading ? <CargaDeDatos /> : (
-          <ValidarSecciones
-          listaSecciones={busquedaActiva ? seccionesFiltradas : secciones}
+      {isLoading ? (
+        <CargaDeDatos />
+      ) : (
+        <ValidarSecciones
+          listaSecciones={secciones}
           borrarSeccion={borrarSeccion}
           edicionSeccion={edicionSeccion}
-   
           showModal={showModal}
+          currentPage={searchParams.get("page") || 1}
+          cambiarPagina={cambiarPagina}
+          pageSize={parseInt(searchParams.get("page_size"))}
+          cantidadDatos={cantidad}
         />
-        )
-      }
-      
+      )}
+
       <Modal show={showModal} onHide={cerrarModal}>
         <Modal.Header closeButton>
           <Modal.Title>Editar Seccion</Modal.Title>

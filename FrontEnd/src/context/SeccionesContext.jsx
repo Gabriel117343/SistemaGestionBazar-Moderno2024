@@ -1,5 +1,5 @@
 import { createContext, useReducer } from 'react'
-import { LoginContext } from './LoginContext'
+
 import { SeccionesReducer } from './reducers/SeccionesReducer'
 import { getAllSecciones, getSeccion, createSeccion, deleteSeccion, updateSeccion } from '../api/secciones.api'
 
@@ -9,21 +9,23 @@ export const SeccionesProvider = ({ children }) => {
 
   const initialState = {
     secciones: [],
+    cantidad: 0,
     seccionSeleccionada: null
   } // estado inicial de los secciones para el Reducer de los secciones
-  const [stateSeccion, dispatch] = useReducer(SeccionesReducer, initialState) // creando el reducer de los secciones
-  // ASI TENGO TODO EL CODIGO DE LOS USUARIOS EN UN SOLO LUGAR Y NO TENGO QUE IMPORTAR LAS FUNCIONES EN CADA COMPONENTE QUE LAS NECESITE
-  // UNICAMENTE SE PASAN LOS PARAMETROS QUE NECESITAN LAS FUNCIONES
-
+  const [stateSeccion, dispatch] = useReducer(SeccionesReducer, initialState) // 
+  
   const TOKEN_ACCESO = localStorage.getItem('accessToken'); 
-  const getSeccionesContext = async () => {
+  const getSeccionesContext = async (parametrosConsulta) => {
       try {
-        const res = await getAllSecciones(TOKEN_ACCESO) // res para referenciarse al response del servidor
- 
-        if (res.status === 200 || res.status === 201) {
+        const res = await getAllSecciones(parametrosConsulta) // res para referenciarse al response del servidor
+
+        if (res.status === 200) {
           dispatch({
             type: 'GET_SECCIONES',
-            payload: res.data.data
+            payload: {
+              secciones: res.data.results,
+              cantidad: res.data.count
+            }
           })
           return ({ success: true, message: res.data.message })
           // return ({ success: true, message: 'Usuario obtenido' }) > Asi se puede retornar un mensaje de exito sin necesidad de obtenerlo del response del servidor

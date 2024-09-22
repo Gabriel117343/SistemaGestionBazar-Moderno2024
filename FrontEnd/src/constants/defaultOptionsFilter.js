@@ -149,3 +149,28 @@ export const ordenPorProductos = [
   },
 
 ]
+export const ordenPorSecciones = [
+  {
+    value: "a-z",
+    label: "A-Z",
+
+    classIcon: "bi bi-sort-alpha-up-alt"
+  },
+  {
+    value: "z-a",
+    label: "Z-A",
+
+    classIcon: "bi bi-sort-alpha-down-alt"
+  },
+  {
+    value: "ventas",
+    label: "Mayores Ventas",
+    classIcon: "bi bi-bag bi-sort-numeric-up" // Cambiado a bi-bag
+  },
+  {
+    value: "ventas-desc",
+    label: "Menores Ventas",
+    classIcon: "bi bi-bag bi-sort-numeric-down" // Cambiado a bi-bag
+  },
+
+]

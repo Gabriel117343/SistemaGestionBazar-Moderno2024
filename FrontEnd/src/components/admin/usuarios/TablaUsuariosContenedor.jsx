@@ -51,7 +51,7 @@ export const TablaUsuariosContenedor = () => {
     async function cargarUsuarios() {
       const parametros = parametrosDeConsulta();
 
-      toast.loading("Cargando Usuarios...", { duration: 2000, id: "toastId" });
+      toast.loading("Cargando Usuarios...", { id: "toastId" });
       const { success, message } = await getUsuarios(parametros);
       if (success) {
         setIsLoading(false);
@@ -171,7 +171,7 @@ export const TablaUsuariosContenedor = () => {
 
   return (
     <section>
-      <div className="row d-flex mb-2">
+      <div className="d-flex row mb-2">
         <div className="col-md-2">
           <ButtonNew onClick={() => setShowRegistroModal(true)}>
             Nuevo
@@ -179,7 +179,6 @@ export const TablaUsuariosContenedor = () => {
         </div>
         <div className="col-md-10 d-flex align-items-center gap-2">
           <label htmlFor="filtro"><i className="bi bi-search"></i></label>
-          
 
           <input
             ref={inputFiltroRef}
