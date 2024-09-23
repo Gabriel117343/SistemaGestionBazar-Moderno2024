@@ -2,6 +2,12 @@ import { useEffect, useContext, useCallback } from "react";
 import { SeccionesContext } from "../../context/SeccionesContext";
 import { toast } from "react-hot-toast";
 import "./shared.css";
+
+const ALL_SECCIONES = {
+  page: 1,
+  page_size: 20,
+};
+
 export const SeccionButton = ({
   filtrarPorSeccion,
   productos,
@@ -14,7 +20,7 @@ export const SeccionButton = ({
 
   useEffect(() => {
     const cargarSecciones = async () => {
-      const { success, message } = await getSeccionesContext();
+      const { success, message } = await getSeccionesContext(ALL_SECCIONES);
       if (!success) {
         toast.error(
           message ?? "Ha ocurrido un error inesperado al cargar las secciones"
@@ -26,15 +32,13 @@ export const SeccionButton = ({
 
   const verificarCoincidencia = (numero) => {
     if (productos.length !== productosPorPagina) {
-  
-        const newClase = productos?.some(
-          (producto) => producto?.seccion?.numero === numero
-        )
-          ? "btn-filtro"
-          : "";
+      const newClase = productos?.some(
+        (producto) => producto?.seccion?.numero === numero
+      )
+        ? "btn-filtro"
+        : "";
 
-        return newClase;
-
+      return newClase;
     }
     return "";
   };

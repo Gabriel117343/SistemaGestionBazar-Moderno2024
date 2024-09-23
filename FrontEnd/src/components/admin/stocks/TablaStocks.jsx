@@ -10,6 +10,7 @@ export const TablaStocks = ({
   cantidadDatos,
   pageSize,
 }) => {
+
   return (
     <article>
       <table className="table table-striped table-hover mb-0">
@@ -31,7 +32,7 @@ export const TablaStocks = ({
             // es necesario que se ejecute una animación u otra, pero no ambas al mismo tiempo porque causaría un error en la librería de animación de react-magic-motion
             <MagicMotion>
               {listaStocks?.map((stock, index) => {
-                const contador = (currentPage - 1) * 10 + index + 1;
+                const contador = (currentPage - 1) * pageSize + index + 1;
                 return (
                   <tr key={stock.id}>
                     <td scope="row">{contador}</td>

@@ -31,15 +31,14 @@ export const TablaUsuariosContenedor = () => {
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
 
   const [isLoading, setIsLoading] = useState(true);
-
   const [searchParams, setSearchParams] = useSearchParams();
 
   const inputFiltroRef = useRef(null);
 
   const parametrosDeConsulta = () => {
     return {
-      page: searchParams.get("page") ?? 1,
-      page_size: searchParams.get("page_size") ?? 10,
+      page: searchParams.get("page") ?? paginaUsuarios.page,
+      page_size: searchParams.get("page_size") ?? paginaUsuarios.page_size,
       orden: searchParams.get("orden") ?? "",
       filtro: searchParams.get("filtro") ?? "",
     };
@@ -106,13 +105,16 @@ export const TablaUsuariosContenedor = () => {
   };
 
   const cambiarFiltro = (filtro) => {
-    const ordenActivo = searchParams.get("orden");
-    const newFiltro = filtro.trim()
+
+    const newFiltro = filtro.trim().toLowerCase();
+
+    const { page_size, orden } = parametrosDeConsulta()
 
     setSearchParams({
-      ...paginaUsuarios,
+      page: 1,
+      page_size: page_size,
       // Propagación condicional de propiedades
-      ...(ordenActivo && { orden: ordenActivo }),
+      ...(orden && { orden: orden }),
       ...(newFiltro && { filtro: newFiltro }),
     });
 
@@ -121,27 +123,29 @@ export const TablaUsuariosContenedor = () => {
 
 
   const handleOrdenarChange = (selectedOption) => {
-    const filtroActivo = searchParams.get("filtro");
-    // si la opción seleccionada es vacía, se elimina el parámetro orden y se mantiene el filtro activo si es que hay uno
 
+    const { page_size } = parametrosDeConsulta()
+
+    inputFiltroRef.current.value = "";
     const newOrden = {
-      ...paginaUsuarios,
+      page: 1,
+      page_size: page_size,
       ...(selectedOption && { orden: selectedOption }),
-      ...(filtroActivo && { filtro: filtroActivo }),
+
     };
     setSearchParams(newOrden);
   };
 
   const cambiarPagina = ({ newPage }) => {
-    const filtroActivo = searchParams.get("filtro");
-    const ordenActivo = searchParams.get("orden");
+
+    const { page_size, filtro, orden } = parametrosDeConsulta()
 
     setSearchParams({
       page: newPage,
-      page_size: parseInt(searchParams.get("page_size")),
+      page_size: page_size,
       // Propagación condicional de propiedades, si son true se agregan al objeto, sino no se agregan
-      ...(filtroActivo && { filtro: filtroActivo }),
-      ...(ordenActivo && { orden: ordenActivo }),
+      ...(filtro && { filtro: filtro }),
+      ...(orden && { orden: orden }),
     });
   };
   // Acciones

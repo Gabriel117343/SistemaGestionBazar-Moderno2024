@@ -18,7 +18,7 @@ export const confirmarCategoria = ({
   Swal.fire({
     title: "Advertencia",
     text: `Los registros de las ventas del producto ${productoNombre} se mantendrán, pero a partir de ahora se registrarán en la categoría ${nuevaCategoriaNombre}. `,
-
+    html: `Los registros de las ventas del producto <strong>${productoNombre}</strong> se mantendrán, pero a partir de ahora se registrarán en la categoría <strong>${nuevaCategoriaNombre}</strong>.`,
     icon: "warning",
     input: "text",
 
@@ -64,7 +64,7 @@ export const confirmarSeccion = ({
 
   Swal.fire({
     title: "Advertencia",
-    text: `Los registros de las ventas del producto ${productoNombre} se mantendrán, pero a partir de ahora se registrarán en la sección ${nuevaSeccionNombre}. `,
+    html: `Los registros de las ventas del producto <strong>${productoNombre}</strong>  se mantendrán, pero a partir de ahora se registrarán en la sección <strong>${nuevaSeccionNombre}</strong>. `,
 
     icon: "warning",
     input: "text",

@@ -31,8 +31,8 @@ export const StockSmart = () => {
 
   const parametrosDeConsulta = () => {
     return {
-      page: searchParams.get("page") ?? 1,
-      page_size: searchParams.get("page_size") ?? 10,
+      page: searchParams.get("page") ?? paginaStock.page,
+      page_size: searchParams.get("page_size") ?? paginaStock.page_size,
       proveedorId: searchParams.get("proveedor") || proveedorId || "",
       filtro: searchParams.get("filtro") ?? "",
       proveedor: searchParams.get("proveedor") ?? "",
@@ -74,65 +74,58 @@ export const StockSmart = () => {
     cargarProveedores();
   }, []);
 
-  // useEffect(() => {
-  //   if (proveedorId) {
-  //     selectRef.current.value = proveedorId; // Actualiza el valor del select
-  //     filtrarPorProveedor(proveedorId); // Filtra los productos basado en el proveedorId
-  //   }
-  // }, [productos]); // Dependencia en productos
-
   const filtrarPorProducto = (filtro) => {
-    const nuevoFiltro = filtro.trim();
-    const proveedor = searchParams.get("proveedor");
+    const nuevoFiltro = filtro.trim().toLowerCase();
 
     // en caso haya un filtro por proveedor, se mantiene de lo contrario se elimina
-    if (nuevoFiltro.length === 0) {
-      setSearchParams({
-        ...paginaStock,
-        ...(proveedor && { proveedor: proveedor }),
-      });
-      return;
-    }
+    const { page_size, proveedor, orden } = parametrosDeConsulta();
 
+    // en todo filtro se debe reiniciar la pagina a 1
     setSearchParams({
-      ...paginaStock,
+      page: 1,
+      page_size: page_size,
       ...(proveedor && { proveedor: proveedor }),
-      filtro: nuevoFiltro,
+      ...(orden && { orden: orden }),
+      ...(nuevoFiltro && { filtro: nuevoFiltro }),
     });
-    // navigate("/admin/stocks");
   };
 
   const filtrarPorProveedor = (idProveedor) => {
-    const filtroActivo = searchParams.get("filtro");
-    const ordenActivo = searchParams.get("orden");
     // en caso haya un filtro activo, se mantiene de lo contrario se elimina
+
+    const { page_size, orden } = parametrosDeConsulta();
+    inputRef.current.value = ""; // se limpia el input de busqueda
     setSearchParams({
-      ...paginaStock,
-      ...(idProveedor !== "all" ? { proveedor: idProveedor } : {}), // si el proveedor es all, se elimina del objeto de busqueda
-      ...(filtroActivo && { filtro: filtroActivo }),
-      ...(ordenActivo && { orden: ordenActivo }),
+      page: 1,
+      page_size: page_size,
+      ...(idProveedor !== "all" ? { proveedor: idProveedor } : {}), // si el proveedor es all, se elimina del objeto de busqueda sino se agrega
+      ...(orden && { orden: orden }),
     });
   };
 
   const cambiarPagina = ({ newPage }) => {
-    const proveedor = searchParams.get("proveedor");
-    const filtroActivo = searchParams.get("filtro");
-
     // en caso haya un filtro por proveedor, se mantiene de lo contrario se elimina
+    const { page_size, proveedor, orden, filtro } = parametrosDeConsulta();
     setSearchParams({
       page: newPage,
-      page_size: searchParams.get("page_size"),
+      page_size: page_size,
       ...(proveedor && { proveedor: proveedor }),
-      ...(filtroActivo && { filtro: filtroActivo }),
+
+      ...(orden && { orden: orden }),
+      ...(filtro && { filtro: filtro }),
     });
   };
 
   const handleOrdenarChange = (selectedOption) => {
-    const filtroActual = searchParams.get("filtro");
+    const { page_size, proveedor } = parametrosDeConsulta();
+
+    inputRef.current.value = ""; // se limpia el input de busqueda
     setSearchParams({
-      ...paginaStock,
+      page: 1,
+      page_size: page_size,
+      ...(proveedor && { proveedor: proveedor }),
       ...(selectedOption && { orden: selectedOption }),
-      ...(filtroActual && { filtro: filtroActual }),
+
     });
   };
 
@@ -241,7 +234,7 @@ export const StockSmart = () => {
           currentPage={searchParams.get("page") || 1}
           cambiarPagina={cambiarPagina}
           cantidadDatos={cantidad}
-          pageSize={parseInt(searchParams.get("page_size"))}
+          pageSize={searchParams.get("page_size")}
         />
       )}
     </section>

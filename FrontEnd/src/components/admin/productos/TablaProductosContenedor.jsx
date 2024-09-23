@@ -42,11 +42,13 @@ export const TablaProductosContenedor = () => {
 
   const parametrosDeConsulta = () => {
     return {
-      page: searchParams.get("page"),
-      page_size: paginaProductos.page_size ?? searchParams.get("page_size"),
-      filtro: searchParams.get("filtro") ?? "",
-      incluir_inactivos: searchParams.get("incluir_inactivos"),
+      page: searchParams.get("page") ?? paginaProductos.page,
+      page_size: searchParams.get("page_size") ?? paginaProductos.page_size,
+      incluir_inactivos:
+        searchParams.get("incluir_inactivos") ??
+        paginaProductos.incluir_inactivos,
       orden: searchParams.get("orden") ?? "",
+      filtro: searchParams.get("filtro") ?? "",
     };
   };
 
@@ -125,40 +127,47 @@ export const TablaProductosContenedor = () => {
 
   const filtrarProductos = (filtro) => {
     const newFiltro = filtro.trim().toLowerCase();
-    const ordenActual = searchParams.get("orden");
+    const { page_size, incluir_inactivos, orden } = parametrosDeConsulta();
     // si el filtro esta vacio se reinician los parametros de busqueda por defecto
     setSearchParams({
-      ...paginaProductos,
+      page: 1,
+      page_size: page_size,
+      incluir_inactivos: incluir_inactivos,
       // propagación condicional de objetos
-      ...(ordenActual && { orden: ordenActual }),
+      ...(orden && { orden: orden }),
       ...(newFiltro && { filtro: newFiltro }),
+
     });
   };
   const debounceFiltrarProductos = debounce(filtrarProductos, 400); // Debounce para retrazar la ejecucion de la funcion
 
   const handleOrdenarChange = (selectedOption) => {
-    const filtroActivo = searchParams.get("filtro");
+    const { page_size, incluir_inactivos } = parametrosDeConsulta();
     // Nota: recordar que si un valor es "" su valor en el operador && es false
+
+    inputRef.current.value = ""; // se limpia el input de busqueda
     setSearchParams({
-      ...paginaProductos,
+      page: 1,
+      page_size: page_size,
+      incluir_inactivos: incluir_inactivos,
       // propagación condicional de objetos
       ...(selectedOption && { orden: selectedOption }),
-      ...(filtroActivo && { filtro: filtroActivo }),
     });
   };
+
   const cambiarPagina = ({ newPage }) => {
-    const filtroActivo = searchParams.get("filtro");
-    const ordenActivo = searchParams.get("orden");
+    const { page_size, incluir_inactivos, filtro, orden } = parametrosDeConsulta();
+
     // en caso haya un filtro activo, se mantiene de lo contrario se elimina
     setSearchParams({
       page: newPage,
-      page_size: searchParams.get("page_size"),
-      incluir_inactivos: searchParams.get("incluir_inactivos"),
-      ...(filtroActivo && { filtro: filtroActivo }),
-      ...(ordenActivo && { orden: ordenActivo }),
+      page_size: page_size,
+      incluir_inactivos: incluir_inactivos, // incluir inactivos siempre se mantiene
+      ...(orden && { orden: orden }),
+      ...(filtro && { filtro: filtro }),
     });
   };
-  
+
   const refrescarTabla = async () => {
     toast.loading("Refrescando", { id: "toastId" });
 
@@ -255,7 +264,8 @@ export const TablaProductosContenedor = () => {
           cambiarPagina={cambiarPagina}
           cantidadDatos={cantidad}
           showModal={showModal}
-          pageSize={paginaProductos.page_size}
+          // asi se obtiene el valor de un parametro de busqueda para que se mantenga consistente con la url
+          pageSize={searchParams.get("page_size")}
         />
       )}
 

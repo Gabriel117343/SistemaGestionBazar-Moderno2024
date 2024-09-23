@@ -34,12 +34,12 @@ export const ListaSeccionesContenedor = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const imputFiltroRef = useRef(null); // Referencia al input de busqueda
+  const inputFiltroRef = useRef(null); // Referencia al input de busqueda
 
   const parametrosDeConsulta = () => {
     return {
-      page: searchParams.get("page") ?? 1,
-      page_size: searchParams.get("page_size") ?? 10,
+      page: searchParams.get("page") ?? paginaSecciones.page,
+      page_size: searchParams.get("page_size") ?? paginaSecciones.page_size,
       orden: searchParams.get("orden") ?? "",
       filtro: searchParams.get("filtro") ?? "",
     };
@@ -123,14 +123,12 @@ export const ListaSeccionesContenedor = () => {
   const debounceCambiarFiltro = debounce(cambiarFiltro, 400); // retrasa la ejucion de la funcion cambiar filtro por 300 milisegundos
 
   const handleOrdenarChange = (selectedOption) => {
-    const filtroActivo = searchParams.get("filtro");
 
+    inputFiltroRef.current.value = "";
     // si la opción seleccionada es vacía, se elimina el parámetro orden y se mantiene el filtro activo si es que hay uno
-
     setSearchParams({
       ...paginaSecciones,
       ...(selectedOption && { orden: selectedOption }),
-      ...(filtroActivo && { filtro: filtroActivo }),
     })
   };
   const cambiarPagina = ({ newPage }) => {
@@ -179,7 +177,7 @@ export const ListaSeccionesContenedor = () => {
           </label>
 
           <input
-            ref={imputFiltroRef}
+            ref={inputFiltroRef}
             defaultValue={searchParams.get("filtro") ?? ""}
             onChange={(e) => debounceCambiarFiltro(e.target.value)}
             className="form-control"

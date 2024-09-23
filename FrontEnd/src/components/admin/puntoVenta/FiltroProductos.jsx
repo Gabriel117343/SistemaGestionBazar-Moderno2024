@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 
 import { ProductosContext } from "../../../context/ProductosContext";
 import CargaDeDatos from "../../../views/CargaDeDatos";
-import { debounce } from "lodash";
+import { debounce, set } from "lodash";
 
 import { ValidarProductos } from "./ListaProductos";
 import { useSearchParams } from "react-router-dom";
@@ -34,12 +34,12 @@ export const FiltroProductos = () => {
 
   const parametrosDeConsulta = () => {
     return {
-      page: searchParams.get("page"),
+      page: searchParams.get("page") ?? paginaPuntoVenta.page,
       page_size: searchParams.get("page_size") ?? paginaPuntoVenta.page_size,
       filtro: searchParams.get("filtro") ?? "",
       categoria: searchParams.get("categoria") ?? "",
       seccion: searchParams.get("seccion") ?? "",
-      incluir_inactivos: searchParams.get("incluir_inactivos"),
+      incluir_inactivos: searchParams.get("incluir_inactivos") ?? paginaPuntoVenta.incluir_inactivos,
       orden: searchParams.get("orden") ?? "",
     };
   };
@@ -50,16 +50,17 @@ export const FiltroProductos = () => {
         componentProductosRef,
         sidebar
       );
-    
-      const categoriaActual = searchParams.get("categoria");
-      const ordenActual = searchParams.get("orden");
-      const filtroActual = searchParams.get("filtro");
+      const { page, page_size, incluir_inactivos, categoria, orden, seccion, filtro,  } = parametrosDeConsulta();
+      console.log({ incluir_inactivos: incluir_inactivos });
       setSearchParams({
-        ...paginaPuntoVenta,
-        page_size: newPageSize,
-        ...(categoriaActual && { categoria: categoriaActual }),
-        ...(ordenActual && { orden: ordenActual }),
-        ...(filtroActual && { filtro: filtroActual }), // siempre y cuando haya un filtro se agrega al objeto de busqueda
+        page: page,
+        page_size: newPageSize ?? page_size,
+        incluir_inactivos: incluir_inactivos,
+        // Propagación condicional de objetos, solo se agregara si hay un filtro activo o una categoria activa
+        ...(categoria && { categoria: categoria }),
+        ...(orden && { orden: orden }),
+        ...(seccion && { seccion: seccion }),
+        ...(filtro && { filtro: filtro }),
       });
     }
     calcular();
@@ -88,72 +89,89 @@ export const FiltroProductos = () => {
     cargarProductos();
   }, [searchParams]); // si los parametros de busqueda cambian se vuelve a cargar los productos
 
-  const filtrar = ({ idSeccion = "all", filtro, idCategoria = "all" }) => {
-    const ordenActual = searchParams.get("orden");
-    const newParams = {
-      ...paginaPuntoVenta,
-      page_size: parseInt(searchParams.get("page_size")),
-      ...(ordenActual && { orden: ordenActual }),
-    };
 
-    // se asigna el valor de la seccion, categoria o filtro al objeto de busqueda
-    if (idSeccion !== "all") {
-      newParams.seccion = idSeccion;
-      categoriaRef.current.value = "all";
-      buscadorRef.current.value = "";
-    } else if (idCategoria !== "all") {
-      newParams.categoria = idCategoria;
-      buscadorRef.current.value = "";
-    } else if (filtro?.trim().length > 0) {
-      newParams.filtro = filtro;
-      categoriaRef.current.value = "all";
-    } else {
+  const filtrarPorCategoria = ({ idCategoria = 'all' }) => {
+    const { page_size, incluir_inactivos, orden, seccion } = parametrosDeConsulta();
 
-      return setSearchParams({
-        ...paginaPuntoVenta,
-        page_size: parseInt(searchParams.get("page_size")),
-        ...(ordenActual && { orden: ordenActual }),
-      }); // si no hay filtro se resetea la busqueda y se muestran todos los productos
-    }
+    buscadorRef.current.value = "";
+    setSearchParams({
+      page: 1,
+      page_size: page_size,
+      incluir_inactivos: incluir_inactivos,
+      // Propagación condicional de objetos
+      ...(idCategoria !== "all" && { categoria: idCategoria }),
+      ...(orden && { orden: orden }),
+      ...(seccion && { seccion: seccion }),
+    });
+  }
 
-    setSearchParams(newParams);
-  };
-  const debounceFiltrar = debounce(filtrar, 400);
+  const filtrarPorSeccion = ({ idSeccion = 'all' }) => {
 
-  const handleOrdenarChange = (selectedOption) => {
-    const filtroActivo = searchParams.get("filtro");
-    const categoriaActiva = searchParams.get("categoria");
+    const { page_size, incluir_inactivos, categoria, orden, filtro } = parametrosDeConsulta();
 
     setSearchParams({
-      ...paginaPuntoVenta,
-      page_size: parseInt(searchParams.get("page_size")),
+      page: 1,
+      page_size: page_size,
+      incluir_inactivos: incluir_inactivos,
+      ...(categoria && { categoria: categoria }),
+      ...(orden && { orden: orden }),
+      ...(idSeccion !== "all" && { seccion: idSeccion }),
+      ...(filtro && { filtro: filtro }),
+
+    });
+  }
+  const filtrarPorNombre = (filtro) => {
+    const { page_size, incluir_inactivos, categoria, orden, seccion } = parametrosDeConsulta();
+    setSearchParams({
+      page: 1,
+      page_size: page_size,
+      incluir_inactivos: incluir_inactivos,
+      ...(categoria && { categoria: categoria }),
+      ...(orden && { orden: orden }),
+      ...(seccion && { seccion: seccion }),
+      ...(filtro && { filtro: filtro }),
+    });
+  }
+
+  const debounceFiltrarPorNombre = debounce(filtrarPorNombre, 400);
+
+  const handleOrdenarChange = (selectedOption) => {
+
+    const { page_size, incluir_inactivos, categoria, filtro } = parametrosDeConsulta();
+
+    buscadorRef.current.value = "";
+    setSearchParams({
+      page: 1,
+      page_size: page_size,
+      incluir_inactivos: incluir_inactivos,
       // Propagación condicional de objetos, solo se agregara si hay un filtro activo o una categoria activa
-      ...(categoriaActiva && { categoria: categoriaActiva }),
+      ...(categoria && { categoria: categoria }),
       ...(selectedOption && { orden: selectedOption }),
-      ...(filtroActivo && { filtro: filtroActivo }),
    
     });
   };
 
   const cambiarPagina = ({ newPage }) => {
-    const filtroActivo = searchParams.get("filtro");  
-    const categoriaActiva = searchParams.get("categoria");
+
+    const { page_size, incluir_inactivos, categoria, filtro, orden } = parametrosDeConsulta();
     setSearchParams({
-      ...paginaPuntoVenta,
       page: newPage,
-      page_size: parseInt(searchParams.get("page_size")),
-      ...(categoriaActiva && { categoria: categoriaActiva }),
-      ...(filtroActivo && { filtro: filtroActivo }),
+      page_size: page_size,
+      incluir_inactivos: incluir_inactivos,
+
+      ...(categoria && { categoria: categoria }),
+      ...(orden && { orden: orden }),
+      ...(filtro && { filtro: filtro }),
     });
   };
-
+  
   return (
     <>
       <div className="col-md-8">
         <div className="row pb-1">
           <div className="col-md-3  d-flex justify-content-center align-items-center gap-2">
             <label htmlFor="categoriaSelect">Categoría </label>
-            <CategoriaSelect parametroCategoria={searchParams.get('categoria')} ref={categoriaRef} filtroCategoria={filtrar} />
+            <CategoriaSelect parametroCategoria={searchParams.get('categoria')} ref={categoriaRef} filtroCategoria={filtrarPorCategoria} />
           </div>
           <div className="col-md-9 d-flex justify-content-center align-items-center gap-2">
             <label htmlFor="buscarSelect">   <i className="bi bi-search"></i></label>
@@ -166,7 +184,7 @@ export const FiltroProductos = () => {
               className="form-control"
               defaultValue={searchParams.get("filtro")}
               placeholder="Ej: Arroz Miraflores"
-              onChange={(e) => debounceFiltrar({ filtro: e.target.value })}
+              onChange={(e) => debounceFiltrarPorNombre(e.target.value)}
             />
             <label htmlFor="orden">Orden:</label>
 
@@ -198,13 +216,13 @@ export const FiltroProductos = () => {
 
         <div className="pb-1 d-flex gap-1 contenedor-secciones">
           <button
-            onClick={filtrar}
+            onClick={filtrarPorSeccion}
             className={`border rounded btn-seleccion ${productos?.length === parseInt(searchParams.get("page_size")) ? "btn-filtro" : ""}`}
           >
             Todos
           </button>
           <SeccionButton
-            filtrarPorSeccion={filtrar}
+            filtrarPorSeccion={filtrarPorSeccion}
             productos={productos}
             productosPorPagina={parseInt(searchParams.get("page_size"))}
           />
