@@ -36,7 +36,9 @@ export const Carrito = () => {
     stateProducto: { productos },
     getProductosContext,
   } = useContext(ProductosContext);
-  const [searchParams, setSearchParams] = useSearchParams();
+
+  // se obtienen los parametros de la url para realizar la consulta
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     // si no hay productos en el carrito o no hay un cliente seleccionado, se habilita la opcion de seleccionar cliente
@@ -68,6 +70,7 @@ export const Carrito = () => {
       categoria: searchParams.get("categoria") ?? "",
       seccion: searchParams.get("seccion") ?? "",
       incluir_inactivos: searchParams.get("incluir_inactivos"),
+      orden: searchParams.get("orden") ?? "",
 
     };
   };

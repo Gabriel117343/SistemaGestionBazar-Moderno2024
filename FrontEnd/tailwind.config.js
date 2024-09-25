@@ -2,8 +2,9 @@
 module.exports = {
     darkMode: ['class'],
     content: [
-    './src/**/*.{js,jsx,ts,tsx}', // Ajusta esto según la estructura de tu proyecto
-    './src/tailwind-component.css', // Añade el archivo CSS específico
+    './src/components/admin/dashboard/**/*.{js,jsx,ts,tsx}', // Ajusta esto según la estructura de tu proyecto
+    './src/styles/tailwind-component.css ', // Añade el archivo CSS específico
+		'./src/components/ui/**/*.{js,jsx,ts,tsx}', // Ajusta esto según la estructura de tu proyecto
   ],
   theme: {
   	extend: {

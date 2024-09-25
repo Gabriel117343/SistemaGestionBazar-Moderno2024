@@ -1,5 +1,5 @@
 import { Carrito } from "../../components/admin/puntoVenta/Carrito";
-import { FiltroProductos } from "../..//components/admin/puntoVenta/FiltroProductos";
+import { PuntoVentaContainer } from "../..//components/admin/puntoVenta/PuntoVentaContainer";
 import GradualSpacing from "../../components/shared/magic_ui/GradualSpacing";
 import "./stylepages.css";
 export const PuntoVenta = () => {
@@ -18,7 +18,7 @@ export const PuntoVenta = () => {
       </div>
       <section className="d-flex row contenedor-puntoventa">
         <Carrito />
-        <FiltroProductos />
+        <PuntoVentaContainer />
       </section>
     </>
   );

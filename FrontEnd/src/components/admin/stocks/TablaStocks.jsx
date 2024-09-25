@@ -17,11 +17,11 @@ export const TablaStocks = ({
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th>Codigo</th>
+            <th>Código</th>
             <th scope="col">Producto</th>
 
             <th>Proveedor</th>
-            <th>Seccion</th>
+            <th>Sección</th>
             <th scope="col" className="text-center">
               Stock Disponible
             </th>
@@ -91,12 +91,12 @@ const SinStocks = () => {
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th>Codigo</th>
+            <th>Código</th>
             <th scope="col">Producto</th>
 
             <th>Precio</th>
             <th>Proveedor</th>
-            <th>Descripcion</th>
+            <th>Descripción</th>
             <th scope="col" className="text-center">
               Stock Disponible
             </th>
