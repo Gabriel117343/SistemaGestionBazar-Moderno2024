@@ -24,7 +24,7 @@ export const ProductosProvider = ({ children }) => {
 
     try {
       const res = await getAllProductos(props) // res para referenciarse al response del servidor
-      console.log(res)
+
       if (res.status === 200) {
         dispatch({
           type: 'GET_PRODUCTOS',

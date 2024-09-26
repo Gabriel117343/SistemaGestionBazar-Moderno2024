@@ -320,18 +320,7 @@ input[type="number"]::-webkit-outer-spin-button {
   animation: zoomAnim 0.3s forwards;
 }
 
-.button-especial {
-  background: none;
-  color: inherit;
-  border: none;
-  padding: 0;
-  font: inherit;
-  cursor: pointer;
-  outline: inherit;
-}
-.button-especial:hover {
-  animation: zoomAnim2 0.3s forwards;
-}
+
 .btn-pago > button:hover {
   animation: zoomAnim3 0.3s forwards;
 }
