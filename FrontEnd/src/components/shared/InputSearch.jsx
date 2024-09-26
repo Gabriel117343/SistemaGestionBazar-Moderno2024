@@ -1,7 +1,7 @@
 import React, { forwardRef} from 'react'
 
-export const InputSearch = forwardRef((props) => {
+export const InputSearch = forwardRef((props, ref) => {
   return (
-    <input ref={props.ref} type="text" id={props.id} className={`form-control ${props.className}`} onChange={props.onChange} {...props}/>
+    <input ref={ref} type="text" id={props.id} className={`form-control ${props.className}`} onChange={props.onChange} {...props}/>
   )
 });

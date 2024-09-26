@@ -1,13 +1,19 @@
+import { useMemo } from "react";
 export const PaginationButton = ({
   currentPage,
   cambiarPagina,
   totalDatos,
   cantidadPorPagina,
 }) => {
-  const totalBotones = Math.ceil(totalDatos / cantidadPorPagina);
+
+  const totalBotones = useMemo(() => {
+    return Math.ceil(totalDatos / cantidadPorPagina);
+  }, [totalDatos, cantidadPorPagina]);
+
+  console.log({currentPage, totalBotones, totalDatos, cantidadPorPagina});
 
   return (
-    <>
+    <div className="pt-1 d-flex gap-1">
       {Array.from({ length: totalBotones }, (_, index) => (
         <button
           key={index + 1}
@@ -17,6 +23,6 @@ export const PaginationButton = ({
           {index + 1}
         </button>
       ))}
-    </>
+    </div>
   );
 };

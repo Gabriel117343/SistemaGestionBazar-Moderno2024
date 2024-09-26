@@ -68,7 +68,9 @@ export const TablaUsuariosContenedor = () => {
     cargarUsuarios();
   }, [searchParams]);
 
+
   const borrarUsuario = (id) => {
+
     async function confirmar() {
       const aceptar = await Swal.fire({
         title: "¿Estás seguro?",
@@ -251,10 +253,5 @@ export const TablaUsuariosContenedor = () => {
       </Modal>
     </section>
   );
-  // return (
-  //   <section className='pt-2'>
-  //     <ValidarUsuarios listaUsuarios={stateUsuario.usuarios} borrarUsuario={borrarUsuario} edicionUsuario={edicionUsuario}/>
 
-  //   </section>
-  // )
 };

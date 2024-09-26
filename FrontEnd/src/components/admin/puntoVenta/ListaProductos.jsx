@@ -95,14 +95,7 @@ export const ListaProductos = ({
           })}
         </MagicMotion>
       </ul>
-      <div className="pt-1 d-flex gap-1">
-        <PaginationButton
-          currentPage={currentPage}
-          cambiarPagina={cambiarPagina}
-          totalDatos={cantidadDatos}
-          cantidadPorPagina={pageSize}
-        />
-      </div>
+
     </article>
   );
 };

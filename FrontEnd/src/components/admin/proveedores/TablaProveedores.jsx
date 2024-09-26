@@ -49,11 +49,11 @@ const MostrarTabla = ({ listaProveedores, borrarProovedor }) => {
         <thead className="border-bottom">
           <tr>
             <th>#</th>
-            <th>Fecha Creacion</th>
+            <th>Fecha Creación</th>
             <th>Nombre</th>
             <th>Persona Contacto</th>
             <th>Telefono</th>
-            <th>Direccion</th>
+            <th>Dirección</th>
             <th>Estado</th>
             <th colSpan={2} className="text-center">
               Opciones
@@ -142,10 +142,11 @@ const SinProveedores = () => {
         <thead className="border-bottom ">
           <tr>
             <th>#</th>
+            <th>Fecha Creación</th>
             <th>Nombre</th>
             <th>Persona Contacto</th>
             <th>Telefono</th>
-            <th>Direccion</th>
+            <th>Dirección</th>
             <th>Estado</th>
             <th>Opciones</th>
           </tr>

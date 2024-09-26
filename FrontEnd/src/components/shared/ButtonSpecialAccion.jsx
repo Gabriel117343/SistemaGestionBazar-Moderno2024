@@ -7,6 +7,7 @@ export const ButtonRefresh = (props) => {
       className={`btn btn-outline-primary btn-nuevo-animacion ${props.className}`}
       onClick={props.onClick}
       {...props}
+      aria-label="Recargar"
     >
       {props.children ? props.children : <i className="bi bi-arrow-repeat"></i>}
     </button>
@@ -17,6 +18,7 @@ export const ButtonPrint = (props) => {
     <button
       className={`btn btn-outline-primary btn-nuevo-animacion ${props.className}`}
       onClick={props.onClick}
+      aria-label="Imprimir"
       {...props}
     >
       {props.children ? props.children : <i className="bi bi-printer"></i>}

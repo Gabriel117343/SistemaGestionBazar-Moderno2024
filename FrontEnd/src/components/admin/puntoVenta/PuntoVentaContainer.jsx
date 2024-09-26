@@ -10,6 +10,7 @@ import { SidebarContext } from "../../../context/SidebarContext";
 
 import { FiltroProductos } from "./FiltroProductos";
 import { ValidarProductos } from "./ListaProductos";
+import { PaginationButton } from "../../shared/PaginationButton";
 
 import useCalculoProductosMostrar from "../../../hooks/useCalculoProductosMostrar";
 import { paginaPuntoVenta } from "@constants/defaultParams";
@@ -39,7 +40,6 @@ export const PuntoVentaContainer = () => {
 
   const calcularProductosMostrar = useCalculoProductosMostrar();
 
-  const categoriaRef = useRef(null);
   const buscadorRef = useRef(null);
   const componenteProductosRef = useRef(null);
 
@@ -57,43 +57,49 @@ export const PuntoVentaContainer = () => {
       orden: searchParams.get("orden") ?? "",
     };
   };
+  const actualizarPageSize = (newPageSize) => {
+    const {
+      page,
+      page_size,
+      incluir_inactivos,
+      categoria,
+      orden,
+      seccion,
+      filtro,
+    } = parametrosDeConsulta();
 
-  // Adjust page size based on sidebar changes
+    setSearchParams({
+      page: page,
+      page_size: newPageSize.page_size ?? page_size,
+      incluir_inactivos: incluir_inactivos,
+      ...(categoria && { categoria: categoria }),
+      ...(orden && { orden: orden }),
+      ...(seccion && { seccion: seccion }),
+      ...(filtro && { filtro: filtro }),
+    });
+  };
+
   useEffect(() => {
     async function calcular() {
+    
+      const prevPageSize = searchParams.get("page_size");
       const newPageSize = await calcularProductosMostrar(
         componenteProductosRef,
         sidebar
       );
-      const {
-        page,
-        page_size,
-        incluir_inactivos,
-        categoria,
-        orden,
-        seccion,
-        filtro,
-      } = parametrosDeConsulta();
-      setSearchParams({
-        page: page,
-        page_size: newPageSize ?? page_size,
-        incluir_inactivos: incluir_inactivos,
-        ...(categoria && { categoria: categoria }),
-        ...(orden && { orden: orden }),
-        ...(seccion && { seccion: seccion }),
-        ...(filtro && { filtro: filtro }),
-      });
+      // para evitar casos donde se recargue la página con la misma url y el tamaño de la página sea el mismo
+      // si ya se ha definido el tamaño de la página no se modifica el estado
+      if (parseInt(prevPageSize) === parseInt(newPageSize)) return
+      actualizarPageSize({ page_size: newPageSize });
     }
     calcular();
   }, [sidebar]);
 
-  // Fetch products whenever search parameters change
   useEffect(() => {
     const cargarProductos = async () => {
-      toast.loading("Cargando productos...", { id: "loading" });
-
+      // si no se ha definido el tamaño de la página no se hace la petición
       if (!searchParams.get("page_size")) return;
-
+      toast.loading("Cargando productos...", { id: "loading" });
       const parametros = parametrosDeConsulta();
 
       const { success, message } = await getProductosContext(parametros);
@@ -149,6 +155,7 @@ export const PuntoVentaContainer = () => {
       page: 1,
       page_size: page_size,
       incluir_inactivos: incluir_inactivos,
+      // operador spread condicional para mantener la categoria, orden y filtro si existen
       ...(categoria && { categoria: categoria }),
       ...(orden && { orden: orden }),
       ...(idSeccion !== "all" && { seccion: idSeccion }),
@@ -163,6 +170,7 @@ export const PuntoVentaContainer = () => {
       page: 1,
       page_size: page_size,
       incluir_inactivos: incluir_inactivos,
+      // se mantiene la categoria, orden y seccion si existen
       ...(categoria && { categoria: categoria }),
       ...(orden && { orden: orden }),
       ...(seccion && { seccion: seccion }),
@@ -202,7 +210,6 @@ export const PuntoVentaContainer = () => {
   return (
     <div className="col-md-8">
       <FiltroProductos
-        categoriaRef={categoriaRef}
         buscadorRef={buscadorRef}
         filtrarPorCategoria={filtrarPorCategoria}
         debounceFiltrarPorNombre={debounceFiltrarPorNombre}
@@ -217,14 +224,16 @@ export const PuntoVentaContainer = () => {
         {isLoading ? (
           <CargaDeDatos />
         ) : (
-          <ValidarProductos
-            productos={productos}
-            currentPage={searchParams.get("page") || 1}
-            cambiarPagina={cambiarPagina}
-            cantidadDatos={cantidad}
-            pageSize={parseInt(searchParams.get("page_size"))}
-          />
+          <ValidarProductos productos={productos} />
         )}
+        <PaginationButton
+          currentPage={searchParams.get("page") ?? 1}
+          cambiarPagina={cambiarPagina}
+          totalDatos={cantidad}
+          cantidadPorPagina={
+            searchParams.get("page_size") ?? paginaPuntoVenta.page_size
+          }
+        />
       </section>
     </div>
   );

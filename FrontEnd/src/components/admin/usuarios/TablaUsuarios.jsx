@@ -4,7 +4,7 @@ import { PaginationButton } from "../../shared/PaginationButton";
 
 export const MostrarTabla = ({
   listaUsuarios,
-  borrarUsario,
+  borrarUsuario,
   edicionUsuario,
   currentPage,
   cambiarPagina,
@@ -12,6 +12,7 @@ export const MostrarTabla = ({
   pageSize,
   showModal,
 }) => {
+
   return (
     <section>
       <table
@@ -88,7 +89,7 @@ export const MostrarTabla = ({
                 <td>
                   <button
                     className="btn btn-sm btn-danger animacion-boton"
-                    onClick={() => borrarUsario(usuario.id)}
+                    onClick={() => borrarUsuario(usuario.id)}
                   >
                     <i className="bi bi-person-x" /> Eliminar
                   </button>

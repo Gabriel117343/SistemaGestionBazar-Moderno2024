@@ -113,7 +113,6 @@ export const StockSmart = () => {
       page: newPage,
       page_size: page_size,
       ...(proveedor && { proveedor: proveedor }),
-
       ...(orden && { orden: orden }),
       ...(filtro && { filtro: filtro }),
     });
@@ -127,7 +126,7 @@ export const StockSmart = () => {
       page: 1,
       page_size: page_size,
       ...(proveedor && { proveedor: proveedor }),
-      ...(selectedOption && { orden: selectedOption }),
+      ...(selectedOption !== 'ninguno' && { orden: selectedOption }),
     });
   };
 
@@ -162,7 +161,7 @@ export const StockSmart = () => {
             id="proveedor"
             className="form-select"
             onChange={(e) => filtrarPorProveedor(e.target.value)}
-            value={proveedorId ?? searchParams.get("proveedor")}
+            value={proveedorId ?? searchParams.get("proveedor") ?? "all"}
           >
             <option value="all">Todos</option>
             {proveedores?.map((proveedor) => (
@@ -180,7 +179,7 @@ export const StockSmart = () => {
             ref={inputRef}
             id="filtro"
             placeholder="Buscar por código, nombre o proveedor"
-            defaultValue={searchParams.get("filtro")}
+            defaultValue={searchParams.get("filtro") ?? ""}
             onChange={(e) => debounceFiltrarPorProducto(e.target.value)}
           />
 
@@ -192,7 +191,7 @@ export const StockSmart = () => {
           {ordenPorStock.map((option) => {
             const ordenActual = searchParams.get("orden") ?? "";
             if (option.value === ordenActual) {
-              return <i className={option.classIcon} />;
+              return <i key={option.value} className={option.classIcon} />;
             }
           })}
           <select
@@ -200,9 +199,9 @@ export const StockSmart = () => {
             name="orden"
             className="form-select w-auto"
             onChange={(e) => handleOrdenarChange(e.target.value)}
-            defaultValue={searchParams.get("orden")}
+            value={searchParams.get("orden") ?? ""}
           >
-            <option value="">Ninguno</option>
+            <option value="ninguno">Ninguno</option>
             {ordenPorStock.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
