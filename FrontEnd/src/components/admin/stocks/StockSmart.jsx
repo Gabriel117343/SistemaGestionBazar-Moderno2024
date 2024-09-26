@@ -12,6 +12,9 @@ import { debounce } from "lodash";
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 import { paginaStock } from "@constants/defaultParams.js";
 import { ordenPorStock } from "@constants/defaultOptionsFilter";
+import { InputSearch } from "../../shared/InputSearch";
+import { ButtonPrint, ButtonRefresh } from "../../shared/ButtonSpecialAccion";
+
 export const StockSmart = () => {
   const {
     getStocksContext,
@@ -125,7 +128,6 @@ export const StockSmart = () => {
       page_size: page_size,
       ...(proveedor && { proveedor: proveedor }),
       ...(selectedOption && { orden: selectedOption }),
-
     });
   };
 
@@ -171,18 +173,17 @@ export const StockSmart = () => {
           </select>
         </div>
         <div className="col-md-9 d-flex align-items-center gap-2">
-          <label htmlFor="nombre">
+          <label htmlFor="filtro">
             <i className="bi bi-search pb-2 pe-1"></i>
           </label>
-          <input
+          <InputSearch
             ref={inputRef}
-            id="nombre"
-            className="form-control"
-            type="text"
+            id="filtro"
             placeholder="Buscar por código, nombre o proveedor"
             defaultValue={searchParams.get("filtro")}
             onChange={(e) => debounceFiltrarPorProducto(e.target.value)}
           />
+
           <label htmlFor="orden">Orden:</label>
 
           {!searchParams.get("orden") && (
@@ -208,16 +209,8 @@ export const StockSmart = () => {
               </option>
             ))}
           </select>
-
-          <button
-            className="btn btn-outline-primary"
-            onClick={debounceRefrescarTabla}
-          >
-            <i className="bi bi-arrow-repeat"></i>
-          </button>
-          <button className="btn btn-outline-primary" onClick={imprimirTabla}>
-            <i className="bi bi-printer"></i>
-          </button>
+          <ButtonRefresh onClick={debounceRefrescarTabla} />
+          <ButtonPrint onClick={imprimirTabla} />
         </div>
       </div>
       {isLoading ? (

@@ -13,6 +13,8 @@ import { ButtonNew } from "../../shared/ButtonNew";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
 import { Modal } from "react-bootstrap";
+import { InputSearch } from '../../shared/InputSearch'
+import { ButtonRefresh, ButtonPrint } from '../../shared/ButtonSpecialAccion'
 
 import useCategoriaStore from "../../../context/store/categoriaStore";
 ("../../../context/store/categoriaStore");
@@ -22,6 +24,7 @@ import CustomModal from "../../../views/CustomModal";
 import { useSearchParams } from "react-router-dom";
 import { paginaProductos } from "@constants/defaultParams.js";
 import { ordenPorProductos } from "@constants/defaultOptionsFilter.js";
+
 export const TablaProductosContenedor = () => {
   const [showModal, setShowModal] = useState(false);
   const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
@@ -194,7 +197,7 @@ export const TablaProductosContenedor = () => {
     <section className="pt-2">
       <div className="row d-flex mb-2">
         <div className="col-md-2">
-          <ButtonNew onClick={() => setShowRegistroModal(true)}>
+          <ButtonNew onClick={() => setShowRegistroModal(true)} >
             Nuevo
           </ButtonNew>
         </div>
@@ -204,14 +207,12 @@ export const TablaProductosContenedor = () => {
             <i className="bi bi-search"></i>
           </label>
 
-          <input
+          <InputSearch 
             ref={inputRef}
-            className="form-control"
-            id="filtro"
-            type="text"
-            /** En caso de que se recargue la página se mantienen el filtro consistente con la url **/
+            id='filtro'
+                  /** En caso de que se recargue la página se mantienen el filtro consistente con la url **/
             defaultValue={searchParams.get("filtro")}
-            placeholder="Buscar producto por nombre o código"
+            placeholder='Buscar productos por nombre o código'
             onChange={(e) => debounceFiltrarProductos(e.target.value)}
           />
           <label htmlFor="orden">Orden:</label>
@@ -239,18 +240,13 @@ export const TablaProductosContenedor = () => {
               </option>
             ))}
           </select>
-          <button
-            className="btn btn-outline-primary btn-nuevo-animacion"
+          <ButtonRefresh
             onClick={debounceRefrescarTabla}
-          >
-            <i className="bi bi-arrow-repeat"></i>
-          </button>
-          <button
-            className="btn btn-outline-primary btn-nuevo-animacion"
+          />
+          <ButtonPrint
             onClick={imprimirTabla}
-          >
-            <i class="bi bi-printer"></i>
-          </button>
+          />
+       
         </div>
       </div>
       {isLoading ? (

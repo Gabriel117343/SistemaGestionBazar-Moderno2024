@@ -12,6 +12,8 @@ import { FormRegistroSecciones } from "./FormRegistroSecciones";
 import { debounce } from "lodash";
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 import { ButtonNew } from "../../shared/ButtonNew";
+import { InputSearch } from "../../shared/InputSearch";
+import { ButtonPrint, ButtonRefresh } from "../../shared/ButtonSpecialAccion";
 
 import CargaDeDatos from "../../../views/CargaDeDatos";
 import { useSearchParams } from "react-router-dom";
@@ -118,18 +120,17 @@ export const ListaSeccionesContenedor = () => {
       // Propagación condicional de objetos
       ...(ordenActivo && { orden: ordenActivo }),
       ...(newFiltro && { filtro: newFiltro }),
-    })
+    });
   };
   const debounceCambiarFiltro = debounce(cambiarFiltro, 400); // retrasa la ejucion de la funcion cambiar filtro por 300 milisegundos
 
   const handleOrdenarChange = (selectedOption) => {
-
     inputFiltroRef.current.value = "";
     // si la opción seleccionada es vacía, se elimina el parámetro orden y se mantiene el filtro activo si es que hay uno
     setSearchParams({
       ...paginaSecciones,
       ...(selectedOption && { orden: selectedOption }),
-    })
+    });
   };
   const cambiarPagina = ({ newPage }) => {
     const filtroActivo = searchParams.get("filtro");
@@ -148,13 +149,14 @@ export const ListaSeccionesContenedor = () => {
   // ACCIONES EXTRA ------------------
   const refrescarTabla = async () => {
     toast.loading("Actualizando tabla...", { id: "loading" });
-    const { success } = await getSeccionesContext();
-    toast.dismiss("loading");
+
+    const parametros = parametrosDeConsulta()
+    const { success } = await getSeccionesContext(parametros);
 
     if (success) {
-      toast.success("Tabla actualizada");
+      toast.success("Tabla actualizada", { id: "loading" });
     } else {
-      toast.error("Error al actualizar la tabla");
+      toast.error("Error al actualizar la tabla", { id: "loading" });
     }
   };
   const debounceRefrescarTabla = useRefreshDebounce(refrescarTabla, 2000);
@@ -176,13 +178,12 @@ export const ListaSeccionesContenedor = () => {
             <i className="bi bi-search"></i>
           </label>
 
-          <input
+          <InputSearch
             ref={inputFiltroRef}
+            id="filtro"
             defaultValue={searchParams.get("filtro") ?? ""}
             onChange={(e) => debounceCambiarFiltro(e.target.value)}
-            className="form-control"
-            type="text"
-            placeholder="Buscar por nombre o por numero..."
+            placeholder="Buscar por nombre o por número"
           />
           <label htmlFor="orden">Orden:</label>
           {!searchParams.get("orden") && (
@@ -208,19 +209,9 @@ export const ListaSeccionesContenedor = () => {
               </option>
             ))}
           </select>
-
-          <button
-            className="btn btn-outline-primary btn-nuevo-animacion"
-            onClick={debounceRefrescarTabla}
-          >
-            <i className="bi bi-arrow-repeat"></i>
-          </button>
-          <button
-            className="btn btn-outline-primary btn-nuevo-animacion"
-            onClick={imprimirTabla}
-          >
-            <i class="bi bi-printer"></i>
-          </button>
+          {/* Es posible pasar un icono personalizado como children */}
+          <ButtonRefresh onClick={debounceRefrescarTabla} />
+          <ButtonPrint onClick={imprimirTabla} />
         </div>
       </div>
       {isLoading ? (

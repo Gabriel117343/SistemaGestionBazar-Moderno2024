@@ -2,6 +2,9 @@ import { CategoriaSelect } from "../../shared/CategoriaSelect";
 import { SeccionButton } from "../../shared/SeccionButton";
 import { ordenPorProductosVenta } from "@constants/defaultOptionsFilter";
 
+import { InputSearch } from '../../shared/InputSearch'
+import { ButtonPrint, ButtonRefresh } from '../../shared/ButtonSpecialAccion'
+
 export const FiltroProductos = ({
   categoriaRef,
   buscadorRef,
@@ -25,18 +28,15 @@ export const FiltroProductos = ({
           />
         </div>
         <div className="col-md-9 d-flex justify-content-center align-items-center gap-2">
-          <label htmlFor="buscarSelect">
+          <label htmlFor="filtro">
             <i className="bi bi-search"></i>
           </label>
-
-          <input
+          <InputSearch
             ref={buscadorRef}
-            type="text"
-            id="buscarSelect"
-            className="form-control"
+            id="filtro"
             defaultValue={searchParams.get("filtro")}
             placeholder="Ej: Arroz Miraflores"
-            onChange={(e) => debounceFiltrarPorNombre(e.target.value)}
+            onChange={e => debounceFiltrarPorNombre(e.target.value)}
           />
           <label htmlFor="orden">Orden:</label>
 

@@ -125,7 +125,7 @@ const MostrarPedidos = forwardRef(
             <tr>
               <th id={`${tableId}-numero`}>#</th>
               <th id={`${tableId}-fechaCreacion`}>Fecha Creacion</th>
-              <th id={`${tableId}-codigo`}>Codigo</th>
+              <th id={`${tableId}-codigo`}>Código</th>
               <th id={`${tableId}-proveedor`}>Proveedor</th>
               <th id={`${tableId}-productos`}>Productos</th>
               <th id={`${tableId}-estado`}>Estado</th>
@@ -284,8 +284,8 @@ const SinPedidos = () => {
         <thead>
           <tr>
             <th>#</th>
-            <th>Fecha Creacion</th>
-            <th>Codigo</th>
+            <th>Fecha Creación</th>
+            <th>Código</th>
             <th>Proveedor</th>
             <th>Productos</th>
             <th>Estado</th>

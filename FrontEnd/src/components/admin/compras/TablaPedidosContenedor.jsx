@@ -1,14 +1,18 @@
 import { useContext, useState, useEffect, useRef } from "react";
 import { PedidosContext } from "../../../context/PedidosContext";
+
 import { toast } from "react-hot-toast";
 import CargaDeDatos from "../../../views/CargaDeDatos";
 import { ValidarPedidos } from "./TablaPedidos";
 import { debounce } from "lodash";
+
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 import { FormOrdenCompra } from "./FormOrdenCompra";
 import { ButtonNew } from "../../shared/ButtonNew";
 import ReactToPrint from "react-to-print";
 
+import { InputSearch } from '../../shared/InputSearch';
+import { ButtonPrint, ButtonRefresh } from '../../shared/ButtonSpecialAccion'
 import "./compras.css";
 export const TablaPedidosContenedor = () => {
   const {
@@ -77,26 +81,19 @@ export const TablaPedidosContenedor = () => {
           <ButtonNew onClick={cambiarSeleccionForm}>Nuevo Pedido</ButtonNew>
         </div>
         <div className="col-md-10 col-sm-10 col-xs-11 d-flex align-items-center justify-content-center gap-2">
-          <i className="bi bi-search"></i>
-          <input
+          <label htmlFor="filtro">
+            <i className="bi bi-search"></i>
+          </label>
+          <InputSearch
             ref={inputRef}
-            type="text"
-            className="form-control"
-            placeholder="Buscar Pedido"
-            onChange={debounceCambiarFiltro}
+            id="filtro"
+            placeholder="Buscar pedido"
+            onChange={e => debounceCambiarFiltro(e.target.value)}
           />
-          <button
-            className="btn btn-outline-primary btn-nuevo-animacion"
-            onClick={debounceRefrescarTabla}
-          >
-            <i className="bi bi-arrow-repeat"></i>
-          </button>
-
+          <ButtonRefresh onClick={debounceRefrescarTabla} />
           <ReactToPrint
             trigger={() => (
-              <button className="btn btn-outline-primary btn-nuevo-animacion">
-                <i className="bi bi-printer"></i>
-              </button>
+              <ButtonPrint />
             )}
             content={() => componentRef.current}
           />
@@ -105,7 +102,7 @@ export const TablaPedidosContenedor = () => {
       {isLoading ? (
         <CargaDeDatos />
       ) : (
-        <ValidarPedidos refrescar={refrescarTabla}
+        <ValidarPedidos ref={componentRef} refrescar={refrescarTabla}
           pedidos={
             inputRef?.current?.value?.length > 0 ? pedidosFiltrados : pedidos
           }

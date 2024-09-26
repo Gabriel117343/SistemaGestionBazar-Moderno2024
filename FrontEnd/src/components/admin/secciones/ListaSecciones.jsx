@@ -23,7 +23,7 @@ const MostrarSecciones = ({
           <tr>
             <th scope="col">#</th>
             <th scope="col">Nombre</th>
-            <th scope="col">Numero</th>
+            <th scope="col">Número</th>
             <th scope="col">Descripción</th>
             <th scope="col">Acciones</th>
           </tr>
@@ -78,14 +78,14 @@ const SinSecciones = () => {
           <tr>
             <th scope="col">ID</th>
             <th scope="col">Nombre</th>
-            <th scope="col">Numero</th>
+            <th scope="col">Número</th>
             <th scope="col">Descripción</th>
             <th scope="col">Acciones</th>
           </tr>
         </thead>
       </table>
       <div className="alert alert-warning mt-3" role="alert">
-        <h5 className="text-center">No se han encontrado Secciónes</h5>
+        <h5 className="text-center">No se han encontrado Secciones</h5>
       </div>
     </section>
   );

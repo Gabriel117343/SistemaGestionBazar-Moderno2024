@@ -13,9 +13,11 @@ import { debounce } from "lodash";
 /** Para la UI */
 import { ButtonNew } from "../../shared/ButtonNew";
 import CargaDeDatos from "../../../views/CargaDeDatos";
+import { InputSearch } from "../../shared/InputSearch";
+import { ButtonPrint, ButtonRefresh } from "../../shared/ButtonSpecialAccion";
+
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 import { useSearchParams } from "react-router-dom";
-
 import { paginaUsuarios } from "@constants/defaultParams.js";
 import { ordenPorUsuarios } from "@constants/defaultOptionsFilter.js";
 export const TablaUsuariosContenedor = () => {
@@ -105,10 +107,9 @@ export const TablaUsuariosContenedor = () => {
   };
 
   const cambiarFiltro = (filtro) => {
-
     const newFiltro = filtro.trim().toLowerCase();
 
-    const { page_size, orden } = parametrosDeConsulta()
+    const { page_size, orden } = parametrosDeConsulta();
 
     setSearchParams({
       page: 1,
@@ -117,28 +118,23 @@ export const TablaUsuariosContenedor = () => {
       ...(orden && { orden: orden }),
       ...(newFiltro && { filtro: newFiltro }),
     });
-
   };
   const debounceCambiarFiltro = debounce(cambiarFiltro, 400); // El usuario debe esperar 400ms para que se ejecute la función
 
-
   const handleOrdenarChange = (selectedOption) => {
-
-    const { page_size } = parametrosDeConsulta()
+    const { page_size } = parametrosDeConsulta();
 
     inputFiltroRef.current.value = "";
     const newOrden = {
       page: 1,
       page_size: page_size,
       ...(selectedOption && { orden: selectedOption }),
-
     };
     setSearchParams(newOrden);
   };
 
   const cambiarPagina = ({ newPage }) => {
-
-    const { page_size, filtro, orden } = parametrosDeConsulta()
+    const { page_size, filtro, orden } = parametrosDeConsulta();
 
     setSearchParams({
       page: newPage,
@@ -179,11 +175,8 @@ export const TablaUsuariosContenedor = () => {
           <label htmlFor="filtro">
             <i className="bi bi-search"></i>
           </label>
-
-          <input
+          <InputSearch
             ref={inputFiltroRef}
-            className="form-control"
-            type="text"
             id="filtro"
             defaultValue={searchParams.get("filtro")}
             placeholder="Buscar por rut, nombre, apellido o correo."
@@ -215,19 +208,8 @@ export const TablaUsuariosContenedor = () => {
               </option>
             ))}
           </select>
-
-          <button
-            className="btn btn-outline-primary btn-nuevo-animacion"
-            onClick={debounceRefrescarTabla}
-          >
-            <i className="bi bi-arrow-repeat"></i>
-          </button>
-          <button
-            className="btn btn-outline-primary btn-nuevo-animacion"
-            onClick={imprimirTabla}
-          >
-            <i className="bi bi-printer"></i>
-          </button>
+          <ButtonRefresh onClick={debounceRefrescarTabla} />
+          <ButtonPrint onClick={imprimirTabla} />
         </div>
       </div>
       {isLoading ? (

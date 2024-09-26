@@ -2,8 +2,11 @@ import { useContext, useEffect, useState, useRef } from "react";
 import { VentasContext } from "../../../context/VentasContext";
 import CargaDeDatos from "../../../views/CargaDeDatos";
 import { toast } from "react-hot-toast";
+
 import { debounce } from 'lodash'; 
 import { ValidarVentas } from "./ListaVentas";
+import { InputSearch } from '../../shared/InputSearch'
+import { ButtonPrint, ButtonRefresh } from '../../shared/ButtonSpecialAccion'
 export const FiltroVentas = () => {
   const {
     stateVenta: { ventas },
@@ -103,22 +106,17 @@ export const FiltroVentas = () => {
         <div className="col-md-9 d-flex align-items-end gap-1">
           <i className="bi bi-search pe-1 pb-2"></i>
           <div style={{ width: "100%" }}>
-            <label htmlFor="nombre">Buscar</label>
-            <input
+            <label htmlFor="filtro">Buscar</label>
+            <InputSearch
               ref={inputRef}
-              type="text"
-              id="nombre"
-              onChange={(e) => filtroCliente(e.target.value)}
-              className="form-control"
+              id="filtro"
+              onChange={e => filtroCliente(e.target.value)}
               placeholder="Buscar por cliente"
             />
           </div>
-          <button className="btn btn-outline-primary" onClick={debounceRefrescarTabla}>
-            <i className="bi bi-arrow-repeat"></i>
-          </button>
-          <button className="btn btn-outline-primary" onClick={imprimirTabla}>
-            <i class="bi bi-printer"></i>
-          </button>
+          <ButtonRefresh onClick={debounceRefrescarTabla} />
+          <ButtonPrint onClick={imprimirTabla} />
+
         </div>
       </div>
       {isLoading ? (

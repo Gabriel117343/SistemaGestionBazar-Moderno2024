@@ -10,6 +10,7 @@ import { SidebarContext } from "../../../context/SidebarContext";
 
 import { FiltroProductos } from "./FiltroProductos";
 import { ValidarProductos } from "./ListaProductos";
+
 import useCalculoProductosMostrar from "../../../hooks/useCalculoProductosMostrar";
 import { paginaPuntoVenta } from "@constants/defaultParams";
 import CargaDeDatos from "../../../views/CargaDeDatos";
@@ -187,6 +188,7 @@ export const PuntoVentaContainer = () => {
   const cambiarPagina = ({ newPage }) => {
     const { page_size, incluir_inactivos, categoria, filtro, orden } =
       parametrosDeConsulta();
+
     setSearchParams({
       page: newPage,
       page_size: page_size,
