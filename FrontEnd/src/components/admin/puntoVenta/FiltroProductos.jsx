@@ -2,6 +2,7 @@ import React from "react";
 import CategoriaFilter from "./CategoriaFilter";
 import SearchFilter from "./SearchFilter";
 import SeccionFilter from "./SeccionFilter";
+import OrdenProductos from './OrdenProductos'
 
 export const FiltroProductos = ({
   buscadorRef,
@@ -11,7 +12,9 @@ export const FiltroProductos = ({
   searchParams,
   secciones,
   filtrarPorSeccion,
+  cambiarModo,
   productos,
+  modoTabla,
 }) => {
   return (
     <>
@@ -25,7 +28,15 @@ export const FiltroProductos = ({
           debounceFiltrarPorNombre={debounceFiltrarPorNombre}
           handleOrdenarChange={handleOrdenarChange}
           searchParams={searchParams}
+          cambiarModo={cambiarModo}
         />
+        <OrdenProductos
+          handleOrdenarChange={handleOrdenarChange}
+          searchParams={searchParams}
+          cambiarModo={cambiarModo}
+          modoTabla={modoTabla}
+        />
+
       </div>
       <SeccionFilter
         filtrarPorSeccion={filtrarPorSeccion}
@@ -33,6 +44,7 @@ export const FiltroProductos = ({
         secciones={secciones}
         searchParams={searchParams}
       />
+ 
     </>
   );
 };

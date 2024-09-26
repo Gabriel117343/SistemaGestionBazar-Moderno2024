@@ -8,6 +8,7 @@ const CategoriaFilter = ({ filtrarPorCategoria, searchParams }) => {
       <CategoriaSelect
         parametroCategoria={searchParams.get("categoria") ?? 'Todas'}
         filtroCategoria={filtrarPorCategoria}
+        id="categoriaSelect"
       />
     </div>
   );

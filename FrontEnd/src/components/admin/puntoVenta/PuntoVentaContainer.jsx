@@ -36,6 +36,7 @@ export const PuntoVentaContainer = () => {
   const { sidebar } = useContext(SidebarContext);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [modoTabla, setModoTabla] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const calcularProductosMostrar = useCalculoProductosMostrar();
@@ -207,6 +208,11 @@ export const PuntoVentaContainer = () => {
     });
   };
 
+  // Acciones extras
+  const cambiarModo = () => {
+    setModoTabla((prev) => !prev);
+  };
+
   return (
     <div className="col-md-8">
       <FiltroProductos
@@ -218,13 +224,15 @@ export const PuntoVentaContainer = () => {
         secciones={secciones}
         filtrarPorSeccion={filtrarPorSeccion}
         productos={productos}
+        cambiarModo={cambiarModo}
+        modoTabla={modoTabla}
       />
       {/* añadir esta section asegura que al montar el componente siempre se tengan las dimensiones correspondientes a la lista de productos a través de la referncia */}
       <section className="container-productos" ref={componenteProductosRef}>
         {isLoading ? (
           <CargaDeDatos />
         ) : (
-          <ValidarProductos productos={productos} />
+          <ValidarProductos productos={productos} modoTabla={modoTabla} />
         )}
         <PaginationButton
           currentPage={searchParams.get("page") ?? 1}

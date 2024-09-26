@@ -3,9 +3,10 @@ import { MagicMotion } from "react-magic-motion";
 import { toast } from "react-hot-toast";
 
 import { CarritoContext } from "../../../context/CarritoContext";
-import { ProductoItem } from "./ProductoItem";
+import { ProductoItemPrimary, ProductoItemSecondary } from "./ProductoItem";
 import "./puntoventa.css";
-export const ListaProductos = ({ productos }) => {
+
+export const ListaProductos = ({ productos, modoTabla }) => {
   const { carrito, agregarProductoCarrito } = useContext(CarritoContext);
 
   const agregarProducto = async (producto) => {
@@ -19,29 +20,54 @@ export const ListaProductos = ({ productos }) => {
     }
   };
 
-  return (
-    <ul className="productos">
-      <MagicMotion duration={0.5}>
-        {productos?.map((producto) => {
-          // const stock = producto?.stock?.find(stock => stock.id === id)
-          const cantidad = producto.stock.cantidad ?? 0; // se accede a la cantidad de productos en stock
-          const stockProductoCarrito =
-            carrito?.find((prod) => prod.id === producto.id)?.cantidad ?? 0; // se accede a la cantidad/stock del producto en el carrito
+  const calcularCantidad = (producto) => {
+    // Es una forma de representar la cantidad de productos que se pueden agregar, no es la cantidad real que viene del stock del backend
+    const cantidad = producto.stock.cantidad ?? 0;
+    const stockProductoCarrito =
+      carrito?.find((prod) => prod.id === producto.id)?.cantidad ?? 0;
+    return cantidad - stockProductoCarrito;
+  };
 
-          const cantidadCalculada = cantidad - stockProductoCarrito;
-          // cantidadCalculada lo que hace es restar la cantidad de productos en stock con la cantidad de productos que ya estan en el carrito
-          // Es una forma de representar la cantidad de productos que se pueden agregar, no es la cantidad real que viene del stock del backend
-          return (
-            <ProductoItem
-              key={producto.id}
-              producto={producto}
-              cantidadCalculada={cantidadCalculada}
-              agregarProducto={agregarProducto}
-            />
-          );
-        })}
-      </MagicMotion>
-    </ul>
+  return (
+    <>
+      {modoTabla ? (
+        <table className="table table-striped table-hover table-bordered mt-2">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {productos?.map((producto) => (
+              <ProductoItemSecondary
+                key={producto.id}
+                producto={producto}
+                cantidadCalculada={calcularCantidad(producto)}
+                agregarProducto={agregarProducto}
+              />
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <ul className="productos">
+          <MagicMotion duration={0.5}>
+            {productos?.map((producto) => {
+              return (
+                <ProductoItemPrimary
+                  key={producto.id}
+                  producto={producto}
+                  cantidadCalculada={calcularCantidad(producto)}
+                  agregarProducto={agregarProducto}
+                />
+              );
+            })}
+          </MagicMotion>
+        </ul>
+      )}
+    </>
   );
 };
 const SinProductos = () => {

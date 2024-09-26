@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const ProductoItem = ({ producto, cantidadCalculada, agregarProducto }) => {
+export const ProductoItemPrimary = ({ producto, cantidadCalculada, agregarProducto }) => {
   return (
     <li key={producto.id} className="producto">
       {cantidadCalculada <= 5 && (
@@ -54,3 +54,21 @@ export const ProductoItem = ({ producto, cantidadCalculada, agregarProducto }) =
   );
 };
 
+
+export const ProductoItemSecondary = ({ producto, cantidadCalculada, agregarProducto }) => {
+  return (
+    <tr >
+      <td>{producto.nombre}</td>
+      <td className="text-success precio-num">${producto.precio}</td>
+      <td className={`${cantidadCalculada === 0 ? "text-danger" : ""}`}>
+        {cantidadCalculada}
+      </td>
+      <td>
+        <button onClick={() => agregarProducto(producto)} className="btn btn-primary">
+          <i className="bi bi-cart-plus"></i> Agregar
+        </button>
+      </td>
+    </tr>
+    
+  );
+};

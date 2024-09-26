@@ -3,7 +3,7 @@ import { useEffect, forwardRef } from "react";
 import { toast } from 'react-hot-toast';
 
 
-export const CategoriaSelect = forwardRef(({ filtroCategoria, parametroCategoria }, ref) => {
+export const CategoriaSelect = forwardRef(({ filtroCategoria, parametroCategoria, id }, ref) => {
   const { categorias, geAllCategoriasStore } = useCategoriaStore();
 
   console.log({categoriaParam: parametroCategoria})
@@ -23,7 +23,7 @@ export const CategoriaSelect = forwardRef(({ filtroCategoria, parametroCategoria
       ref={ref}
       className="form-control"
       name="categoria"
-      id="categoriaSelect"
+      id={id ?? "categoriaSelect"}
       onChange={(e) => filtroCategoria({ idCategoria: e.target.value })}
       value={parametroCategoria} // persistira el valor haún cuando se recargue la pagina gracias a los parametros de busqueda
     >
