@@ -35,14 +35,13 @@ const MostrarSecciones = ({
           <MagicMotion>
             {listaSecciones.map((seccion, index) => {
               const contador = calcularContador(index);
-              console.log({ contador: contador })
               return (
                 <ItemSeccion
                   key={seccion.id}
                   seccion={seccion}
                   contador={contador}
-                  borrarSeccion={borrarSeccion}
-                  edicionSeccion={edicionSeccion}
+                  borrar={borrarSeccion}
+                  editar={edicionSeccion}
                 />
               );
             })}

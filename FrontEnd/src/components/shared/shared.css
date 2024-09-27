@@ -12,6 +12,7 @@
    box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
   }
  }
+
  
 
  .btn-nuevo-animacion:hover {
@@ -35,4 +36,18 @@
   background: #4eacff;  /* fallback for old browsers */
   color: white;
   
+}
+
+@keyframes btnFormEase {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+  
+}
+.btn-ease:hover {
+  animation: btnFormEase 0.3s forwards;
+
 }

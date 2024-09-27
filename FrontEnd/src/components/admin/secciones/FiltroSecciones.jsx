@@ -1,6 +1,5 @@
 import React from "react";
 import { InputSearch } from "../../shared/InputSearch";
-import { ButtonPrint, ButtonRefresh } from "../../shared/ButtonSpecialAccion";
 import { ordenPorSecciones } from "@constants/defaultOptionsFilter";
 
 export const FiltroSecciones = ({

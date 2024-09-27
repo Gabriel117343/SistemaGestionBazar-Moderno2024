@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
+import { ButtonSave, ButtonCancel } from '../../shared/ButtonFormulario'
+
 export const FormRegistroSecciones = ({ cerrarModal, crearSeccion }) => {
   const imagenIncial = '../../../public/images/seccion-productos.jpg'
   const [vistaImagen, setVistaImagen] = useState(imagenIncial) // estado para la vista previa de la imagen
@@ -29,23 +31,27 @@ export const FormRegistroSecciones = ({ cerrarModal, crearSeccion }) => {
       </div>
       <div className="form-group">
         <label htmlFor="nombre">Nombre</label>
-        <input className='form-control' type="text" name='nombre' />
+        <input className='form-control' id="nombre" type="text" name='nombre' />
       </div>
       <div className="form-group">
         <label htmlFor="numero">Numero</label>
-        <input className='form-control' type="number" name='numero' />
+        <input className='form-control' type="number" id='numero' name='numero' />
       </div>
       <div className="form-group">
-        <label htmlFor="descripcion">Descripcion (Opcional)</label>
-        <textarea style={{ maxHeight: '180px' }} className='form-control' name="descripcion" id="" cols="30" rows="10"></textarea>
+        <label htmlFor="descripcion">Descripcion <small>(opcional)</small></label>
+        <textarea style={{ maxHeight: '180px' }} className='form-control' name="descripcion" id="descripcion" cols="30" rows="10"></textarea>
       </div>
       <div className="form-group">
         <label htmlFor="imagen">Imagen (Opcional)</label>
-        <input className='form-control' type="file" name='imagen' onChange={cambiarVistaImagen}/>
+        <input className='form-control' accept=".jpg, .jpeg, .png" type="file" name='imagen' onChange={cambiarVistaImagen}/>
       </div>
       <div className="d-flex justify-content-between pt-2">
-        <button className='btn btn-primary'>Guardar</button>
-        <button type='button' onClick={cerrarModal} className='btn btn-danger'>Cancelar</button>
+        <ButtonSave>
+          Guardar 
+        </ButtonSave>
+        <ButtonCancel type='submit' disabled={true} onClick={cerrarModal}>
+          Cancelar
+        </ButtonCancel>
       </div>
     </form>
   )

@@ -38,7 +38,7 @@ export const SeccionesProvider = ({ children }) => {
   const getSeccionContext = async (id) => {
     try {
       const res = await getSeccion(id, TOKEN_ACCESO)
-      if (res.status === 200 || res.status === 201) {
+      if (res.status === 200) {
         dispatch({
           type: 'GET_SECCION',
           payload: res.data
@@ -54,7 +54,7 @@ export const SeccionesProvider = ({ children }) => {
     try {
       const res = await createSeccion(seccion, TOKEN_ACCESO)
       console.log(res)
-      if (res.status === 200 || res.status === 201) {
+      if (res.status === 200) {
         dispatch({
           type: 'CREATE_SECCION',
           payload: res.data.data
@@ -69,7 +69,7 @@ export const SeccionesProvider = ({ children }) => {
     try {
       const res = await deleteSeccion(id, TOKEN_ACCESO)
       console.log(res)
-      if (res.status === 200 || res.status === 201) {
+      if (res.status === 200) {
         dispatch({
           type: 'DELETE_SECCION',
           payload: id
