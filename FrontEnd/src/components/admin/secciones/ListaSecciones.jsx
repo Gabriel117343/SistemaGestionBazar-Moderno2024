@@ -1,22 +1,24 @@
 import { MagicMotion } from "react-magic-motion";
 import "./secciones.css";
-import { PaginationButton } from "../../shared/PaginationButton";
-
+import { WithoutResults } from "../../shared/WithoutResults";
+import { ItemSeccion } from "./ItemSeccion";
 const MostrarSecciones = ({
   listaSecciones,
   borrarSeccion,
   edicionSeccion,
   showModal,
   currentPage,
-  cambiarPagina,
-  cantidadDatos,
   pageSize,
 }) => {
-  console.log(currentPage, cantidadDatos, pageSize);
+
+  const calcularContador = (index) => {
+    return (currentPage - 1) * pageSize + index + 1;
+  };
+
   return (
-    <section>
+    <>
       <table
-        className="table table-striped table-hover table-bordered mt-2"
+        className="table table-striped table-hover table-bordered mt-2 mb-0"
         style={{ filter: showModal && "blur(0.7px)" }}
       >
         <thead>
@@ -29,54 +31,34 @@ const MostrarSecciones = ({
           </tr>
         </thead>
         <tbody>
+          {/* Cuando hay un cambio anima la tabla */}
           <MagicMotion>
-            {" "}
-            {/* Cuando hay un cambio anima la tabla */}
-            {listaSecciones.map((seccion, index) => (
-              <tr key={seccion.id}>
-                <td scope="row">{(currentPage - 1) * pageSize + index + 1}</td>
-                <td>{seccion.nombre}</td>
-                <td>{seccion.numero}</td>
-                <td>{seccion.descripcion}</td>
-                <td>
-                  <div className="d-flex justify-content-center gap-2">
-                    <button
-                      onClick={() => edicionSeccion(seccion.id)}
-                      className="btn btn-outline-primary btn-nuevo-animacion"
-                    >
-                      <i className="bi bi-pencil-fill"></i>
-                    </button>
-                    <button
-                      onClick={() => borrarSeccion(seccion.id)}
-                      className="btn btn-outline-danger "
-                    >
-                      <i className="bi bi-trash-fill"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {listaSecciones.map((seccion, index) => {
+              const contador = calcularContador(index);
+              console.log({ contador: contador })
+              return (
+                <ItemSeccion
+                  key={seccion.id}
+                  seccion={seccion}
+                  contador={contador}
+                  borrarSeccion={borrarSeccion}
+                  edicionSeccion={edicionSeccion}
+                />
+              );
+            })}
           </MagicMotion>
         </tbody>
       </table>
-      <div className="pagination-buttons mb-3 mt-1 animacion-numeros d-flex gap-1">
-        <PaginationButton
-          currentPage={currentPage}
-          cambiarPagina={cambiarPagina}
-          totalDatos={cantidadDatos}
-          cantidadPorPagina={pageSize}
-        />
-      </div>
-    </section>
+    </>
   );
 };
 const SinSecciones = () => {
   return (
-    <section>
+    <>
       <table className="table table-striped table-hover table-bordered mt-2">
         <thead>
           <tr>
-            <th scope="col">ID</th>
+            <th scope="col">#</th>
             <th scope="col">Nombre</th>
             <th scope="col">Número</th>
             <th scope="col">Descripción</th>
@@ -84,10 +66,8 @@ const SinSecciones = () => {
           </tr>
         </thead>
       </table>
-      <div className="alert alert-warning mt-3" role="alert">
-        <h5 className="text-center">No se han encontrado Secciones</h5>
-      </div>
-    </section>
+      <WithoutResults message="No se han encontrado Secciones" />
+    </>
   );
 };
 export const ValidarSecciones = ({ listaSecciones, ...props }) => {

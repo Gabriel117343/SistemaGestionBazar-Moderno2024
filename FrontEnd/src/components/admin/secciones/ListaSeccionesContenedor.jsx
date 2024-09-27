@@ -18,8 +18,9 @@ import { ButtonPrint, ButtonRefresh } from "../../shared/ButtonSpecialAccion";
 import CargaDeDatos from "../../../views/CargaDeDatos";
 import { useSearchParams } from "react-router-dom";
 import { paginaSecciones } from "@constants/defaultParams";
-import { ordenPorSecciones } from "@constants/defaultOptionsFilter";
 
+import { PaginationButton } from "../../shared/PaginationButton";
+import { FiltroSecciones } from "./FiltroSecciones";
 export const ListaSeccionesContenedor = () => {
   const {
     stateSeccion: { secciones, cantidad, seccionSeleccionada },
@@ -150,7 +151,7 @@ export const ListaSeccionesContenedor = () => {
   const refrescarTabla = async () => {
     toast.loading("Actualizando tabla...", { id: "loading" });
 
-    const parametros = parametrosDeConsulta()
+    const parametros = parametrosDeConsulta();
     const { success } = await getSeccionesContext(parametros);
 
     if (success) {
@@ -173,61 +174,42 @@ export const ListaSeccionesContenedor = () => {
           </ButtonNew>
         </div>
 
+        {/* Es posible pasar un icono personalizado como children */}
         <div className="col-md-10 d-flex align-items-center gap-2">
-          <label htmlFor="filtro">
-            <i className="bi bi-search"></i>
-          </label>
-
-          <InputSearch
-            ref={inputFiltroRef}
-            id="filtro"
-            defaultValue={searchParams.get("filtro") ?? ""}
-            onChange={(e) => debounceCambiarFiltro(e.target.value)}
-            placeholder="Buscar por nombre o por número"
+          <FiltroSecciones
+            searchParams={searchParams}
+            cambiarOrden={handleOrdenarChange}
+            filtrar={debounceCambiarFiltro}
+            inputFiltroRef={inputFiltroRef}
+            refrescar={debounceRefrescarTabla}
+            imprimirTabla={imprimirTabla}
           />
-          <label htmlFor="orden">Orden:</label>
-          {!searchParams.get("orden") && (
-            <i className="bi-bi-arrow-down-up"></i>
-          )}
-          {ordenPorSecciones.map((option) => {
-            const ordenActual = searchParams.get("orden") ?? "";
-            if (option.value === ordenActual) {
-              return <i className={option.classIcon}></i>;
-            }
-          })}
-          <select
-            id="orden"
-            name="orden"
-            className="form-select w-auto"
-            onChange={(e) => handleOrdenarChange(e.target.value)}
-            defaultValue={searchParams.get("orden") ?? ""}
-          >
-            <option value="">Ninguno</option>
-            {ordenPorSecciones.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          {/* Es posible pasar un icono personalizado como children */}
           <ButtonRefresh onClick={debounceRefrescarTabla} />
           <ButtonPrint onClick={imprimirTabla} />
         </div>
       </div>
-      {isLoading ? (
-        <CargaDeDatos />
-      ) : (
-        <ValidarSecciones
-          listaSecciones={secciones}
-          borrarSeccion={borrarSeccion}
-          edicionSeccion={edicionSeccion}
-          showModal={showModal}
-          currentPage={searchParams.get("page") || 1}
+      <section>
+        {isLoading ? (
+          <CargaDeDatos/>
+        ) : (
+          <ValidarSecciones
+            listaSecciones={secciones}
+            borrarSeccion={borrarSeccion}
+            edicionSeccion={edicionSeccion}
+            showModal={showModal}
+            currentPage={searchParams.get("page") ?? paginaSecciones.page}
+            pageSize={parseInt(searchParams.get("page_size")) ?? paginaSecciones.page_size}
+          />
+        )}
+        <PaginationButton
+          currentPage={searchParams.get("page") ?? 1}
           cambiarPagina={cambiarPagina}
-          pageSize={parseInt(searchParams.get("page_size"))}
-          cantidadDatos={cantidad}
+          totalDatos={cantidad}
+          cantidadPorPagina={
+            searchParams.get("page_size") ?? paginaPuntoVenta.page_size
+          }
         />
-      )}
+      </section>
 
       <Modal show={showModal} onHide={cerrarModal}>
         <Modal.Header closeButton>

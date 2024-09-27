@@ -35,7 +35,7 @@ function useCalculoProductosMostrar() {
 
           totalProductos = columnas * filas;
         } else {
-          // se ejecuta si el componente no esta montado en el DOM (solo para evitar errores)
+          // se ejecuta si el componente no esta montado en el DOM, solo para evitar errores por falta de referencia (Ref) del dom
           if (window.innerWidth < 1200 || window.innerHeight < 500) {
             totalProductos = 6;
           } else if (window.innerWidth > 1200 && window.innerWidth < 1800) {

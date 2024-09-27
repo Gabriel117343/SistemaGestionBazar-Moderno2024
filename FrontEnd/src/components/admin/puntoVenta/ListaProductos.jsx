@@ -41,14 +41,16 @@ export const ListaProductos = ({ productos, modoTabla }) => {
             </tr>
           </thead>
           <tbody>
-            {productos?.map((producto) => (
-              <ProductoItemSecondary
-                key={producto.id}
-                producto={producto}
-                cantidadCalculada={calcularCantidad(producto)}
-                agregarProducto={agregarProducto}
-              />
-            ))}
+            <MagicMotion>
+              {productos?.map((producto) => (
+                <ProductoItemSecondary
+                  key={producto.id}
+                  producto={producto}
+                  cantidadCalculada={calcularCantidad(producto)}
+                  agregarProducto={agregarProducto}
+                />
+              ))}
+            </MagicMotion>
           </tbody>
         </table>
       ) : (
