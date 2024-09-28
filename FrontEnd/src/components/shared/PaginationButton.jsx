@@ -1,10 +1,13 @@
 import { useMemo } from "react";
+
+
 export const PaginationButton = ({
   currentPage,
   cambiarPagina,
   totalDatos,
   cantidadPorPagina,
 }) => {
+
 
   const totalBotones = useMemo(() => {
     return Math.ceil(totalDatos / cantidadPorPagina);

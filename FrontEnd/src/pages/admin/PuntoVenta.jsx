@@ -2,7 +2,9 @@ import { Carrito } from "../../components/admin/puntoVenta/Carrito";
 import { PuntoVentaContainer } from "../..//components/admin/puntoVenta/PuntoVentaContainer";
 import GradualSpacing from "../../components/shared/magic_ui/GradualSpacing";
 import "./stylepages.css";
+  
 export const PuntoVenta = () => {
+
   return (
     <>
       <div className="container-fluid">

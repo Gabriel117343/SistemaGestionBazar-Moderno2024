@@ -1,13 +1,11 @@
-import { useRef } from 'react';
+import { useRef } from "react";
 
 // Nota: llamar este hook solo dentro de un useEffect o una funcion asincrona dado que espera una referencia a un componente del DOM
 // espera una promesa que resuelve un numero entero antes de que se llame a una api o se haga una peticion al servidor
 function useCalculoProductosMostrar() {
-
   const prevSidebarRef = useRef(null);
 
   return (componenteRef, sidebar) => {
-
     let tiempo = sidebar ? 800 : 500;
 
     // Si el valor anterior de sidebar es igual al valor actual, establecer tiempo a 0
@@ -23,7 +21,8 @@ function useCalculoProductosMostrar() {
         let totalProductos = 1;
 
         if (componenteRef?.current) {
-          const { width, height } = componenteRef.current.getBoundingClientRect();
+          const { width, height } =
+            componenteRef.current.getBoundingClientRect();
 
           // tamaños segun la cuadricula grid de los productos
           const productoWidth = 171;

@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames/dedupe";
-import './shared.css'
+import "./shared.css";
 export const ButtonSave = ({ className, onClick, children, ...props }) => {
   // classnames es una libreria que permite combinar clases de forma dinamica
   const buttonClass = classNames("btn btn-success btn-ease", className);
@@ -14,14 +14,14 @@ export const ButtonSave = ({ className, onClick, children, ...props }) => {
   return <button {...atributos}>{children ? children : "Guardar"}</button>;
 };
 
-export const ButtonCancel = ({ className, onClick, children, props }) => {
+export const ButtonCancel = ({ className, onClick, children, ...props }) => {
   const buttonClass = classNames("btn btn-danger btn-ease", className);
   const atributos = {
     className: buttonClass,
     type: "button",
     onClick: onClick,
     "aria-label": "Cancelar",
-    ...props,
+    ...props, // las demás propiedades se agregan al boton
   };
   return <button {...atributos}>{children ? children : "Cancelar"}</button>;
 };

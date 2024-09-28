@@ -5,7 +5,11 @@ import { toast, Toaster } from "react-hot-toast";
 
 import { LoginContext } from "./context/LoginContext";
 
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 
 import { AdminRoutes } from "./routes/AdminRoutes";
 import { ProductosProvider } from "./context/ProductosContext";
@@ -36,9 +40,9 @@ function App() {
         console.log("Usuario no tiene rol asignado");
         window.location.replace("/login");
         break;
-      // acción que siempre se ejecuta en switch
     }
   };
+
   async function validarSesion() {
     const { success, message } = await obtenerUsuarioLogeado().finally(() => {
       setTimeout(() => {
@@ -57,6 +61,7 @@ function App() {
       }
     }
   }
+
   useEffect(() => {
     const tokenAcceso = localStorage.getItem("accessToken");
     const tokenRefresco = localStorage.getItem("refreshToken");
@@ -98,23 +103,37 @@ function App() {
   }, [isAuth]);
 
   if (loading) {
-    return <CargaDePagina />; // si loading es true se muestra el componente CargaDePagina
+    return <CargaDePagina />;
   }
+
+  // Configuración de las rutas usando createBrowserRouter
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Navigate to="/login" />,
+    },
+    {
+      path: "/login",
+      element: <Login />,
+    },
+    {
+      path: "/admin/*",
+      element: <AdminRoutes />,
+    },
+    {
+      path: "*",
+      element: <Navigate to="/login" />,
+    },
+  ]);
 
   return (
     <VentasProvider>
       <ClientesProvider>
         <ProductosProvider>
-          {/* este es el contexto de los productos */}
-          <BrowserRouter>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="*" element={<Navigate to="/login" />} />
-              <Route path="/admin/*" element={<AdminRoutes />} />
-            </Routes>
-            <HerramientaDesarrollo />
-            <Toaster /> {/* Aquí se renderiza el componente Toaster de react-hot-toast. documentación > https://github.com/timolins/react-hot-toast/blob/main/site/pages/docs/styling.mdx*/}
-          </BrowserRouter>
+          {/* Proveemos el router configurado */}
+          <RouterProvider router={router} />
+          <HerramientaDesarrollo />
+          <Toaster />
         </ProductosProvider>
       </ClientesProvider>
     </VentasProvider>

@@ -8,7 +8,7 @@ import "./puntoventa.css";
 
 export const ListaProductos = ({ productos, modoTabla }) => {
   const { carrito, agregarProductoCarrito } = useContext(CarritoContext);
-
+  console.log('render')
   const agregarProducto = async (producto) => {
     toast.loading("Agregando al carrito...", { id: "loading" });
     const { success, message } = await agregarProductoCarrito(producto);
