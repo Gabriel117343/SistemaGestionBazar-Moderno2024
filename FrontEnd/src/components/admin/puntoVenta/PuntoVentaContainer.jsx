@@ -38,7 +38,7 @@ export const PuntoVentaContainer = () => {
         await getSeccionesContext(TOTAL_SECTIONS_SHOW);
       if (!success) {
         toast.error(
-          message ?? "Ha ocurrido un error inesperado al cargar las secciones"
+          message ?? "Ha ocurrido un error inesperado al cargar las secciones", { id: 'loading'}
         );
       }
     };

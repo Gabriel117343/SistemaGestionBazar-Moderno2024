@@ -1,4 +1,3 @@
-
 import "./shared.css";
 
 export const SeccionButton = ({
@@ -7,10 +6,7 @@ export const SeccionButton = ({
   secciones,
   productosPorPagina,
 }) => {
-
-
   const verificarCoincidencia = (seccionNumero) => {
-
     if (productos.length !== productosPorPagina) {
       const newClase = productos?.some(
         (producto) => producto?.seccion?.numero === seccionNumero
@@ -29,7 +25,7 @@ export const SeccionButton = ({
         <div key={seccion.id} className="seccion">
           <button
             onClick={() => filtrarPorSeccion({ idSeccion: seccion.id })}
-            className={`border rounded btn-seleccion ${verificarCoincidencia(seccion.numero)}`}
+            className={`btn-seleccion ${verificarCoincidencia(seccion.numero)}`}
           >
             {seccion.nombre}
           </button>

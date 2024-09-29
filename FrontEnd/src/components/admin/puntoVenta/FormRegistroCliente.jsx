@@ -1,9 +1,11 @@
-import React, { useContext } from 'react'
+import React, { useContext, useId } from 'react'
 import { ClientesContext } from '../../../context/ClientesContext'
 import swal from 'sweetalert2'
 import { toast } from 'react-hot-toast'
 export const FormRegistroCliente = ({ cerrarModal }) => {
   const { crearClienteContext } = useContext(ClientesContext)
+  const id = useId()
+
   const enviarFormulario = async (event) => {
     event.preventDefault()
     const formData = new FormData(event.target)
@@ -29,7 +31,7 @@ export const FormRegistroCliente = ({ cerrarModal }) => {
     }
   }
   return (
-    <form action="" onSubmit={enviarFormulario}>
+    <form action="" id={`${id}-form-registro-clientes`} onSubmit={enviarFormulario}>
       <div className="form-group">
         <label htmlFor="nombre">Nombre</label>
         <input type="text" className="form-control" name="nombre" id="nombre" placeholder="Ej: Juan Perez" autoFocus/>

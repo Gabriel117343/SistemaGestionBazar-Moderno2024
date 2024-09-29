@@ -127,9 +127,10 @@
 }
 
 /* estilos para el carrito de compras */
-.ul-carrito {
+.container-carrito {
 
   min-height: 28vh;
+  margin-bottom: 8px;
 }
 .unidades-producto {
  
@@ -155,7 +156,7 @@
 }
 .imagen-producto-mini > img {
   aspect-ratio: 1 / 1; /* la imagen se mantiene cuadrada en relación al width del contenedor - buenas prácticas */
-  object-fit: container;
+  object-fit: contain;
   width: 100%;
   height: auto;
   
@@ -204,20 +205,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 }
 
-.btn-seleccion {
-  width: 100%;
-  padding: 2px;
-  background: #f1f1f1;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin: 5px 0;
-  cursor: pointer;
-  text-wrap: nowrap;
-  font-size:15px;
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 
-  
-}
 @keyframes movimiento-boton {
   0% {
     transform: translateX(0);
@@ -230,11 +218,7 @@ input[type="number"]::-webkit-outer-spin-button {
   }
 
 }
-.btn-filtro {
-  background: #4eacff;  /* fallback for old browsers */
-  color: white;
-  
-}
+
 
 .btn-nuevo-animacion:hover {
   background-position: right center;
@@ -258,14 +242,7 @@ input[type="number"]::-webkit-outer-spin-button {
   }
  }
 
-.btn-seleccion:hover {
-  
-  -webkit-animation: pulse 2s infinite;
-  animation: pulse11 1.5s infinite;
-  animation: zoomAnim 0.3s forwards;
-  animation: movimiento-boton 1s ease;
-  box-shadow: 0 0 5px 0 #b4b4b4;
-}
+
 /* Estilos para el carrito de compras*/
 .precio-num {
   font-size: 17px;

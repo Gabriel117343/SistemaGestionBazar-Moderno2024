@@ -32,11 +32,7 @@
   padding: 10px;
 
 }
-.btn-filtro {
-  background: #4eacff;  /* fallback for old browsers */
-  color: white;
-  
-}
+
 
 @keyframes btnFormEase {
   0% {
@@ -50,4 +46,36 @@
 .btn-ease:hover {
   animation: btnFormEase 0.3s forwards;
 
+}
+
+/* Estilos para el boton de seccion de productos */
+.btn-seleccion {
+  max-width: 150px;
+  padding: 2px;
+  background: #f1f1f1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 5px 0;
+  cursor: pointer;
+  text-wrap: nowrap;
+
+  font-size:15px;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+
+  
+}
+.btn-seleccion:hover {
+  
+  -webkit-animation: pulse 2s infinite;
+  animation: pulse11 1.5s infinite;
+  animation: zoomAnim 0.3s forwards;
+  animation: movimiento-boton 1s ease;
+  box-shadow: 0 0 5px 0 #b4b4b4;
+}
+.btn-filtro {
+  background: #0972e2;  /* Ajustado para mejor contraste */
+  color: white;
+
+  padding: 0 3px 0 3px;
+  
 }

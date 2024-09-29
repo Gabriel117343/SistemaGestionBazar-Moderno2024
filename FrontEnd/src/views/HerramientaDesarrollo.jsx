@@ -1,17 +1,25 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { LoginContext } from "../context/LoginContext";
 export const HerramientaDesarrollo = () => {
   const {
     stateLogin: { isAuth, usuario },
   } = useContext(LoginContext);
-  console.log(usuario)
+  const [hidde, setHidde] = useState(false);
+
+  const hiddeTol = () => {
+    console.log('hidde')
+    setHidde(prev => !prev);
+  }
+  const clase = hidde ? "d-none" : "d-block";
   return (
     <footer className="container">
-      <section className="d-flex justify-content-center">
+
+      <section className={`d-flex justify-content-center ${clase}`} onClick={hiddeTol}>
         {usuario && isAuth ? (
           <section
             style={{
-              width: "50%",
+              width: "min-content",
+              padding: "0 10px 0 10px",
               margin: "0 auto",
               borderRadius: "30px",
               maxHeight: "30px",

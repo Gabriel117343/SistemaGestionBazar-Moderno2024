@@ -6,7 +6,7 @@ const SeccionFilter = ({ filtrarPorSeccion, productos, secciones, searchParams }
     <div className="pb-1 d-flex gap-1 contenedor-secciones">
       <button
         onClick={filtrarPorSeccion}
-        className={`border rounded btn-seleccion ${
+        className={`btn-seleccion ${
           productos?.length === parseInt(searchParams.get("page_size"))
             ? "btn-filtro"
             : ""

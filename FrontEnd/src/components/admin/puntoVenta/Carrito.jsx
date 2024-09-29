@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { MagicMotion } from "react-magic-motion";
 import { Modal } from "react-bootstrap";
 import { FormRegistroCliente } from "./FormRegistroCliente";
@@ -32,11 +32,9 @@ export const Carrito = () => {
     vaciarCarrito,
     actualizarCantidadCarrito,
   } = useContext(CarritoContext);
-  const {
-    stateProducto: { productos },
-    getProductosContext,
-  } = useContext(ProductosContext);
+  const { getProductosContext } = useContext(ProductosContext);
 
+  const inputStockRef = useRef(null);
   // se obtienen los parametros de la url para realizar la consulta
   const [searchParams] = useSearchParams();
 
@@ -71,7 +69,6 @@ export const Carrito = () => {
       seccion: searchParams.get("seccion") ?? "",
       incluir_inactivos: searchParams.get("incluir_inactivos"),
       orden: searchParams.get("orden") ?? "",
-
     };
   };
 
@@ -85,16 +82,20 @@ export const Carrito = () => {
       toast.error(message, { id: "loading" });
     }
   };
-  const actualizarCarrito = (idProducto, cantidad) => {
-    const productoConStock =
-      productos.find((prod) => prod.id === idProducto).stock.cantidad -
-      cantidad;
-    // si la cantidad es menor o igual a 0, no se aumentar el stock en carrito
-    if (productoConStock < 0) {
-      toast.error("Producto sin stock disponible");
-      return;
+  const actualizarCarrito = async (idProducto, cantidad) => {
+    toast.dismiss({ id: "loading" });
+    const { type, message } = await actualizarCantidadCarrito(
+      idProducto,
+      cantidad
+    );
+    if (type === "success") {
+      toast.success(message, { id: "update cart" });
+    } else if (type === "info") {
+      toast(message, { id: "update cart", icon: "🛒" });
+    } else if (type === "error") {
+      toast.error(message, { id: "update cart" });
     } else {
-      actualizarCantidadCarrito(idProducto, cantidad);
+      toast.dismiss({ id: "update cart" });
     }
   };
   const refrescarProductos = async () => {
@@ -120,13 +121,15 @@ export const Carrito = () => {
 
     // agregar productos
 
-    const { success, message } = await createVentaContext(formVenta).finally(() =>{
-      refrescarProductos(); //
-    })
+    const { success, message } = await createVentaContext(formVenta).finally(
+      () => {
+        refrescarProductos(); //
+      }
+    );
 
     if (success) {
       vaciarCarrito();
-   
+
       Swal.fire({
         title: "Venta realizada",
         text: message,
@@ -167,13 +170,13 @@ export const Carrito = () => {
   };
 
   const debounceAgregarProducto = debounce(agregarProducto, 100);
-  const debounceActualizarCarrito = debounce(actualizarCarrito, 100);
+  const debounceActualizarCarrito = debounce(actualizarCarrito, 50);
   return (
     <div className="col-md-4">
-      <MagicMotion className="carrito" name="carrito" duration={0.5}>
-        <ul className="ul-carrito ps-1">
+      <MagicMotion name="carrito" duration={0.5}>
+        <div className="container-carrito">
           {carrito?.map((producto) => (
-            <li key={producto.id}>
+            <div key={producto.id} className="producto-item">
               <div className="d-flex justify-content-between ps-1">
                 <div>
                   <div
@@ -190,11 +193,20 @@ export const Carrito = () => {
                       className="img-min-producto"
                     />
                   </div>
-                  <strong className="ps-1">{producto.nombre}</strong>
+
+                  <label
+                    onClick={() => debounceActualizarCarrito(producto.id, 0)}
+                    className="ps-1"
+                    htmlFor={`producto-${producto.id}`}
+                  >
+                    <strong>{producto.nombre}</strong>
+                  </label>
                   <div className="d-flex flex-column">
                     <div className="d-flex ps-4">
                       <input
                         type="number"
+                        id={`producto-${producto.id}`}
+                        name="unidades"
                         className="unidades-producto"
                         onChange={(e) => {
                           if (e.target.value > 99) {
@@ -207,8 +219,9 @@ export const Carrito = () => {
                         }}
                         min="0"
                         max="99"
-                        value={producto.cantidad}
+                        value={producto.cantidad !== 0 ? producto.cantidad : ""}
                       />
+
                       <p className="mb-0">
                         /Unidades en ${producto.cantidad * producto.precio}
                       </p>
@@ -234,14 +247,15 @@ export const Carrito = () => {
                   </div>
                 </div>
               </div>
-            </li>
+            </div>
           ))}
           {carrito?.length === 0 && (
             <div className="text-center" style={{ fontSize: "150px" }}>
               <i className="bi bi-cart-x"></i>
             </div>
           )}
-        </ul>
+        </div>
+
         <hr className="linea-carrito" />
         <div className="d-flex justify-content-between gap-2 ps-2 btn-pago">
           <button

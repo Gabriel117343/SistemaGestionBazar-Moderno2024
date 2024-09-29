@@ -75,9 +75,9 @@
   text-decoration: none;
 }
 .active {
-  background-color: rgb(42, 152, 226);
+  background-color: rgb(2, 119, 197);
   color: white;
-}
+} 
 .icon, .link_text {
   font-size: 20px;
 }

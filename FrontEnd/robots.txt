@@ -1,0 +1,5 @@
+
+User-agent: *
+
+# Esto es para Permitir que los motores de busqueda indexen este sitio. (Mejora el SEO)
+Disallow:

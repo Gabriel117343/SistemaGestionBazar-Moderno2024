@@ -22,7 +22,7 @@ export const ListaProductos = ({ productos, modoTabla }) => {
 
   const calcularCantidad = (producto) => {
     // Es una forma de representar la cantidad de productos que se pueden agregar, no es la cantidad real que viene del stock del backend
-    const cantidad = producto.stock.cantidad ?? 0;
+    const cantidad = producto.stock.cantidad;
     const stockProductoCarrito =
       carrito?.find((prod) => prod.id === producto.id)?.cantidad ?? 0;
     return cantidad - stockProductoCarrito;
