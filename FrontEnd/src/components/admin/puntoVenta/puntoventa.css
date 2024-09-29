@@ -11,11 +11,12 @@
 
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+  grid-template-rows: 220px;
+  grid-auto-rows: 220px;
   gap: 20px;
 
 }
 .producto {
-  
 
   display: flex;
   text-align: center;
@@ -23,21 +24,26 @@
   padding: 0;
   margin: 0;
   outline: 2px solid #ccc;
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 5px 5px;
   background: rgb(255, 255, 255);
   max-width: 270px;
+  overflow: hidden;
   position: relative;
 }
 .producto-img {
   width: 100%;
-  height: 150px;
+  height: 65%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding-top: 5px;
 }
 .producto-img > img {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1/1;
   object-fit: contain;
   width: 100%;
-  height: inherit;
+  height: 100%;
+  
   
 
 }
@@ -45,6 +51,9 @@
   box-shadow: 0 0 5px 5px rgba(231, 231, 231, 0.5);
   animation: zoomAnim3 0.3s forwards;
 
+}
+.producto-info {
+  height: 25%;
 }
 .producto-info > p {
   white-space: nowrap; /* Asegura que el texto se mantenga en una sola línea */
@@ -58,11 +67,8 @@
   filter: grayscale(90%)
 }
 .icono-informativo {
-  font-size: 19px;
-  width: 25px;
-  height: 25px;
-  color: #ff7272;
-  opacity: 0.8;
+
+  margin: 5px 5px 0 0 ;
   position: absolute;
   top: 0px;
   right: 0px;
@@ -70,18 +76,17 @@
   justify-self: center;
   z-index: 10;
   display: flex;
-
-
 }
 .btn-agregar {
-  flex-direction: column;
+  display: flex;
+  justify-self: end;
 }
 .btn-agregar > button {
 
   background: #1bc4ee;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to bottom, #1bc4ee, #009FC7);  /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to bottom, #1bc4ee, #0784a3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  opacity: 0.9;
+
 
   width: 100%;
   color: white;

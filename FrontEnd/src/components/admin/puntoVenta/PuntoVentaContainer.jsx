@@ -67,7 +67,7 @@ export const PuntoVentaContainer = () => {
         ) : (
           <ValidarProductos productos={productos} modoTabla={modoTabla} />
         )}
-        <PaginacionProductos cantidad={cantidad} />
+        <PaginacionProductos cantidad={cantidad ?? 1} />
       </section>
     </div>
   );

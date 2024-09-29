@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from PIL import Image
+from django.core.files.base import ContentFile
+from io import BytesIO
 from django.db.models import JSONField # para campos JSON en la base de datos de SQLite
 # en caso de utilizar postgresql, se debe importar de la siguiente manera:
 # from django.contrib.postgres.fields import JSONField
@@ -43,7 +45,33 @@ class Producto(models.Model):
     proveedor = models.ForeignKey('Proveedor', on_delete=models.CASCADE) # esto quiere decir que un producto pertenece a un proveedor y un proveedor puede tener muchos productos
     estado = models.BooleanField(default=True)
     hash = models.CharField(max_length=255, default='Sin hash')
-    # Otros campos relacionados con el producto
+   
+    # Redefinir el método save para redimensionar la imagen antes de guardarla
+    def save(self, *args, **kwargs):
+        """
+        Redimensiona la imagen antes de guardarla y reduce su calidad.
+        """
+        if self.imagen:
+            img = Image.open(self.imagen)
+            max_size = (800, 800)  # Dimensiones máximas permitidas en píxeles (ancho x alto)
+
+            if img.mode == 'RGBA':
+                # Crear una imagen de fondo blanco
+                background = Image.new('RGB', img.size, (255, 255, 255))
+                background.paste(img, (0, 0), img)
+                img = background
+
+            if img.height > max_size[0] or img.width > max_size[1]:
+                img.thumbnail(max_size, Image.LANCZOS)  # Usar Image.LANCZOS en lugar de Image.ANTIALIAS
+            
+            output = BytesIO()
+            img.save(output, format='JPEG', quality=70, optimize=True)  # Ajusta la calidad y optimiza la imagen
+            output.seek(0)
+            self.imagen = ContentFile(output.read(), name=self.imagen.name)
+        
+        super().save(*args, **kwargs)
+
+
     def __str__(self):
         return '{0} - {1} - {2}'.format(self.nombre, self.categoria, self.id)
 class Categoria(models.Model):

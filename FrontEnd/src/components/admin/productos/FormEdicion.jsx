@@ -48,7 +48,7 @@ export const FormEdicion = ({ cerrarModal, producto, categorias }) => {
       }
     }
     cargarProveedores();
-  })
+  }, [])
   const idFormAdmin = useId(); // buena practica para generar id unicos
   const enviarFormulario = async (event) => {
     event.preventDefault();

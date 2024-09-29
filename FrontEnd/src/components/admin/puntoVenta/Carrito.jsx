@@ -2,17 +2,21 @@ import { useState, useEffect, useContext, useRef } from "react";
 import { MagicMotion } from "react-magic-motion";
 import { Modal } from "react-bootstrap";
 import { FormRegistroCliente } from "./FormRegistroCliente";
+
 import { ListaClientes } from "./ListaClientes";
 import { ClientesContext } from "../../../context/ClientesContext";
 import { CarritoContext } from "../../../context/CarritoContext";
 import { ProductosContext } from "../../../context/ProductosContext";
+
 import { VentasContext } from "../../../context/VentasContext";
 import { toast } from "react-hot-toast";
 import useTransformarDatosVenta from "../../../hooks/useTransformarDatosVenta";
 import { useSearchParams } from "react-router-dom";
+
 import "./puntoventa.css";
 import { debounce } from "lodash";
 import Swal from "sweetalert2";
+import { CartOutlineX } from '../../ui/svg/CartSvg'
 export const Carrito = () => {
   const [showModal, setShowModal] = useState(false);
   const [showListModal, setShowListModal] = useState(false);
@@ -93,6 +97,7 @@ export const Carrito = () => {
     } else if (type === "info") {
       toast(message, { id: "update cart", icon: "🛒" });
     } else if (type === "error") {
+      toast.dismiss({ id: "update cart" });
       toast.error(message, { id: "update cart" });
     } else {
       toast.dismiss({ id: "update cart" });
@@ -209,17 +214,18 @@ export const Carrito = () => {
                         name="unidades"
                         className="unidades-producto"
                         onChange={(e) => {
-                          if (e.target.value > 99) {
-                            e.target.value = e.target.value.slice(0, 2);
-                          }
+                          // Nota: el valor de un input siempre es un string, por lo que se debe convertir a entero
+
                           debounceActualizarCarrito(
                             producto.id,
-                            e.target.value
+                            parseInt(e.target.value)
                           );
                         }}
                         min="0"
                         max="99"
-                        value={producto.cantidad !== 0 ? producto.cantidad : ""}
+                        value={
+                          producto.cantidad !== 0 ? producto.cantidad : "0"
+                        }
                       />
 
                       <p className="mb-0">
@@ -250,8 +256,8 @@ export const Carrito = () => {
             </div>
           ))}
           {carrito?.length === 0 && (
-            <div className="text-center" style={{ fontSize: "150px" }}>
-              <i className="bi bi-cart-x"></i>
+            <div className="d-flex justify-content-center align-items-center pt-2">
+             <CartOutlineX width={150} height={150} fill="black" />
             </div>
           )}
         </div>

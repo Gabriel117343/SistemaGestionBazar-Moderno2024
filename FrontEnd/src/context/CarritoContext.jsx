@@ -1,4 +1,4 @@
-import { useState, createContext, useEffect } from "react";
+import { useState, createContext, useEffect, useRef } from "react";
 
 export const CarritoContext = createContext();
 
@@ -11,14 +11,15 @@ const MENSAJES_CARRITO = {
   restar: "Se redujo la cantidad en el carrito",
   actualizar: "Cantidad actualizada correctamente!",
   vaciar: "Carrito vaciado!",
-  maximo_alcanzado: "Se ha alcanzado el máximo de productos en el carrito!",
+  maximo_alcanzado: "Se ha alcanzado el total de stock disponible!",
+  longitud_maxima: "La longitud máxima es de 99",
 };
 
 export const CarritoProvider = ({ children }) => {
   const initialState = JSON.parse(localStorage.getItem("carrito")) || [];
 
   const [carrito, setCarrito] = useState(initialState);
-
+  const stockRef = useRef();
   // mantener el estado haún cuando se recargue la página
   useEffect(() => {
     localStorage.setItem("carrito", JSON.stringify(carrito));
@@ -26,10 +27,11 @@ export const CarritoProvider = ({ children }) => {
 
   const agregarProductoCarrito = (producto) => {
     const productoEnCarrito = carrito.find((prod) => prod.id === producto.id);
+
     const productoConStock =
       producto.stock.cantidad - (productoEnCarrito?.cantidad ?? 0);
 
-    if (productoConStock <= 0 || productoConStock === undefined) {
+    if (productoConStock <= 0) {
       return { success: false, message: MENSAJES_CARRITO.agregar_error };
     } else if (productoEnCarrito) {
       const productoActualizado = carrito.map((prod) => {
@@ -77,8 +79,15 @@ export const CarritoProvider = ({ children }) => {
   };
 
   const actualizarCantidadCarrito = (productoId, cantidad) => {
+    // Validar cantidad máxima
+    if (cantidad > 99) {
+      return { type: "error", message: MENSAJES_CARRITO.longitud_maxima };
+    }
 
-    if (cantidad === 0 || cantidad.trim() === "") {
+    // Validar cantidad cero o NaN
+    if (cantidad === 0 || isNaN(cantidad)) {
+      if (stockRef?.current === 0) return { type: "none", message: "" };
+      stockRef.current = 0;
       const newCarrito = carrito.map((prod) => {
         if (prod.id === productoId) {
           prod.cantidad = 0;
@@ -89,35 +98,45 @@ export const CarritoProvider = ({ children }) => {
       });
 
       setCarrito(newCarrito);
-      return { type: "", message: "" };
+      return { type: "none", message: "" };
     }
 
+    // Encontrar producto en el carrito
     const productoEnCarrito = carrito.find((prod) => prod.id === productoId);
+    if (!productoEnCarrito) {
+      return { type: "error", message: "Producto no encontrado" };
+    }
 
+    // Calcular stock restante
     const productoConStock = productoEnCarrito.stock.cantidad - cantidad;
+    const cantidadMaximaAlcanzada = cantidad === productoEnCarrito.cantidad;
 
-    const cantidadMaximaAlcanzada =
-      parseInt(cantidad) === productoEnCarrito.cantidad;
-
+    // Manejar caso de stock insuficiente
     if (productoConStock <= 0 && !cantidadMaximaAlcanzada) {
-      // para agregar el todo el stock disponible en caso de que la cantidad sea mayor al stock, mejora la experiencia de usuario
+      // si ya se ha agregado el máximo de stock disponible no se puede agregar más
+      if (stockRef.current === productoEnCarrito.stock.cantidad) {
+        return { type: "info", message: MENSAJES_CARRITO.maximo_alcanzado };
+      }
 
+      // Agrega todo el stock disponible al carrito en caso se intente agregar más de lo que hay, pero no se ha alcanzado el máximo, mejora la experiencia de usuario
       const productoActualizado = carrito.map((prod) => {
         if (prod.id === productoId) {
           prod.cantidad = prod.stock.cantidad;
-
+          stockRef.current = prod.stock.cantidad;
           return prod;
         } else {
           return prod;
         }
       });
+
       setCarrito(productoActualizado);
       return { type: "info", message: MENSAJES_CARRITO.maximo_alcanzado };
     } else if (productoConStock > 0) {
- 
+      // Actualizar cantidad en el carrito
       const productoActualizado = carrito.map((prod) => {
         if (prod.id === productoId) {
           prod.cantidad = cantidad;
+          stockRef.current = cantidad;
           return prod;
         } else {
           return prod;
