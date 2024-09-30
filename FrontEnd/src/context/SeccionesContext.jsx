@@ -10,6 +10,8 @@ export const SeccionesProvider = ({ children }) => {
   const initialState = {
     secciones: [],
     cantidad: 0,
+    page: 0,
+    page_size: 0,
     seccionSeleccionada: null
   } // estado inicial de los secciones para el Reducer de los secciones
   const [stateSeccion, dispatch] = useReducer(SeccionesReducer, initialState) // 
@@ -24,7 +26,9 @@ export const SeccionesProvider = ({ children }) => {
             type: 'GET_SECCIONES',
             payload: {
               secciones: res.data.results,
-              cantidad: res.data.count
+              cantidad: res.data.count,
+              page: parametrosConsulta.page,
+              page_size: parametrosConsulta.page_size
             }
           })
           return ({ success: true, message: res.data.message })

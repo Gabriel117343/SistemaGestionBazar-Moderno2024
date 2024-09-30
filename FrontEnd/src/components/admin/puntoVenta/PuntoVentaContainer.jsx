@@ -11,7 +11,6 @@ import { PaginacionProductos } from "./PaginacionProductos";
 
 import CargaDeDatos from "../../../views/CargaDeDatos";
 import "./puntoventa.css";
-
 const TOTAL_SECTIONS_SHOW = {
   page: 1,
   page_size: 20,

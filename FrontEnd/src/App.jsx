@@ -90,14 +90,14 @@ function App() {
       }
       setTimeout(() => {
         setLoading(false);
-      }, 1000);
+      }, 100);
     } else {
       if (isAuth === false) {
         validarSesion();
       } else {
         setTimeout(() => {
           setLoading(false);
-        }, 1000);
+        }, 100);
       }
     }
   }, [isAuth]);

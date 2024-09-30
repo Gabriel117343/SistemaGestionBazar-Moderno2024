@@ -8,7 +8,9 @@ export const SeccionesReducer = (stateSeccion, action) => {
       return {
         ...stateSeccion,
         secciones: payload.secciones,
-        cantidad: payload.cantidad
+        cantidad: payload.cantidad,
+        page: payload.page,
+        page_size: payload.page_size
       }
     case 'GET_SECCION':
       return {
