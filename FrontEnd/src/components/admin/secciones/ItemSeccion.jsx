@@ -1,6 +1,7 @@
 import React from "react";
 
 export const ItemSeccion = ({ seccion, contador, editar, borrar }) => {
+
   return (
     <tr>
       <td scope="row">{contador}</td>

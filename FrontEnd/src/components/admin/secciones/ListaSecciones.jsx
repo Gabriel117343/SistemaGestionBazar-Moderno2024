@@ -14,7 +14,7 @@ const MostrarSecciones = ({
   const calcularContador = (index) => {
     return (currentPage - 1) * pageSize + index + 1;
   };
-
+  console.log('renderizando MostrarSecciones')
   return (
     <>
       <table

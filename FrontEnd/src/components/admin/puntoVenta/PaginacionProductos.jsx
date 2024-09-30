@@ -24,7 +24,7 @@ export const PaginacionProductos = ({ cantidad }) => {
       parametrosDeConsulta();
 
     setSearchParams({
-      ...searchParams,
+      // ...searchParams,
       page: newPage,
       page_size: page_size,
       incluir_inactivos: incluir_inactivos,

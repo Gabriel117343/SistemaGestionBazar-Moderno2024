@@ -66,7 +66,7 @@ export const FormEdicion = ({ cerrarModal, seccion, actualizarSeccion }) => {
           style={{ maxHeight: "180px" }}
           className="form-control"
           name="descripcion"
-          id=""
+          id="descripcion"
           cols="30"
           rows="10"
           defaultValue={descripcion}

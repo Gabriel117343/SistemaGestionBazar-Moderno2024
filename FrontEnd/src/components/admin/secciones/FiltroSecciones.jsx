@@ -36,7 +36,7 @@ export const FiltroSecciones = ({
         name="orden"
         className="form-select w-auto"
         onChange={(e) => cambiarOrden(e.target.value)}
-        defaultValue={searchParams.get("orden") ?? ""}
+        value={searchParams.get("orden") ?? ""}
       >
         <option value="">Ninguno</option>
         {ordenPorSecciones.map((option) => (

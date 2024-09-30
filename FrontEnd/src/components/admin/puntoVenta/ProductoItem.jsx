@@ -62,11 +62,13 @@ export const ProductoItemPrimary = ({
 
 export const ProductoItemSecondary = ({
   producto,
+  contador,
   cantidadCalculada,
   agregarProducto,
 }) => {
   return (
     <tr>
+      <td>{contador}</td>
       <td>{producto.nombre}</td>
       <td className="text-success precio-num">${producto.precio}</td>
       <td className={`${cantidadCalculada === 0 ? "text-danger" : ""}`}>

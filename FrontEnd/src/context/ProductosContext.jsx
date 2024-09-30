@@ -10,6 +10,7 @@ export const ProductosProvider = ({ children }) => {
   const initialState = {
     productos: [],
     cantidad: 0,
+    page: 0,
     page_size: 0,
     productoSeleccionado: null
   } // estado inicial de los productos para el Reducer de los productos
@@ -21,16 +22,18 @@ export const ProductosProvider = ({ children }) => {
  
   const getProductosContext = async (props) => {
     '|incluir_inactivos|filtro|page|page_size|seccion|categoria|orden'
-
+ 
     try {
       const res = await getAllProductos(props) // res para referenciarse al response del servidor
-
+      console.log({ res })
       if (res.status === 200) {
         dispatch({
           type: 'GET_PRODUCTOS',
           payload: {
             productos: res.data.results,
             cantidad: res.data.count,
+            page: props.page,
+            page_size: props.page_size
 
           },
         });

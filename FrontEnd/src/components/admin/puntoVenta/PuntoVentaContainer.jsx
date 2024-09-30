@@ -19,7 +19,7 @@ const TOTAL_SECTIONS_SHOW = {
 
 export const PuntoVentaContainer = () => {
   const {
-    stateProducto: { productos, cantidad },
+    stateProducto: { productos, cantidad, page, page_size },
   } = useContext(ProductosContext);
 
   const {
@@ -65,9 +65,9 @@ export const PuntoVentaContainer = () => {
         {isLoading ? (
           <CargaDeDatos />
         ) : (
-          <ValidarProductos productos={productos} modoTabla={modoTabla} />
+          <ValidarProductos productos={productos} modoTabla={modoTabla} paginaActual={page} tamanoPagina={page_size} />
         )}
-        <PaginacionProductos cantidad={cantidad ?? 1} />
+        <PaginacionProductos cantidad={cantidad} />
       </section>
     </div>
   );

@@ -6,7 +6,7 @@ import { CarritoContext } from "../../../context/CarritoContext";
 import { ProductoItemPrimary, ProductoItemSecondary } from "./ProductoItem";
 import "./puntoventa.css";
 
-export const ListaProductos = ({ productos, modoTabla }) => {
+export const ListaProductos = ({ productos, modoTabla, paginaActual, tamanoPagina }) => {
   const { carrito, agregarProductoCarrito } = useContext(CarritoContext);
   console.log('render')
   const agregarProducto = async (producto) => {
@@ -19,7 +19,7 @@ export const ListaProductos = ({ productos, modoTabla }) => {
       toast.error(message, { id: "loading" });
     }
   };
-
+  console.log({ paginaActual, tamanoPagina })
   const calcularCantidad = (producto) => {
     // Es una forma de representar la cantidad de productos que se pueden agregar, no es la cantidad real que viene del stock del backend
     const cantidad = producto.stock.cantidad;
@@ -27,6 +27,10 @@ export const ListaProductos = ({ productos, modoTabla }) => {
       carrito?.find((prod) => prod.id === producto.id)?.cantidad ?? 0;
     return cantidad - stockProductoCarrito;
   };
+  const calcularContador = (index) => {
+
+    return (paginaActual - 1) * tamanoPagina + index + 1;
+  }
 
   return (
     <>
@@ -34,6 +38,7 @@ export const ListaProductos = ({ productos, modoTabla }) => {
         <table className="table table-striped table-hover table-bordered mt-2">
           <thead>
             <tr>
+              <th>#</th>
               <th>Nombre</th>
               <th>Precio</th>
               <th>Stock</th>
@@ -42,9 +47,10 @@ export const ListaProductos = ({ productos, modoTabla }) => {
           </thead>
           <tbody>
             <MagicMotion>
-              {productos?.map((producto) => (
+              {productos?.map((producto, index) => (
                 <ProductoItemSecondary
                   key={producto.id}
+                  contador={calcularContador(index)}
                   producto={producto}
                   cantidadCalculada={calcularCantidad(producto)}
                   agregarProducto={agregarProducto}
