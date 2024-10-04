@@ -1,5 +1,6 @@
 import { useSearchParams } from "react-router-dom";
-import { paginaPuntoVenta } from "@constants/defaultParams";
+import { paginaPuntoVenta } from "@constants/defaultParams"; // parametros por defecto para la paginación
+
 // HOOK PERSONALIZADO CON TECNICAS AVANZADAS PARA MANEJAR LOS PARAMETROS DE BUSQUEDA DE LOS PRODUCTOS
 
 export const useProductosSearchParams = () => {
@@ -28,7 +29,8 @@ export const useProductosSearchParams = () => {
 
   const actualizarParametros = (newParams = {}, skipParams = {}) => {
     // se recibe como parametro un objeto por ej: { filtro: 'nuevoFiltro', categoria: 'nuevaCategoria' }
-    if (Object.keys(newParams).length === 0) return;
+    
+    if (Object.keys(obj).length === 0) return setSearchParams(); // significa que se quiere limpiar los parametros de busqueda
     const {
       page,
       page_size,
