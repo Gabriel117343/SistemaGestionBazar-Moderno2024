@@ -6,7 +6,7 @@ const CategoriaFilter = ({ filtrarPorCategoria, searchParams }) => {
     <div className="col-md-3 d-flex justify-content-center align-items-center gap-2">
       <label htmlFor="categoriaSelect">Categoría </label>
       <CategoriaSelect
-        parametroCategoria={searchParams.get("categoria") ?? 'Todas'}
+        parametroCategoria={searchParams.get("categoria") ?? 'all'}
         filtroCategoria={filtrarPorCategoria}
         id="categoriaSelect"
       />

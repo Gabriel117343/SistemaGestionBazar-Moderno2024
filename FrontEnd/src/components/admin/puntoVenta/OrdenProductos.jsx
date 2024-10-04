@@ -25,7 +25,7 @@ const OrdenProductos = ({
         onChange={(e) => handleOrdenarChange(e.target.value)}
         value={searchParams.get("orden") ?? ""}
       >
-        <option value="">Ninguno</option>
+        <option value="all">Ninguno</option>
         {ordenPorProductosVenta.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
