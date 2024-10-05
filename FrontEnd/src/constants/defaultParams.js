@@ -9,7 +9,7 @@ export const paginaPuntoVenta = {
     incluir_inactivos: false,
   },
   opcionales: {
-    categoria: "all",
+    categoria: 0,
     orden: "all",
     seccion: "all",
     filtro: "",

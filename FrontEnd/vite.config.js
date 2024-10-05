@@ -16,8 +16,10 @@ export default defineConfig({
     }
   },
   build: {
+    globals: true,
     outDir: 'dist', // Especifica el directorio de salida para la construcción
     assetsDir: 'assets', // Especifica el directorio de salida para los activos (relativo al directorio de salida)
+    setupFiles: './vite.setup.js',
   },
   test: {
     globals: true,
