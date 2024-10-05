@@ -129,6 +129,7 @@ export const FiltroProductos = ({
           filtroActual={filtro}
           cambiarModo={cambiarModo}
         />
+        
         <OrdenProductos
           handleOrdenarChange={handleOrdenarChange}
           ordenActual={orden}
@@ -138,6 +139,7 @@ export const FiltroProductos = ({
       </div>
       <SeccionFilter
         filtrarPorSeccion={filtrarPorSeccion}
+        resetearFiltro={limpiarParametros}
         productos={productos}
         secciones={secciones}
         pageSizeActual={page_size}
