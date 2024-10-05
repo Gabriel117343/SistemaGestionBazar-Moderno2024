@@ -2,9 +2,18 @@
 
 
 export const paginaPuntoVenta = {
-  page: 1,
-  page_size: 10,
-  incluir_inactivos: false,
+
+  mandatorios: {
+    page: 1,
+    page_size: 10,
+    incluir_inactivos: false,
+  },
+  opcionales: {
+    categoria: "all",
+    orden: "all",
+    seccion: "all",
+    filtro: "",
+  }
 }
 export const paginaProductos = {
   page: 1,

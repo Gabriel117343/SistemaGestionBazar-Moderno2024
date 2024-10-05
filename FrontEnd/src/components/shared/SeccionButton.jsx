@@ -24,7 +24,7 @@ export const SeccionButton = ({
       {secciones?.map((seccion) => (
         <div key={seccion.id} className="seccion">
           <button
-            onClick={() => filtrarPorSeccion({ idSeccion: seccion.id })}
+            onClick={() => filtrarPorSeccion(seccion.id)}
             className={`btn-seleccion ${verificarCoincidencia(seccion.numero)}`}
           >
             {seccion.nombre}

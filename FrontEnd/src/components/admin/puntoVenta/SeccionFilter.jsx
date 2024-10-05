@@ -1,13 +1,13 @@
 import React from "react";
 import { SeccionButton } from "../../shared/SeccionButton";
 
-const SeccionFilter = ({ filtrarPorSeccion, productos, secciones, searchParams }) => {
+const SeccionFilter = ({ filtrarPorSeccion, productos, secciones, pageSizeActual }) => {
   return (
     <div className="pb-1 d-flex gap-1 contenedor-secciones">
       <button
-        onClick={filtrarPorSeccion}
+        onClick={() => filtrarPorSeccion("all")}
         className={`btn-seleccion ${
-          productos?.length === parseInt(searchParams.get("page_size"))
+          productos?.length === parseInt(pageSizeActual)
             ? "btn-filtro"
             : ""
         }`}
@@ -18,7 +18,7 @@ const SeccionFilter = ({ filtrarPorSeccion, productos, secciones, searchParams }
         filtrarPorSeccion={filtrarPorSeccion}
         productos={productos}
         secciones={secciones}
-        productosPorPagina={parseInt(searchParams.get("page_size"))}
+        productosPorPagina={parseInt(pageSizeActual)}
       />
     </div>
   );

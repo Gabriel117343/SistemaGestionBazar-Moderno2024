@@ -1,4 +1,4 @@
-# Documentación del Hook `useCalculoDatosVenta`
+# Documentación del Hook `useTransformarDatosVenta`
 
 ## Descripción
 Este Hook sera útil para generar los datos tranformados sobre la información de las ventas, con el fin de ser enviados al Backend(django) para ser `Transformados`, poder recibirlos nuevamente en el FrotEnd y usarlos para mostrar Graficos de las ventas Historicas.

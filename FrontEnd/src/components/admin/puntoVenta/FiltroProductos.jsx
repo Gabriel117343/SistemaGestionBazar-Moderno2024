@@ -4,7 +4,7 @@ import SearchFilter from "./SearchFilter";
 import SeccionFilter from "./SeccionFilter";
 import OrdenProductos from "./OrdenProductos";
 
-import { debounce, orderBy } from "lodash";
+import { debounce } from "lodash";
 import useCalculoProductosMostrar from "../../../hooks/useCalculoProductosMostrar";
 import { toast } from "react-hot-toast";
 
@@ -12,7 +12,7 @@ import { paginaPuntoVenta } from "@constants/defaultParams";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { ProductosContext } from "../../../context/ProductosContext";
 
-import { useProductosSearchParams } from "../../../hooks/useProductosSearchParams";
+import { useMagicSearchParams } from "../../../hooks/useMagicSearchParams";
 
 export const FiltroProductos = ({
   componenteProductosRef,
@@ -26,14 +26,18 @@ export const FiltroProductos = ({
   const { sidebar } = useContext(SidebarContext);
   const calcularProductosMostrar = useCalculoProductosMostrar();
 
-  const { searchParams, obtenerParametros, actualizarParametros } =
-    useProductosSearchParams();
+  const { mandatorios, opcionales } = paginaPuntoVenta;
+  const {
+    searchParams,
+    obtenerParametros,
+    actualizarParametros,
+    limpiarParametros,
+  } = useMagicSearchParams({
+    mandatory: mandatorios,
+    optional: opcionales,
+  });
 
   const buscadorRef = useRef(null);
-
-  const actualizarPageSize = (newPageSize) => {
-    actualizarParametros({ page_size: newPageSize.page_size });
-  };
 
   useEffect(() => {
     async function calcular() {
@@ -48,8 +52,8 @@ export const FiltroProductos = ({
         console.log("Se mantiene el tamaño de la página");
         return;
       }
-    
-      actualizarPageSize({ page_size: newPageSize });
+      const params = { page_size: newPageSize };
+      actualizarParametros({ newParams: params, keepParams: {} });
     }
     calcular();
   }, [sidebar]);
@@ -60,7 +64,7 @@ export const FiltroProductos = ({
       if (!searchParams.get("page_size")) return;
       toast.loading("Cargando productos...", { id: "loading" });
       const parametros = obtenerParametros();
-      console.log({parametrosBuscandos: parametros})
+      console.log({ parametrosBuscandos: parametros });
       const { success, message } = await getProductosContext(parametros);
       if (success) {
         toast.success(message ?? "Productos cargados", { id: "loading" });
@@ -76,56 +80,58 @@ export const FiltroProductos = ({
   }, [searchParams]);
 
   // Event handlers
-  const filtrarPorCategoria = ({ idCategoria = "" }) => {
+  const filtrarPorCategoria = (idCategoria = "") => {
     buscadorRef.current.value = "";
-    const value = idCategoria === "all" ? "" : idCategoria;
-    actualizarParametros({
-      page: 1,
-      categoria: value,
-    }, { filtro: true });
+
+    const newSearch = { page: 1, categoria: idCategoria };
+
+    actualizarParametros(
+      { newParams: newSearch },
+      { keepParams: { filtro: false } } // indica que no se desea mantener el filtro de búsqueda
+    );
   };
 
-  const filtrarPorSeccion = ({ idSeccion = "" }) => {
-    actualizarParametros({
-      page: 1,
-      seccion: idSeccion,
-    });
+  const filtrarPorSeccion = (idSeccion = "") => {
+    const newSearch = { page: 1, seccion: idSeccion };
+    actualizarParametros({ newParams: newSearch });
   };
 
   const filtrarPorNombre = (filtro) => {
-    actualizarParametros({
-      page: 1,
-      filtro: filtro,
-    });
+    const filtroLimpio = filtro.trim();
+
+    actualizarParametros({ newParams: { page: 1, filtro: filtroLimpio } });
   };
   const debounceFiltrarPorNombre = debounce(filtrarPorNombre, 400);
 
   const handleOrdenarChange = (selectedOption = "") => {
     buscadorRef.current.value = "";
 
-    const value = selectedOption === "all" ? "" : selectedOption;
+    const newSearch = { page: 1, orden: selectedOption };
+
     actualizarParametros({
-      page: 1,
-      orden: value,
-    }, { filtro: true });
+      newParams: newSearch,
+      keepParams: { filtro: false },
+    });
   };
+  // es mejor acceder a los parametros de la URL una sola vez en vez de pasar el searchParams como prop y acceder de esta forma: searchParams.get("categoria")
+  const { categoria, filtro, orden, page_size } = obtenerParametros();
   return (
     <>
       <div className="row pb-1">
         <CategoriaFilter
           filtrarPorCategoria={filtrarPorCategoria}
-          searchParams={searchParams}
+          categoriaActual={categoria}
         />
         <SearchFilter
           buscadorRef={buscadorRef}
           debounceFiltrarPorNombre={debounceFiltrarPorNombre}
           handleOrdenarChange={handleOrdenarChange}
-          searchParams={searchParams}
+          filtroActual={filtro}
           cambiarModo={cambiarModo}
         />
         <OrdenProductos
           handleOrdenarChange={handleOrdenarChange}
-          searchParams={searchParams}
+          ordenActual={orden}
           cambiarModo={cambiarModo}
           modoTabla={modoTabla}
         />
@@ -134,7 +140,7 @@ export const FiltroProductos = ({
         filtrarPorSeccion={filtrarPorSeccion}
         productos={productos}
         secciones={secciones}
-        searchParams={searchParams}
+        pageSizeActual={page_size}
       />
     </>
   );

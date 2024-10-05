@@ -2,12 +2,14 @@ import { useRef } from "react";
 
 // Nota: llamar este hook solo dentro de un useEffect o una funcion asincrona dado que espera una referencia a un componente del DOM
 // Espera una promesa que resuelve un numero entero antes de que se llame a una api para especificar total de productos que se solicitaran. (parametros de consulta)
+
 function useCalculoProductosMostrar() {
   const prevSidebarRef = useRef(null);
 
   // tamaños segun la cuadricula grid de los productos
   const productoWidth = 175;
-  const gap = 20;
+  const gapX = 20;
+  const gapY = 20;
   const productoHeight = 220;
 
   // requerido el contexto de la barra lateral (true o false)
@@ -30,8 +32,8 @@ function useCalculoProductosMostrar() {
           const { width, height } =
             componenteRef.current.getBoundingClientRect();
 
-          const sumaGapProductoWidth = (Math.floor(width / productoWidth) - 1) * gap;
-          const sumaGapProductoHeight = (Math.floor(height / productoHeight) - 1) * gap;
+          const sumaGapProductoWidth = (Math.floor(width / productoWidth) - 1) * gapX;
+          const sumaGapProductoHeight = (Math.floor(height / productoHeight) - 1) * gapY;
 
           const columnas = Math.floor(
             (width - sumaGapProductoWidth) / productoWidth

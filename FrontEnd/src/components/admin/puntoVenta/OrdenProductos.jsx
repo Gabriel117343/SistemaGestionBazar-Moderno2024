@@ -2,7 +2,7 @@ import { ordenPorProductosVenta } from "@constants/defaultOptionsFilter";
 import { ButtonRefresh } from "../../shared/ButtonSpecialAccion";
 const OrdenProductos = ({
   handleOrdenarChange,
-  searchParams,
+  ordenActual,
   cambiarModo,
   modoTabla,
 }) => {
@@ -10,9 +10,9 @@ const OrdenProductos = ({
     <div className="col-md-4 d-flex justify-content-end align-items-center gap-2">
       <label htmlFor="orden">Orden:</label>
 
-      {!searchParams.get("orden") && <i className="bi bi-arrow-down-up"></i>}
+      {!ordenActual && <i className="bi bi-arrow-down-up"></i>}
       {ordenPorProductosVenta.map((option) => {
-        const ordenActual = searchParams.get("orden") ?? "";
+ 
         if (option.value === ordenActual) {
           return <i key={option.value} className={option.classIcon} />;
         }
@@ -23,7 +23,7 @@ const OrdenProductos = ({
         name="orden"
         className="form-select"
         onChange={(e) => handleOrdenarChange(e.target.value)}
-        value={searchParams.get("orden") ?? ""}
+        value={ordenActual ?? ""}
       >
         <option value="all">Ninguno</option>
         {ordenPorProductosVenta.map((option) => (

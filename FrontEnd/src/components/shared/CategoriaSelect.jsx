@@ -6,7 +6,6 @@ import { toast } from 'react-hot-toast';
 export const CategoriaSelect = forwardRef(({ filtroCategoria, parametroCategoria, id }, ref) => {
   const { categorias, geAllCategoriasStore } = useCategoriaStore();
 
-  console.log({categoriaParam: parametroCategoria})
   useEffect(() => {
     async function cargarCategorias() {
       const { success, message } = await geAllCategoriasStore();
@@ -24,7 +23,7 @@ export const CategoriaSelect = forwardRef(({ filtroCategoria, parametroCategoria
       className="form-control"
       name="categoria"
       id={id ?? "categoriaSelect"}
-      onChange={(e) => filtroCategoria({ idCategoria: e.target.value })}
+      onChange={(e) => filtroCategoria(e.target.value)}
       value={parametroCategoria} // persistira el valor haún cuando se recargue la pagina gracias a los parametros de busqueda
     >
       <option value="all">Todas</option>

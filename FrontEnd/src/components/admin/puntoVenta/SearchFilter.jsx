@@ -4,7 +4,7 @@ import { InputSearch } from "../../shared/InputSearch";
 const SearchFilter = ({
   buscadorRef,
   debounceFiltrarPorNombre,
-  searchParams,
+  filtroActual,
 }) => {
   // Nota: no se establece el filtro en el "value", ya que hay un debounce que se encarga de actualizar el filtro
   // y eso retrazaria la actualización del input mientras se escribe
@@ -17,7 +17,7 @@ const SearchFilter = ({
       <InputSearch
         ref={buscadorRef}
         id="filtro"
-        defaultValue={searchParams.get("filtro")}
+        defaultValue={filtroActual ?? ""}
         placeholder="Ej: Arroz Miraflores"
         onChange={(e) => debounceFiltrarPorNombre(e.target.value)}
       />
