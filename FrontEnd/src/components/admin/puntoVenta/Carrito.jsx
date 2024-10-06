@@ -177,7 +177,7 @@ export const Carrito = () => {
   const debounceAgregarProducto = debounce(agregarProducto, 100);
   const debounceActualizarCarrito = debounce(actualizarCarrito, 50);
   return (
-    <div className="col-md-4">
+    <>
       <MagicMotion name="carrito" duration={0.5}>
         <div className="container-carrito">
           {carrito?.map((producto) => (
@@ -350,6 +350,6 @@ export const Carrito = () => {
           />
         </Modal.Body>
       </Modal>
-    </div>
+    </>
   );
 };

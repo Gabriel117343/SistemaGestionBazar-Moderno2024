@@ -52,7 +52,7 @@ export const PuntoVentaContainer = () => {
   };
 
   return (
-    <div className="col-md-8">
+    <>
       <FiltroProductos
         secciones={secciones}
         setIsLoading={setIsLoading}
@@ -71,6 +71,6 @@ export const PuntoVentaContainer = () => {
         )}
         <PaginacionProductos cantidad={cantidad} />
       </section>
-    </div>
+    </>
   );
 };

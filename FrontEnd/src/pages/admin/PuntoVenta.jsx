@@ -1,6 +1,8 @@
 import { Suspense, lazy } from "react";
 import { lazyLoad } from "../../utils/lazyLoad.js";
 import LoadingOverlay from "../../views/LoadingOverlay.jsx";
+import Skeleton from "../../components/skeletons/Skeleton.jsx";
+import SkeletonText from "../../components/skeletons/SkeletonText.jsx";
 
 const Carrito = lazyLoad("../components/admin/puntoVenta/Carrito", "Carrito");
 const PuntoVentaContainer = lazyLoad(
@@ -8,17 +10,19 @@ const PuntoVentaContainer = lazyLoad(
   "PuntoVentaContainer"
 );
 
-const GradualSpacing = lazy(() => import("../../components/shared/magic_ui/GradualSpacing.jsx"));
+const GradualSpacing = lazy(
+  () => import("../../components/shared/magic_ui/GradualSpacing.jsx")
+);
 
 import "./stylepages.css";
+import SkeletonCircle from "../../components/skeletons/SkeletonCircle.jsx";
 
 export const PuntoVenta = () => {
   return (
     <>
       <div className="container-fluid">
         <div className="d-flex align-items-center justify-content-left gap-3 pt-2 titulo-page pb-2">
-
-          { /* Mientras se carga el icon y el GradualSpacing se mostrar el h2 */}
+          {/* Mientras se carga el icon y el GradualSpacing se mostrar el h2 */}
           <Suspense fallback={<h2>Realizar Ventas</h2>}>
             <div
               style={{ fontSize: "30px" }}
@@ -28,16 +32,29 @@ export const PuntoVenta = () => {
             </div>
             <GradualSpacing text="Realizar Ventas" className="m-0" type="h2" />
           </Suspense>
-        
         </div>
       </div>
       <section className="d-flex row contenedor-puntoventa">
-        <Suspense fallback={<LoadingOverlay />}>
-          <Carrito />
-          <PuntoVentaContainer />
-        </Suspense>
+        {/* Si un componente carga antes se mostrara inmediatamente */}
+
+        <div className="col-md-4">
+          <Suspense fallback={<Skeleton height="200px" width="100%" />}>
+            <Carrito />
+          </Suspense>
+        </div>
+        <div className="col-md-8">
+          <Suspense
+            fallback={
+              <>
+                <SkeletonText lines={3} gap="8px" />
+                <Skeleton height="400px" width="100%" />
+              </>
+            }
+          >
+            <PuntoVentaContainer />
+          </Suspense>
+        </div>
       </section>
-      x
     </>
   );
 };
