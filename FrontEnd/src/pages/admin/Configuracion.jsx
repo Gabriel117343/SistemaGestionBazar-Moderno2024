@@ -1,4 +1,10 @@
+import { Suspense, lazy } from "react";
+import { lazyLoad } from "../../utils/lazyLoad.js";
+import LoadingOverlay from "../../views/LoadingOverlay.jsx";
+
 import { FormConfiguracionCuenta } from "../../components/admin/configuracion/FormConfiguracionCuenta";
+
+
 import "./stylepages.css";
 import GradualSpacing from "../../components/shared/magic_ui/GradualSpacing";
 export const Configuracion = () => {

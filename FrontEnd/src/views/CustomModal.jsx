@@ -3,7 +3,7 @@ import "./views.css";
 
 // recibe el Header y el Body como hijos
 
-const CustomModal = forwardRef(({ children, show, onHide }, ref) => {
+const CustomModal = forwardRef(({ children, show = false, onHide }, ref) => {
   useEffect(() => {
     if (show) {
       document.body.style.overflow = "hidden";

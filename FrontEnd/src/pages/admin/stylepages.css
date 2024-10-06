@@ -20,10 +20,12 @@
     width: 60px;
     height: 60px;
     color: #555555;
+    opacity: 0.8;
     background: transparent;
 
 }
 .contenedor-puntoventa {
     width: 100%;
     height: 100%;
+  
 }
