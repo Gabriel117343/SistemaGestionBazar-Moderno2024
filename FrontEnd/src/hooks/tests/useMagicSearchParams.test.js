@@ -58,7 +58,7 @@ describe('useMagicSearchParams', () => {
     const { result } = renderHook(() => useMagicSearchParams({ mandatory, optional }));
 
     act(() => {
-      result.current.limpiarParametros();
+      result.current.limpiarParametros({ mantenerParamsUrl: false });
     });
 
     expect(mockSetSearchParams).toHaveBeenCalledWith({
@@ -86,7 +86,7 @@ describe('useMagicSearchParams', () => {
     });
   });
   test('actualizarParametros no actualiza los parámetros cuando no se envían nuevos parámetros ni parámetros a mantener', () => {
-    const mandatory = { page: 1, pageSize: 10 };
+    const mandatory = { page: '1', pageSize: '10' };
     const optional = { filter: '', category: 'all' };
 
     const { result } = renderHook(() => useMagicSearchParams({ mandatory, optional }));
@@ -96,8 +96,28 @@ describe('useMagicSearchParams', () => {
     });
 
     expect(mockSetSearchParams).toHaveBeenCalledWith({
-      page: 1,
-      pageSize: 10,
+      page: '1',
+      pageSize: '10', // siempre se convierten a string por lo que no se espera su valor como número entero a diferencia de obtenerParametros()
     });
   });
+  test('calcularParametrosOmitidos maneja correctamente los parámetros omitidos', () => {
+    const mandatory = { page: 1, pageSize: 10 };
+    const optional = { filter: '', category: 'Tecnologia' };
+
+    const { result } = renderHook(() => useMagicSearchParams({ mandatory, optional }));
+
+    act(() => {
+      result.current.actualizarParametros({
+        newParams: { filter: 'newFilter' },
+        keepParams: { category: false },
+      });
+    });
+
+    expect(mockSetSearchParams).toHaveBeenCalledWith({
+      page: 1,
+      pageSize: 10,
+      filter: 'newFilter',
+    });
+  });
+  
 });

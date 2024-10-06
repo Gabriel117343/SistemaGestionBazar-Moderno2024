@@ -521,11 +521,13 @@ class ProductoView(viewsets.ModelViewSet):
 
         try:
             queryset = self.get_queryset()
+       
             page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
                 paginated_response = self.get_paginated_response(serializer.data)
                 # Modifica el contenido de la respuesta paginada para incluir el mensaje personalizado
+
                 paginated_response.data['message'] = 'Productos obtenidos!'
                 return paginated_response
             serializer = self.get_serializer(queryset, many=True)

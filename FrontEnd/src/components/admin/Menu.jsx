@@ -1,9 +1,11 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { FaBars } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { LoginContext } from "../../context/LoginContext";
 import { SidebarContext } from "../../context/SidebarContext";
 import "./Menu.css";
+
+import { paginaProductos, paginaPuntoVenta, paginaSecciones } from '@constants/defaultParams';
 
 //MENU DE OPCIONES PARA EL ADMINISTRADOR
 export const Menu = ({ children }) => {
@@ -12,6 +14,7 @@ export const Menu = ({ children }) => {
     stateLogin: { usuario, isAuth },
   } = useContext(LoginContext);
   const { cambiarEstadoSidebar, sidebar } = useContext(SidebarContext);
+  const [paramsMandatorios, setParamsMandatorios] = useState([]);
  
   const accionSidebar = () => {
     cambiarEstadoSidebar();
@@ -37,7 +40,15 @@ export const Menu = ({ children }) => {
 
     }
   }, [sidebar]); // Dependencia: el efecto se re-ejecuta cuando cambia el estado de sidebarAbierto
-  
+
+
+
+  const asignarParametrosUrl = useMemo(() => (path, paramsMandatorios = {}) => {
+    if (Object.keys(paramsMandatorios).length === 0) return path;
+    // convierte el objeto en una cadena de consulta ej: "page=1&page_size=10&incluir_inactivos=true"
+    const queryParams = new URLSearchParams(paramsMandatorios).toString();
+    return `${path}?${queryParams}`;
+  }, []);
 
   const menuItems = [
     {
@@ -71,7 +82,7 @@ export const Menu = ({ children }) => {
       icon: <i className="bi bi-cart4"></i>,
     },
     {
-      path: "/admin/punto-venta",
+      path: asignarParametrosUrl('/admin/punto-venta', paginaPuntoVenta.mandatorios),
       name: "Punto de Venta",
       icon: <i className="bi bi-shop-window"></i>,
     },
@@ -94,7 +105,7 @@ export const Menu = ({ children }) => {
       icon: <i className="bi bi-people"></i>,
     },
     {
-      path: "/admin/secciones?page=1&page_size=10",
+      path: asignarParametrosUrl('/admin/secciones', paginaSecciones.mandatorios),
       name: "Secciones",
       icon: <i className="bi bi-layers-fill"></i>,
     },
@@ -104,6 +115,9 @@ export const Menu = ({ children }) => {
       icon: <i className="bi bi-gear"></i>,
     },
   ];
+
+
+
   return (
     <div className="contenedor">
       <aside className={`sidebar `}>

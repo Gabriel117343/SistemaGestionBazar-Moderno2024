@@ -11,6 +11,8 @@ import { PaginacionProductos } from "./PaginacionProductos";
 
 import CargaDeDatos from "../../../views/CargaDeDatos";
 import "./puntoventa.css";
+
+
 const TOTAL_SECTIONS_SHOW = {
   page: 1,
   page_size: 20,
@@ -18,7 +20,7 @@ const TOTAL_SECTIONS_SHOW = {
 
 export const PuntoVentaContainer = () => {
   const {
-    stateProducto: { productos, cantidad, page, page_size },
+    stateProducto: { productos, cantidad, page, page_size }, getProductosContext
   } = useContext(ProductosContext);
 
   const {
@@ -55,6 +57,7 @@ export const PuntoVentaContainer = () => {
         secciones={secciones}
         setIsLoading={setIsLoading}
         componenteProductosRef={componenteProductosRef}
+        getProductosContext={getProductosContext}
         productos={productos}
         cambiarModo={cambiarModo}
         modoTabla={modoTabla}

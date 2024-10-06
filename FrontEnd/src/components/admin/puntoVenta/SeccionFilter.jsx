@@ -5,7 +5,7 @@ const SeccionFilter = ({ filtrarPorSeccion, productos, secciones, pageSizeActual
   return (
     <div className="pb-1 d-flex gap-1 contenedor-secciones">
       <button
-        onClick={() => resetearFiltro()}
+        onClick={() => resetearFiltro({ mantenerParamsUrl: true})}
         className={`btn-seleccion ${
           productos?.length === parseInt(pageSizeActual)
             ? "btn-filtro"

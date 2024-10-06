@@ -7,30 +7,28 @@ import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 import { ButtonPrint, ButtonRefresh } from "../../shared/ButtonSpecialAccion";
 
 import { debounce } from "lodash";
-import { useSearchParams } from "react-router-dom";
+
 import { toast } from "react-hot-toast";
+import { useMagicSearchParams } from '../../../hooks/useMagicSearchParams'
 
 export const FiltroSecciones = ({ getSeccionesContext, setIsLoading }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const { mandatorios, opcionales } = paginaSecciones;
+  const { searchParams, obtenerParametros, actualizarParametros, limpiarParametros } = useMagicSearchParams({
+    mandatory: mandatorios,
+    optional: opcionales,
+  });
 
   const inputFiltroRef = useRef(null); // Referencia al input de busqueda
 
-  const parametrosDeConsulta = () => {
-    return {
-      page: searchParams.get("page") ?? paginaSecciones.page,
-      page_size: searchParams.get("page_size") ?? paginaSecciones.page_size,
-      orden: searchParams.get("orden") ?? "",
-      filtro: searchParams.get("filtro") ?? "",
-    };
-  };
 
   useEffect(() => {
     async function cargar() {
       toast.loading("Cargando...", { duration: 2000, id: "loading" });
-
-      const parametros = parametrosDeConsulta();
+     
+      const parametros = obtenerParametros();
       const { success, message } = await getSeccionesContext(parametros); // se ejecuta la funcion getProductos del contexto de los productos
-
+    
       if (success) {
         setIsLoading(false);
         toast.success(message, { id: "loading" });
@@ -44,32 +42,27 @@ export const FiltroSecciones = ({ getSeccionesContext, setIsLoading }) => {
     cargar();
   }, [searchParams]);
 
-  const cambiarFiltro = (filtro) => {
-    const ordenActivo = searchParams.get("orden");
-    const newFiltro = filtro.trim();
-    setSearchParams({
-      ...paginaSecciones,
-      // Propagación condicional de objetos
-      ...(ordenActivo && { orden: ordenActivo }),
-      ...(newFiltro && { filtro: newFiltro }),
-    });
+  const filtrarPorNombre = (filtro) => {
+    const filtroLimpio = filtro.trim();
+    actualizarParametros({ newParams: { page: 1, filtro: filtroLimpio } });
   };
-  const debounceCambiarFiltro = debounce(cambiarFiltro, 400); // retrasa la ejucion de la funcion cambiar filtro por 300 milisegundos
+  const debounceFiltrarPorNombre = debounce(filtrarPorNombre, 400); // retrasa la ejucion de la funcion cambiar filtro por 300 milisegundos
 
   const handleOrdenarChange = (selectedOption) => {
     inputFiltroRef.current.value = "";
-    // si la opción seleccionada es vacía, se elimina el parámetro orden y se mantiene el filtro activo si es que hay uno
-    setSearchParams({
-      ...paginaSecciones,
-      ...(selectedOption && { orden: selectedOption }),
-    });
+    const newSearch = { page: 1, orden: selectedOption };
+
+    actualizarParametros({
+      newParams: newSearch,
+      keepParams: { filtro: false },
+    })
   };
 
   // ACCIONES EXTRA ------------------
   const refrescarTabla = async () => {
     toast.loading("Actualizando tabla...", { id: "loading" });
 
-    const parametros = parametrosDeConsulta();
+    const parametros = obtenerParametros();
     const { success } = await getSeccionesContext(parametros);
 
     if (success) {
@@ -94,7 +87,7 @@ export const FiltroSecciones = ({ getSeccionesContext, setIsLoading }) => {
         id="filtro"
         // Nota: se usa defaultValue ya que el input no tiene que ser controlado poque utiliza un debounce
         defaultValue={searchParams.get("filtro") ?? ""}
-        onChange={(e) => debounceCambiarFiltro(e.target.value)}
+        onChange={(e) => debounceFiltrarPorNombre(e.target.value)}
         placeholder="Buscar por nombre o por número"
       />
       <label htmlFor="orden" aria-label="orden">

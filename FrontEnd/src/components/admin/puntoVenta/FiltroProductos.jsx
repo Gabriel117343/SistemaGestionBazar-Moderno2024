@@ -10,19 +10,19 @@ import { toast } from "react-hot-toast";
 
 import { paginaPuntoVenta } from "@constants/defaultParams";
 import { SidebarContext } from "../../../context/SidebarContext";
-import { ProductosContext } from "../../../context/ProductosContext";
 
 import { useMagicSearchParams } from "../../../hooks/useMagicSearchParams";
 
 export const FiltroProductos = ({
   componenteProductosRef,
   secciones,
+  getProductosContext,
   setIsLoading,
   cambiarModo,
   productos,
   modoTabla,
 }) => {
-  const { getProductosContext } = useContext(ProductosContext);
+
   const { sidebar } = useContext(SidebarContext);
   const calcularProductosMostrar = useCalculoProductosMostrar();
 
@@ -38,10 +38,18 @@ export const FiltroProductos = ({
   });
 
   const buscadorRef = useRef(null);
+  const controllerRef = useRef();
+
+
 
   useEffect(() => {
+
     async function calcular() {
-      const prevPageSize = searchParams.get("page_size");
+  
+
+      const { page_size } = obtenerParametros();
+      const prevPageSize = page_size;
+      
       const newPageSize = await calcularProductosMostrar(
         componenteProductosRef,
         sidebar
@@ -56,16 +64,26 @@ export const FiltroProductos = ({
       actualizarParametros({ newParams: params, keepParams: {} });
     }
     calcular();
+
   }, [sidebar]);
 
   useEffect(() => {
+
+    if (controllerRef.current) {
+      // cualquier petición pendiente se abortara 
+      controllerRef.current.abort();
+    }
+    // nuevamene se crea un nuevo AbortController para la nueva petición
+    controllerRef.current = new AbortController();
+
+    const signal = controllerRef.current.signal;
     const cargarProductos = async () => {
       // si no se ha definido el tamaño de la página no se hace la petición
-      if (!searchParams.get("page_size")) return;
+      // if (!searchParams.get("page_size")) return;
       toast.loading("Cargando productos...", { id: "loading" });
       const parametros = obtenerParametros();
       console.log({ parametrosBuscandos: parametros });
-      const { success, message } = await getProductosContext(parametros);
+      const { success, message } = await getProductosContext(parametros, signal);
       if (success) {
         toast.success(message ?? "Productos cargados", { id: "loading" });
         setIsLoading(false);
@@ -77,6 +95,10 @@ export const FiltroProductos = ({
       }
     };
     cargarProductos();
+    return () => {
+      controllerRef.current.abort();
+
+    };
   }, [searchParams]);
 
   // Event handlers
@@ -101,7 +123,7 @@ export const FiltroProductos = ({
 
     actualizarParametros({ newParams: { page: 1, filtro: filtroLimpio } });
   };
-  const debounceFiltrarPorNombre = debounce(filtrarPorNombre, 400);
+  const debounceFiltrarPorNombre = debounce(filtrarPorNombre, 0);
 
   const handleOrdenarChange = (selectedOption = "") => {
     buscadorRef.current.value = "";
@@ -113,6 +135,12 @@ export const FiltroProductos = ({
       keepParams: { filtro: false },
     });
   };
+
+  const resetearFiltro = () => {
+
+    buscadorRef.current.value = "";
+    limpiarParametros();
+  }
   // es mejor acceder a los parametros de la URL una sola vez en vez de pasar el searchParams como prop y acceder de esta forma: searchParams.get("categoria")
   const { categoria, filtro, orden, page_size } = obtenerParametros();
   return (
@@ -139,7 +167,7 @@ export const FiltroProductos = ({
       </div>
       <SeccionFilter
         filtrarPorSeccion={filtrarPorSeccion}
-        resetearFiltro={limpiarParametros}
+        resetearFiltro={resetearFiltro}
         productos={productos}
         secciones={secciones}
         pageSizeActual={page_size}

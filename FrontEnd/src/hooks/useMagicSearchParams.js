@@ -1,8 +1,7 @@
-
 import { useSearchParams } from "react-router-dom";
 
 // HOOK PERSONALIZADO CON TECNICAS AVANZADAS PARA MANEJAR LOS PARAMETROS DE BUSQUEDA DE CUALQUIER PAGINACIÓN
-export const useMagicSearchParams = ({ mandatory={}, optional={} }) => {
+export const useMagicSearchParams = ({ mandatory = {}, optional = {} }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const TOTAL_PARAMS_PAGE = { ...mandatory, ...optional };
@@ -10,12 +9,12 @@ export const useMagicSearchParams = ({ mandatory={}, optional={} }) => {
 
   const convertirTipoOriginal = (value, key) => {
     // dado que los parametros de una url se reciben como string, se convierten a su tipo original
-    if (typeof TOTAL_PARAMS_PAGE[key] === 'number') {
-      return parseInt(value, 10);
-    } else if (typeof TOTAL_PARAMS_PAGE[key] === 'boolean') {
-      return value === 'true';
+    if (typeof TOTAL_PARAMS_PAGE[key] === "number") {
+      return parseInt(value);
+    } else if (typeof TOTAL_PARAMS_PAGE[key] === "boolean") {
+      return value === "true";
     } else if (Array.isArray(TOTAL_PARAMS_PAGE[key])) {
-      return value.split(',');
+      return value.split(",");
     }
     // Nota: no se convierten las fechas ya qué es mejor manejarlas directamente en el componente que las recibe debido a que se pueden necesitar en diferentes formatos
     return value;
@@ -27,13 +26,12 @@ export const useMagicSearchParams = ({ mandatory={}, optional={} }) => {
 
     const params = Object.keys(paramsUrl).reduce((acc, key) => {
       if (Object.hasOwn(TOTAL_PARAMS_PAGE, key)) {
-        
-        acc[key] = convertir ? convertirTipoOriginal(paramsUrl[key], key) : paramsUrl[key];
+        acc[key] = convertir
+          ? convertirTipoOriginal(paramsUrl[key], key)
+          : paramsUrl[key];
       }
       return acc;
     }, {});
-
-    console.error({ parametrosConvertidos: params });
 
     return params;
   };
@@ -60,7 +58,7 @@ export const useMagicSearchParams = ({ mandatory={}, optional={} }) => {
     return {
       ...mandatory,
       ...paramsFiltered,
-    }
+    };
   };
 
   const ordenarParametros = (parametrosFiltrados) => {
@@ -76,35 +74,51 @@ export const useMagicSearchParams = ({ mandatory={}, optional={} }) => {
     return orderedParams;
   };
 
-  const limpiarParametros = () => {
-    // por defeto no se limpian los parametros obligatorios de la paginación ya que se perdería la paginación por defecto y si ya estan en la URL no se eliminan
+  const parametrosMandatoriosUrl = () => {
+    const totalParametros = obtenerParametros({ convertir: false });
+    const paramsUrlEncontrados = Object.keys(totalParametros).reduce((acc, key) => {
+      if (Object.hasOwn(mandatory, key)) {
+        acc[key] = totalParametros[key];
+      }
+      return acc;
+    }, {});
+    return paramsUrlEncontrados;
+  };
+  
 
-    const { page, page_size } = obtenerParametros({ convertir: false })
+  const limpiarParametros = ({ mantenerParamsUrl = true } = {}) => {
+    // por defeto no se limpian los parametros obligatorios de la paginación ya que se perdería la paginación
+
     setSearchParams({
       ...mandatory,
-      ...(page && { page }),
-      ...(page_size && { page_size }),
+      // en caso se encuentren parametros en la URL reemplazarán los parametros mandatorios por defecto
+      ...(mantenerParamsUrl && {
+        ...(parametrosMandatoriosUrl()),
+       
+      }),
     });
   };
 
   // Nota: asi la función limpiara los parametros en vez de seguir si se llamada por ej: actualizarParametros() o actualizarParametros({}) como lo hace un useState (setEstado())
-  const actualizarParametros = ({ newParams = {}, keepParams = {}} = {}) => {
-      // se recibe como parametro un objeto por ej: { filtro: 'nuevoFiltro', categoria: 'nuevaCategoria' }
+  const actualizarParametros = ({ newParams = {}, keepParams = {} } = {}) => {
+    // se recibe como parametro un objeto por ej: { filtro: 'nuevoFiltro', categoria: 'nuevaCategoria' }
 
-    if (Object.keys(newParams).length === 0 && Object.keys(keepParams).length === 0) {
-    
-      limpiarParametros(); 
+    if (
+      Object.keys(newParams).length === 0 &&
+      Object.keys(keepParams).length === 0
+    ) {
+      limpiarParametros();
       return;
     }
 
-      const parametrosFinales = calcularParametrosOmitidos(newParams, keepParams);
-      const parametrosOrdenados = ordenarParametros(parametrosFinales);
-      setSearchParams(parametrosOrdenados);
-    };
-    return {
-      searchParams,
-      actualizarParametros,
-      limpiarParametros,
-      obtenerParametros,
-    };
+    const parametrosFinales = calcularParametrosOmitidos(newParams, keepParams);
+    const parametrosOrdenados = ordenarParametros(parametrosFinales);
+    setSearchParams(parametrosOrdenados);
+  };
+  return {
+    searchParams,
+    actualizarParametros,
+    limpiarParametros,
+    obtenerParametros,
+  };
 };

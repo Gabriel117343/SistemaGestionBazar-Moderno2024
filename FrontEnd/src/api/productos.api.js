@@ -4,8 +4,8 @@ const productosApi = createApiInstance('usuarios/datos/v1/productos') // la urls
 
 // ESTE ES EL CRU DDE PRODUCTOS
 
-export const getAllProductos = ({ incluir_inactivos, page, orden, page_size, filtro, categoria, seccion }) => {
 
+export const getAllProductos = ({ incluir_inactivos, page, orden, page_size, filtro, categoria, seccion }, signal) => {
 
   return productosApi.get('/', {
     params: {
@@ -17,6 +17,8 @@ export const getAllProductos = ({ incluir_inactivos, page, orden, page_size, fil
       seccion: seccion,
       orden: orden,
     },
+    // se envia el signal para abortar la peticion en curso
+    signal: signal
   
   })
 }

@@ -18,6 +18,7 @@ import { paginaSecciones } from "@constants/defaultParams";
 import { PaginacionSecciones } from "./PaginacionSecciones";
 
 import { FiltroSecciones } from "./FiltroSecciones";
+
 export const ListaSeccionesContenedor = () => {
   const {
     stateSeccion: { secciones, cantidad, page, page_size, seccionSeleccionada },

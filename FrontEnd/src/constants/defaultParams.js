@@ -30,6 +30,15 @@ export const paginaUsuarios = {
   page_size: 10,
 }
 export const paginaSecciones = {
-  page: 1,
-  page_size: 10,
+  mandatorios: 
+  {
+    page: 1,
+    page_size: 10,
+
+  },
+  opcionales: 
+  {
+    orden: "all",
+    filtro: "",
+  }
 }

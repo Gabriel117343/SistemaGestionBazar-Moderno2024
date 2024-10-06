@@ -17,9 +17,9 @@ export const SeccionesProvider = ({ children }) => {
   const [stateSeccion, dispatch] = useReducer(SeccionesReducer, initialState) // 
   
   const TOKEN_ACCESO = localStorage.getItem('accessToken'); 
-  const getSeccionesContext = async (parametrosConsulta) => {
+  const getSeccionesContext = async (props) => {
       try {
-        const res = await getAllSecciones(parametrosConsulta) // res para referenciarse al response del servidor
+        const res = await getAllSecciones(props) // res para referenciarse al response del servidor
 
         if (res.status === 200) {
           dispatch({
@@ -27,8 +27,8 @@ export const SeccionesProvider = ({ children }) => {
             payload: {
               secciones: res.data.results,
               cantidad: res.data.count,
-              page: parametrosConsulta.page,
-              page_size: parametrosConsulta.page_size
+              page: props.page,
+              page_size: props.page_size
             }
           })
           return ({ success: true, message: res.data.message })

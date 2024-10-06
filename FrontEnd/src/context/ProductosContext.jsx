@@ -20,11 +20,11 @@ export const ProductosProvider = ({ children }) => {
   // UNICAMENTE SE PASAN LOS PARAMETROS QUE NECESITAN LAS FUNCIONES
 
  
-  const getProductosContext = async (props) => {
+  const getProductosContext = async (parametros, signal) => {
     '|incluir_inactivos|filtro|page|page_size|seccion|categoria|orden'
  
     try {
-      const res = await getAllProductos(props) // res para referenciarse al response del servidor
+      const res = await getAllProductos(parametros, signal) // res para referenciarse al response del servidor
       console.log({ res })
       if (res.status === 200) {
         dispatch({
@@ -32,8 +32,8 @@ export const ProductosProvider = ({ children }) => {
           payload: {
             productos: res.data.results,
             cantidad: res.data.count,
-            page: props.page,
-            page_size: props.page_size
+            page: parametros.page,
+            page_size: parametros.page_size
 
           },
         });
@@ -43,6 +43,12 @@ export const ProductosProvider = ({ children }) => {
       }
       return ({ success: false, message: res.data.error })
     } catch (error) { // si hay un error en la peticion se ejecuta este bloque que captura el response del servidor
+      if (error.name === 'CanceledError') {
+        console.error('Fetch abortado')
+
+        return ({ success: false, message: 'Fetch de Productos abortado por el usuario' })
+      }
+
       console.error(error)
       return ({ success: false, message: error.response.data.error })
     }
