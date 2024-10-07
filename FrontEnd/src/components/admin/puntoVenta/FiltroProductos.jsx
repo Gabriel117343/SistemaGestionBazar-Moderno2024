@@ -4,7 +4,7 @@ import SearchFilter from "./SearchFilter";
 import SeccionFilter from "./SeccionFilter";
 import OrdenProductos from "./OrdenProductos";
 
-import { debounce } from "lodash";
+import { debounce } from "es-toolkit";
 import useCalculoProductosMostrar from "../../../hooks/useCalculoProductosMostrar";
 import { toast } from "react-hot-toast";
 
@@ -123,7 +123,7 @@ export const FiltroProductos = ({
 
     actualizarParametros({ newParams: { page: 1, filtro: filtroLimpio } });
   };
-  const debounceFiltrarPorNombre = debounce(filtrarPorNombre, 0);
+  const debounceFiltrarPorNombre = debounce(filtrarPorNombre, 400);
 
   const handleOrdenarChange = (selectedOption = "") => {
     buscadorRef.current.value = "";

@@ -1,6 +1,6 @@
 import { Suspense, lazy } from "react";
 import { lazyLoad } from "../../utils/lazyLoad.js";
-import LoadingOverlay from "../../views/LoadingOverlay.jsx";
+
 import Skeleton from "../../components/skeletons/Skeleton.jsx";
 import SkeletonText from "../../components/skeletons/SkeletonText.jsx";
 
@@ -38,7 +38,7 @@ export const PuntoVenta = () => {
         {/* Si un componente carga antes se mostrara inmediatamente */}
 
         <div className="col-md-4">
-          <Suspense fallback={<Skeleton height="200px" width="100%" />}>
+          <Suspense fallback={<><Skeleton height="200px" width="100%" /><SkeletonCircle size="50px"/></>}>
             <Carrito />
           </Suspense>
         </div>
@@ -46,7 +46,7 @@ export const PuntoVenta = () => {
           <Suspense
             fallback={
               <>
-                <SkeletonText lines={3} gap="8px" />
+                <SkeletonText lines={2} gap="8px" />
                 <Skeleton height="400px" width="100%" />
               </>
             }

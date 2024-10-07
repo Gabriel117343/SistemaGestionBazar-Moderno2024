@@ -6,7 +6,7 @@ import { paginaSecciones } from "@constants/defaultParams";
 import useRefreshDebounce from "../../../hooks/useRefreshDebounce";
 import { ButtonPrint, ButtonRefresh } from "../../shared/ButtonSpecialAccion";
 
-import { debounce } from "lodash";
+import { debounce } from "es-toolkit";
 
 import { toast } from "react-hot-toast";
 import { useMagicSearchParams } from '../../../hooks/useMagicSearchParams'

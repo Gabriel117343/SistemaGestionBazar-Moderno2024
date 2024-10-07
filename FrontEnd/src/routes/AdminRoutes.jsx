@@ -13,6 +13,7 @@ import { Usuarios } from "../pages/admin/Usuarios";
 import { Configuracion } from "../pages/admin/Configuracion";
 
 import { PuntoVenta } from "../pages/admin/PuntoVenta";
+
 import { Secciones } from "../pages/admin/Secciones";
 
 // MENU DE OPCIONES PARA EL ADMINISTRADOR

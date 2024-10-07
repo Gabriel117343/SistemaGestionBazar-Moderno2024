@@ -1,5 +1,7 @@
 /* skeleton */
 .skeleton {
+
+  margin: 10px;
   background-color: #e0e0e0;
   animation: shimmer 1.5s infinite linear;
   background: linear-gradient(

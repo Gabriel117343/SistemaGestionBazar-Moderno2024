@@ -14,7 +14,6 @@ import { ButtonNew } from "../../shared/ButtonNew";
 
 import CargaDeDatos from "../../../views/CargaDeDatos";
 
-import { paginaSecciones } from "@constants/defaultParams";
 import { PaginacionSecciones } from "./PaginacionSecciones";
 
 import { FiltroSecciones } from "./FiltroSecciones";

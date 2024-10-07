@@ -16,7 +16,7 @@ export const useMagicSearchParams = ({ mandatory = {}, optional = {} }) => {
     } else if (Array.isArray(TOTAL_PARAMS_PAGE[key])) {
       return value.split(",");
     }
-    // Nota: no se convierten las fechas ya qué es mejor manejarlas directamente en el componente que las recibe debido a que se pueden necesitar en diferentes formatos
+    // Nota: no se convierten las fechas ya qué es mejor manejarlas directamente en el componente que las recibe
     return value;
   };
 

@@ -3,7 +3,7 @@ import { lazy } from "react";
 export function lazyLoad(path, nameExport) {
   
   return lazy(() => {
-    const promise = import(path);
+    const promise = import(/* @vite-ignore */ path);
     if (nameExport === null) {
       return promise;
     } else {
