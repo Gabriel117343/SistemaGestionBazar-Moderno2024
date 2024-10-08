@@ -32,7 +32,7 @@ export const ListaSeccionesContenedor = () => {
   const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
 
   const [isLoading, setIsLoading] = useState(true);
-
+  console.log('render lista secciones')
   const borrarSeccion = (id) => {
     async function confirmar() {
       const aceptar = await Swal.fire({

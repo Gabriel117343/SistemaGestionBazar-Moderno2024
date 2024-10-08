@@ -26,8 +26,16 @@ export const paginaStock = {
   page_size: 10,
 }
 export const paginaUsuarios = {
-  page: 1,
-  page_size: 10,
+  mandatorios: {
+    page: 1,
+    page_size: 10,
+    incluir_inactivos: true,
+  },
+  opcionales: {
+    orden: "all",
+    filtro: "",
+  }
+  
 }
 export const paginaSecciones = {
   mandatorios: 

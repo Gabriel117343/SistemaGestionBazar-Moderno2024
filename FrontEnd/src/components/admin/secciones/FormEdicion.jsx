@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useId } from "react";
 import { toast } from "react-hot-toast";
+import { ButtonCancel, ButtonSave } from "../../shared/ButtonFormulario";
+
 export const FormEdicion = ({ cerrarModal, seccion, actualizarSeccion }) => {
   const { nombre, numero, descripcion, imagen } = seccion;
   const imagenInicial = imagen
     ? imagen
     : "../../../public/images/seccion-productos.jpg"; // si no hay imagen, se muestra una por defecto
   const [vistaImagen, setVistaImagen] = useState(imagenInicial); // estado para la vista previa de la imagen
+  const [isLoading, setIsLoading] = useState(false);
+  const id = useId();
   const enviarFormulario = async (event) => {
+    setIsLoading(true);
     event.preventDefault();
     const formData = new FormData(event.target);
     const img = event.target[3].files[0];
@@ -19,7 +24,9 @@ export const FormEdicion = ({ cerrarModal, seccion, actualizarSeccion }) => {
       toast.dismiss(toastId, { id: "loading" });
       toast.success(message);
       cerrarModal();
+      setIsLoading(false);
     } else {
+      setIsLoading(false);
       toast.dismiss(toastId, { id: "loading" });
       toast.error(message);
       cerrarModal();
@@ -29,7 +36,7 @@ export const FormEdicion = ({ cerrarModal, seccion, actualizarSeccion }) => {
     setVistaImagen(URL.createObjectURL(event.target.files[0]));
   };
   return (
-    <form action="" onSubmit={enviarFormulario}>
+    <form action="" id={`form-edicion-${id}`} onSubmit={enviarFormulario}>
       <div>
         {vistaImagen && (
           <img
@@ -83,10 +90,12 @@ export const FormEdicion = ({ cerrarModal, seccion, actualizarSeccion }) => {
         />
       </div>
       <div className="d-flex justify-content-between pt-2">
-        <button className="btn btn-primary">Guardar</button>
-        <button type="button" onClick={cerrarModal} className="btn btn-danger">
+        <ButtonSave disabled={isLoading}>Guardar</ButtonSave>
+
+        <ButtonCancel disabled={isLoading} onClick={cerrarModal}>
           Cancelar
-        </button>
+        </ButtonCancel>
+        
       </div>
     </form>
   );

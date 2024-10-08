@@ -21,7 +21,7 @@ export const Login = () => {
 
   const navigate = useNavigate();
 
-  const limpiarFormularioYReactivarBoton = () => {
+  const handleFinishLoading = () => {
     formLoginRef.current.reset();
     setBtnisDisabled(false);
   };
@@ -57,7 +57,7 @@ export const Login = () => {
       }, 1500);
     } else  {
       toast.dismiss("loading");
-      limpiarFormularioYReactivarBoton();
+      handleFinishLoading();
       mostrarError(tipo, message);
     }
   };
@@ -104,6 +104,7 @@ export const Login = () => {
                         className="form-control form-control-lg"
                         placeholder="Email"
                         name="email"
+                        disabled={btnisDisabled}
                       />
                     </div>
                     <div className="form form-white mb-4 contraseña-container">
@@ -113,6 +114,7 @@ export const Login = () => {
                         placeholder="Password"
                         name="password"
                         type={mostrarContraseña ? "text" : "password"}
+                        disabled={btnisDisabled}
                       />
                       <span className="icon">
                         <FontAwesomeIcon

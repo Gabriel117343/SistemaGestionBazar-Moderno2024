@@ -1,14 +1,11 @@
 import { MagicMotion } from "react-magic-motion";
 import "./styles.css";
-import { PaginationButton } from "../../shared/PaginationButton";
 
 export const MostrarTabla = ({
   listaUsuarios,
   borrarUsuario,
   edicionUsuario,
   currentPage,
-  cambiarPagina,
-  cantidadDatos,
   pageSize,
   showModal,
 }) => {
@@ -99,15 +96,6 @@ export const MostrarTabla = ({
           </MagicMotion>
         </tbody>
       </table>
-
-      <div className="pagination-buttons mb-3 mt-1 animacion-numeros d-flex gap-1">
-        <PaginationButton
-          currentPage={currentPage}
-          cambiarPagina={cambiarPagina}
-          totalDatos={cantidadDatos}
-          cantidadPorPagina={pageSize}
-        />
-      </div>
     </section>
   );
 };

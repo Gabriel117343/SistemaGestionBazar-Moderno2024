@@ -1,12 +1,11 @@
 import { createContext, useReducer } from 'react'
 import { getAllProveedores, getProveedor, createProveedor, deleteProveedor, updateProveedor } from '../api/proveedores.api'
 import { ProveedoresReducer } from './reducers/ProveedoresReducer'
-import { LoginContext } from './LoginContext'
+
 export const ProveedoresContext = createContext() // creando el contexto de los proveedores para poder usarlo en cualquier componente
 
 export const ProveedoresProvider = ({ children }) => {
   
-
   const initialState = {
     proveedores: [],
     proveedorSeleccionado: null
@@ -50,6 +49,7 @@ export const ProveedoresProvider = ({ children }) => {
         return ({ success: true, message: res.data.message })
         // return ({ success: true, message: 'Usuario obtenido' }) > Asi se puede retornar un mensaje de exito sin necesidad de obtenerlo del response del servidor
       }
+      return ({ success: false, message: res.data.error })
     } catch (error) { // si hay un error en la peticion se ejecuta este bloque que captura el response del servidor 
       return ({ success: false, message: error.response.data.error })
     }
@@ -67,6 +67,7 @@ export const ProveedoresProvider = ({ children }) => {
         return ({ success: true, message: res.data.message })
         // return ({ success: true, message: 'Usuario obtenido' }) > Asi se puede retornar un mensaje de exito sin necesidad de obtenerlo del response del servidor
       }
+      return ({ success: false, message: res.data.error })
     } catch (error) { // si hay un error en la peticion se ejecuta este bloque que captura el response del servidor
 
       return ({ success: false, message: error.response.data.error })
@@ -84,6 +85,7 @@ export const ProveedoresProvider = ({ children }) => {
         return ({ success: true, message: res.data.message })
         // return ({ success: true, message: 'Usuario obtenido' }) > Asi se puede retornar un mensaje de exito sin necesidad de obtenerlo del response del servidor
       }
+      return ({ success: false, message: res.data.error })
     } catch (error) { // si hay un error en la peticion se ejecuta este bloque que captura el response del servidor 
       return ({ success: false, message: error.response.data.error })
     }
@@ -91,6 +93,7 @@ export const ProveedoresProvider = ({ children }) => {
   const actualizarProveedor = async (id, proveedor) => {
     try {
       const res = await updateProveedor(id, proveedor, TOKEN_ACCESO)
+
       if (res.status === 200 || res.status === 201) {
         dispatch({
           type: 'UPDATE_PROVEEDOR',
@@ -99,6 +102,7 @@ export const ProveedoresProvider = ({ children }) => {
         return ({ success: true, message: res.data.message })
         // return ({ success: true, message: 'Usuario obtenido' }) > Asi se puede retornar un mensaje de exito sin necesidad de obtenerlo del response del servidor
       }
+      return ({ success: false, message: res.data.error })
     } catch (error) { // si hay un error en la peticion se ejecuta este bloque que captura el response del servidor 
       return ({ success: false, message: error.response.data.error })
     }

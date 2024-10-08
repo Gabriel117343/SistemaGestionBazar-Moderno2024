@@ -4,7 +4,7 @@ from rest_framework import viewsets, permissions
 from django.utils import timezone
 from .serializer import *
 from .models import *
-
+Usuario
 from django.db import transaction
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
@@ -320,7 +320,6 @@ class UsuarioView(viewsets.ModelViewSet): # este método es para listar, crear, 
                 Q(nombre__icontains=filtro) |
                 Q(email__icontains=filtro)
             )
-
         # Ordenar por nombre ascendente o descendente
         if orden is not None:
             if orden == 'a-z':

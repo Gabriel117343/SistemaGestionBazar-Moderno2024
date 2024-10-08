@@ -195,7 +195,7 @@ export const FormularioEdicion = ({ cerrarModal }) => {
         </div>
         
         <h2 className="text-capitalize">{`${usuarioSeleccionado.nombre} ${usuarioSeleccionado.apellido}`}</h2>
-        <p className="ultima-conexion"><i class="bi bi-clock-history"></i> Última actividad: <small>{` ${fechaUltimaActividad.toLocaleDateString()} - ${fechaUltimaActividad.toLocaleTimeString()}`}</small></p>
+        <p className="ultima-conexion"><i className="bi bi-clock-history"></i> Última actividad: <small>{` ${fechaUltimaActividad.toLocaleDateString()} - ${fechaUltimaActividad.toLocaleTimeString()}`}</small></p>
         
       </div>
       

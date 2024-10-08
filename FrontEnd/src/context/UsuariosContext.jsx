@@ -31,7 +31,9 @@ export const UsuariosProvider = ({ children }) => {
           type: 'GET_USUARIOS',
           payload: {
             usuarios: res.data.results,
-            cantidad: res.data.count
+            cantidad: res.data.count,
+            page: props.page,
+            page_size: props.page_size,
           }
         })
         return ({ success: true, message: res.data.message })

@@ -5,7 +5,7 @@ import { LoginContext } from "../../context/LoginContext";
 import { SidebarContext } from "../../context/SidebarContext";
 import "./Menu.css";
 
-import { paginaProductos, paginaPuntoVenta, paginaSecciones } from '@constants/defaultParams';
+import { paginaProductos, paginaPuntoVenta, paginaSecciones, paginaUsuarios } from '@constants/defaultParams';
 
 //MENU DE OPCIONES PARA EL ADMINISTRADOR
 export const Menu = ({ children }) => {
@@ -100,7 +100,7 @@ export const Menu = ({ children }) => {
       icon: <i className="bi bi-bag"></i>,
     },
     {
-      path: "/admin/usuarios?page=1&page_size=10",
+      path: asignarParametrosUrl('/admin/usuarios', paginaUsuarios.mandatorios),
       name: "Usuarios",
       icon: <i className="bi bi-people"></i>,
     },

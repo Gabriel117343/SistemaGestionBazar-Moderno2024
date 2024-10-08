@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useId } from "react";
 import { toast } from "react-hot-toast";
 import { ButtonSave, ButtonCancel } from "../../shared/ButtonFormulario";
 
@@ -6,16 +6,22 @@ export const FormRegistroSecciones = ({ cerrarModal, crearSeccion }) => {
   const imagenIncial = "../../../public/images/seccion-productos.jpg";
   const [vistaImagen, setVistaImagen] = useState(imagenIncial); // estado para la vista previa de la imagen
 
+  const [isLoading, setIsLoading] = useState(false);
+  const id = useId(); 
+
   const enviarFormulario = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
     const toastId = toast.loading("Cargando...", { id: "loading" });
     const formData = new FormData(event.target);
     const { success, message } = await crearSeccion(formData);
     if (success) {
+
       toast.dismiss(toastId, { id: "loading" });
       toast.success(message);
       cerrarModal();
     } else {
+
       toast.dismiss(toastId, { id: "loading" });
       toast.error(message);
       cerrarModal();
@@ -25,7 +31,7 @@ export const FormRegistroSecciones = ({ cerrarModal, crearSeccion }) => {
     setVistaImagen(URL.createObjectURL(event.target.files[0])); // esto crea una url de la imagen
   };
   return (
-    <form action="" onSubmit={enviarFormulario}>
+    <form action="" id={`form-registro-${id}`} onSubmit={enviarFormulario}>
       <div>
         <img
           style={{ width: "100%", height: "200px" }}
@@ -67,14 +73,15 @@ export const FormRegistroSecciones = ({ cerrarModal, crearSeccion }) => {
         <input
           className="form-control"
           accept=".jpg, .jpeg, .png"
+          id="imagen"
           type="file"
           name="imagen"
           onChange={cambiarVistaImagen}
         />
       </div>
       <div className="d-flex justify-content-between pt-2">
-        <ButtonSave disabled={true}>Guardar</ButtonSave>
-        <ButtonCancel disabled={true} onClick={cerrarModal}>
+        <ButtonSave disabled={isLoading}>Guardar</ButtonSave>
+        <ButtonCancel disabled={isLoading} onClick={cerrarModal}>
           Cancelar
         </ButtonCancel>
       </div>

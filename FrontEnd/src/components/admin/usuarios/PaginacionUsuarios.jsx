@@ -1,14 +1,15 @@
 import React from "react";
 import { useMagicSearchParams } from "../../../hooks/useMagicSearchParams";
 import { PaginationButton } from "../../shared/PaginationButton";
-import { paginaSecciones } from "@constants/defaultParams";
+import { paginaUsuarios } from "@constants/defaultParams";
 
-export const PaginacionSecciones = ({ cantidad }) => {
-  const { mandatorios, opcionales } = paginaSecciones;
+export const PaginacionUsuarios = ({ cantidad }) => {
+  const { mandatorios, opcionales } = paginaUsuarios;
   const { actualizarParametros, obtenerParametros } = useMagicSearchParams({
     mandatory: mandatorios,
     optional: opcionales,
   });
+
   const { page, page_size } = obtenerParametros();
   const cambiarPagina = ({ newPage }) => {
     actualizarParametros({ newParams: { page: newPage }, keepParams: {} }); // no se omitira ningún parametro

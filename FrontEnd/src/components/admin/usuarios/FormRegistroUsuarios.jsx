@@ -4,7 +4,7 @@ import { useClasesInput } from '../../../hooks/useClasesInput'// cutom hook para
 import { useFormatos } from '../../../hooks/useFormatos'// custom hook para los formatos - hook personalizado
 import './styles.css'// estilos del formulario
 import { toast } from 'react-hot-toast' // alertas para la interfaz
-import debounce from 'lodash/debounce' // para optimizar el rendimiento
+import { debounce } from 'es-toolkit' // para optimizar el rendimiento
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome' // icono eye para usar en input contraseña
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import confetti from 'canvas-confetti' // efecto de confetti

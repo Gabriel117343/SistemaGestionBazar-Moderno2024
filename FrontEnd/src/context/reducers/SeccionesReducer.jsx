@@ -1,38 +1,41 @@
-import React from 'react'
+import React from "react";
 
 export const SeccionesReducer = (stateSeccion, action) => {
-
-  const { type, payload } = action     
+  const { type, payload } = action;
   switch (type) {
-    case 'GET_SECCIONES':
+    case "GET_SECCIONES":
       return {
         ...stateSeccion,
         secciones: payload.secciones,
         cantidad: payload.cantidad,
         page: payload.page,
-        page_size: payload.page_size
-      }
-    case 'GET_SECCION':
+        page_size: payload.page_size,
+      };
+    case "GET_SECCION":
       return {
         ...stateSeccion,
-        seccionSeleccionada: payload
-      }
-    case 'CREATE_SECCION':
+        seccionSeleccionada: payload,
+      };
+    case "CREATE_SECCION":
       return {
         ...stateSeccion,
-        secciones: [...stateSeccion.secciones, payload]
-      }
-    case 'DELETE_SECCION':
+        secciones: [...stateSeccion.secciones, payload],
+      };
+    case "DELETE_SECCION":
       return {
         ...stateSeccion,
-        secciones: stateSeccion.secciones.filter(seccion => seccion.id !== payload)
-      }
-    case 'UPDATE_SECCION':
+        secciones: stateSeccion.secciones.filter(
+          (seccion) => seccion.id !== payload
+        ),
+      };
+    case "UPDATE_SECCION":
       return {
         ...stateSeccion,
-        secciones: stateSeccion.secciones.map(seccion => seccion._id === payload.id ? payload : seccion)
-      }
+        secciones: stateSeccion.secciones.map((seccion) =>
+          seccion.id === payload.id ? payload : seccion
+        ),
+      };
     default:
-      return stateSeccion
+      return stateSeccion;
   }
-}
+};

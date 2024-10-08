@@ -6,7 +6,9 @@ export const UsuariosReducer = (stateUsuario, action) => { // recibe el estado a
       return {
         ...stateUsuario,
         usuarios: payload.usuarios,
-        cantidad: payload.cantidad // guarda la cantidad de usuarios en el estado
+        cantidad: payload.cantidad,
+        page: payload.page,
+        page_size: payload.page_size
       }
     case 'GET_USUARIO':
       return {
