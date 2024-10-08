@@ -1,6 +1,15 @@
-import { TablaProductosContenedor } from "../../components/admin/productos/TablaProductosContenedor";
+import { Suspense, lazy } from "react";
+import { lazyLoad } from "../../utils/lazyLoad";
+import Skeleton from "../../components/skeletons/Skeleton";
+import SkeletonText from "../../components/skeletons/SkeletonText";
+const GradualSpacing = lazy(
+  () => import("../../components/shared/magic_ui/GradualSpacing.jsx")
+);
+const ProductosContenedor = lazyLoad(
+  "../components/admin/productos/ProductosContenedor",
+  "ProductosContenedor"
+);
 
-import GradualSpacing from "../../components/shared/magic_ui/GradualSpacing";
 import "./stylepages.css";
 export const Productos = () => {
   return (
@@ -12,10 +21,20 @@ export const Productos = () => {
         >
           <i class="bi bi-boxes"></i>
         </div>
-        <GradualSpacing text="Agregar Productos" className="m-0" type="h2" />
+        <Suspense fallback={<h2>Agregar Productos</h2>}>
+          <GradualSpacing text="Agregar Productos" className="m-0" type="h2" />
+        </Suspense>
       </div>
-
-      <TablaProductosContenedor />
+      <Suspense
+        fallback={
+          <>
+            <SkeletonText lines={2} gap="8px" />
+            <Skeleton height="500px" width="100%" />
+          </>
+        }
+      >
+        <ProductosContenedor />
+      </Suspense>
     </section>
   );
 };

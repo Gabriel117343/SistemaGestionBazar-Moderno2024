@@ -24,7 +24,7 @@ export const AdminRoutes = () => {
   return (
     <AdminProvider>
       <HeaderAdmin />
-      <CustomModal />
+
       <Menu>
         <Routes>
           <Route path="/dashboard" element={<Dashboard />} />
@@ -42,7 +42,9 @@ export const AdminRoutes = () => {
           <Route path="/secciones" element={<Secciones />} />
           <Route path="/configuracion" element={<Configuracion />} />
         </Routes>
+        <CustomModal />
       </Menu>
+
     </AdminProvider>
   );
 };
