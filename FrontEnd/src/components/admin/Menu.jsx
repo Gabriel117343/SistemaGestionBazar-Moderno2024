@@ -5,7 +5,7 @@ import { LoginContext } from "../../context/LoginContext";
 import { SidebarContext } from "../../context/SidebarContext";
 import "./Menu.css";
 
-import { paginaProductos, paginaPuntoVenta, paginaSecciones, paginaUsuarios } from '@constants/defaultParams';
+import { paginaProductos, paginaPuntoVenta, paginaSecciones, paginaUsuarios, paginaStock } from '@constants/defaultParams';
 
 //MENU DE OPCIONES PARA EL ADMINISTRADOR
 export const Menu = ({ children }) => {
@@ -72,7 +72,7 @@ export const Menu = ({ children }) => {
       icon: <i className="bi bi-arrow-return-left"></i>,
     },
     {
-      path: "/admin/stocks?page=1&page_size=10",
+      path: asignarParametrosUrl("/admin/stocks", paginaStock.mandatorios),
       name: "Stock",
       icon: <i className="bi bi-box"></i>,
     },

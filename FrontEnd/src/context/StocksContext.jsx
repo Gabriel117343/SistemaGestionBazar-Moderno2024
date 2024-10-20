@@ -9,7 +9,9 @@ export const StocksProvider = ({ children }) => {
   const initialState = {
     stocks: [],
     cantidad: 0,
-    stockSeleccionado: null
+    stockSeleccionado: null,
+    page: 0,
+    page_size: 0
   } // estado inicial de los stocks para el Reducer de los stocks
   const [stateStock, dispatch] = useReducer(StocksReducer, initialState) // creando el reducer de los stocks
   // ASI TENGO TODO EL CODIGO DE LOS USUARIOS EN UN SOLO LUGAR Y NO TENGO QUE IMPORTAR LAS FUNCIONES EN CADA COMPONENTE QUE LAS NECESITE
@@ -25,7 +27,9 @@ export const StocksProvider = ({ children }) => {
           type: 'GET_STOCKS',
           payload: {
             stocks: res.data.results,
-            cantidad: res.data.count
+            cantidad: res.data.count,
+            page: props.page,
+            page_size: props.page_size
           }
         })
         return ({ success: true, message: res.data.message })

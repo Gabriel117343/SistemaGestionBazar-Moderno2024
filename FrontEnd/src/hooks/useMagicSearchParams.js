@@ -1,9 +1,10 @@
 import { useSearchParams } from "react-router-dom";
-
+import { useRef } from 'react'
 // HOOK PERSONALIZADO CON TECNICAS AVANZADAS PARA MANEJAR LOS PARAMETROS DE BUSQUEDA DE CUALQUIER PAGINACIÓN
 export const useMagicSearchParams = ({ mandatory = {}, optional = {} }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const searchRef = useRef()
   const TOTAL_PARAMS_PAGE = { ...mandatory, ...optional };
   const PARAM_ORDER = Array.from(Object.keys(TOTAL_PARAMS_PAGE));
 
@@ -97,6 +98,7 @@ export const useMagicSearchParams = ({ mandatory = {}, optional = {} }) => {
        
       }),
     });
+    
   };
 
   // Nota: asi la función limpiara los parametros en vez de seguir si se llamada por ej: actualizarParametros() o actualizarParametros({}) como lo hace un useState (setEstado())
@@ -114,6 +116,7 @@ export const useMagicSearchParams = ({ mandatory = {}, optional = {} }) => {
     const parametrosFinales = calcularParametrosOmitidos(newParams, keepParams);
     const parametrosOrdenados = ordenarParametros(parametrosFinales);
     setSearchParams(parametrosOrdenados);
+    searchRef.current = searchParams
   };
   return {
     searchParams,

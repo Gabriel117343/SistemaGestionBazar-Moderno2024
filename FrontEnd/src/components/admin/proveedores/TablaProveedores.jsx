@@ -7,6 +7,8 @@ import "./styles.css";
 import { ProveedoresContext } from "../../../context/ProveedoresContext";
 import { PaginationButton } from "../../shared/PaginationButton";
 import useFiltroDatosMostrar from "../../../hooks/useFiltroDatosMostrar";
+
+import calcularContador from '@utils/calcularContador';
 const MostrarTabla = ({ listaProveedores, borrarProovedor }) => {
   const {
     stateProveedor: { proveedorSeleccionado },
@@ -64,7 +66,7 @@ const MostrarTabla = ({ listaProveedores, borrarProovedor }) => {
           <MagicMotion>
             {proveedoresMostrar.map((proveedor, index) => {
               
-              const contador = (currentPage - 1) * cantidadProveedores + index + 1;
+              const contador = calcularContador({ index, pageSize: cantidadProveedores, currentPage });
               return (
                 <tr key={proveedor.id}>
                   <td>{contador}</td>

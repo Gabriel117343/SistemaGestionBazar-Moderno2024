@@ -12,7 +12,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'), // Establece la ruta de alias a la carpeta src
       '@constants': path.resolve(__dirname, './src/constants'), // Establece la ruta de alias a la carpeta src/constants
-      '@components': path.resolve(__dirname, './src/components') // Establece la ruta de alias a la carpeta src/components
+      '@components': path.resolve(__dirname, './src/components'),
+      '@utils': path.resolve(__dirname, './src/utils'),
     }
   },
   build: {

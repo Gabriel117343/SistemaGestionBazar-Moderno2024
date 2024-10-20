@@ -1,7 +1,7 @@
+import { useId } from 'react'
 import { MagicMotion } from "react-magic-motion";
 import "./styles.css";
-
-import { useId } from "react";
+import calcularContador from "@utils/calcularContador";
 const MostrarProductos = ({
   listaProductos,
   borrarProducto,
@@ -39,7 +39,7 @@ const MostrarProductos = ({
           {/* Cuando hay un cambio anima la tabla */}
           <MagicMotion>
             {listaProductos.map((producto, index) => {
-              const contador = (currentPage - 1) * pageSize + index + 1;
+              const contador = calcularContador({ index, pageSize, currentPage });
               return (
                 <tr key={producto.id}>
                   <td id={`${id}-td-#-${producto.id}`}>{contador}</td>

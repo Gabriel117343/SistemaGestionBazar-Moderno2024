@@ -1,4 +1,3 @@
-import React from 'react'
 
 export const StocksReducer = (stateStock, action) => {
   const { type, payload } = action // destructuring de la accion
@@ -9,7 +8,9 @@ export const StocksReducer = (stateStock, action) => {
       return {
         ...stateStock,
         stocks: payload.stocks,
-        cantidad: payload.cantidad // guarda la cantidad de stocks en el estado
+        cantidad: payload.cantidad, 
+        page: payload.page,
+        page_size: payload.page_size
       }
     case 'GET_STOCK':
       return {

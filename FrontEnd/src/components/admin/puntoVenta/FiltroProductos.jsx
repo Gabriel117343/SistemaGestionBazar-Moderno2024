@@ -37,10 +37,12 @@ export const FiltroProductos = ({
     optional: opcionales,
   });
 
+
+
   const buscadorRef = useRef(null);
   const controllerRef = useRef();
 
-
+ 
 
   useEffect(() => {
 

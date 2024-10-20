@@ -1,29 +1,25 @@
 import { MagicMotion } from "react-magic-motion";
+import { useId } from 'react'
 import ContadorAnimado from "../../shared/magic_ui/ContadorAnimado";
-import { PaginationButton } from "../../shared/PaginationButton";
+import calcularContador from '@utils/calcularContador'
 
 export const TablaStocks = ({
   listaStocks,
   proveedorId,
   currentPage,
-  cambiarPagina,
-  cantidadDatos,
   pageSize,
 }) => {
 
-  const calcularContador = (index) => {
-    return (currentPage - 1) * pageSize + index + 1;
-  };
+  const id = useId()
 
   return (
-    <article>
-      <table className="table table-striped table-hover mb-0">
+    <section>
+      <table id={`tabla-stock-${id}`} className="table table-striped table-hover mb-0">
         <thead>
           <tr>
             <th scope="col">#</th>
             <th>Código</th>
             <th scope="col">Producto</th>
-
             <th>Proveedor</th>
             <th>Sección</th>
             <th scope="col" className="text-center">
@@ -36,7 +32,7 @@ export const TablaStocks = ({
             // es necesario que se ejecute una animación u otra, pero no ambas al mismo tiempo porque causaría un error en la librería de animación de react-magic-motion
             <MagicMotion>
               {listaStocks?.map((stock, index) => {
-                const contador = calcularContador(index);
+                const contador = calcularContador({ index, pageSize, currentPage });
                 return (
                   <tr key={stock.id}>
                     <td scope="row">{contador}</td>
@@ -75,17 +71,8 @@ export const TablaStocks = ({
       {listaStocks.length === 0 && (
         <h1 className="text-center pt-4">No se han econtrado Productos..</h1>
       )}
-      <div className="pagination-buttons mb-3 mt-1 animacion-numeros d-flex gap-1">
-        {/* bucle Array.from() para generar botones según la cantidad de páginas necesarias, solo se usara el indice del array */}
-
-        <PaginationButton
-          currentPage={currentPage}
-          cambiarPagina={cambiarPagina}
-          totalDatos={cantidadDatos}
-          cantidadPorPagina={pageSize}
-        />
-      </div>
-    </article>
+    
+    </section>
   );
 };
 const SinStocks = () => {

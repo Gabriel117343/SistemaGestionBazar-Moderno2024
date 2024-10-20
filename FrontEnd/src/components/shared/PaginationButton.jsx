@@ -13,7 +13,7 @@ export const PaginationButton = ({
     return Math.ceil(totalDatos / cantidadPorPagina);
   }, [totalDatos, cantidadPorPagina]);
 
-  console.log({currentPage, totalBotones, totalDatos, cantidadPorPagina});
+  console.log({ currentPage, totalBotones, totalDatos, cantidadPorPagina });
 
   return (
     <div className="pt-1 d-flex gap-1">

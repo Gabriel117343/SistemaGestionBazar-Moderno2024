@@ -2,14 +2,14 @@ import { createApiInstance } from './config/axiosConfig';
 
 const stocksApi = createApiInstance('usuarios/datos/v1/stocks') // la urls por defectos
 
-export const getAllStocks = ({ page, page_size, filtro, proveedorId, orden }) => {
+export const getAllStocks = ({ page, page_size, filtro, proveedor, orden }) => {
   console.log(orden)
   return stocksApi.get('/', {
     params: {
       page: page,
       page_size: page_size,
       filtro: filtro,
-      proveedor: proveedorId,
+      proveedor: proveedor,
       orden: orden
     }
   })
