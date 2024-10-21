@@ -6,7 +6,6 @@ import "./styles.css";
 import { FormEdicion } from "./FormEdicion";
 import { FormRegistroProductos } from "./FormRegistroProductos";
 
-
 // Para la UI
 import CargaDeDatos from "../../../views/CargaDeDatos";
 import { ButtonNew } from "../../shared/ButtonNew";
@@ -18,15 +17,21 @@ import useCategoriaStore from "../../../context/store/categoriaStore";
 ("../../../context/store/categoriaStore");
 
 import CustomModal from "../../../views/CustomModal";
-import { FiltroProductos } from './FiltroProductos'
-import { PaginacionProductos } from './PaginacionProductos'
+import { FiltroProductos } from "./FiltroProductos";
+import { PaginacionProductos } from "./PaginacionProductos";
 
 export const ProductosContenedor = () => {
   const [showModal, setShowModal] = useState(false);
   const [showRegistroModal, setShowRegistroModal] = useState(false); // Nuevo estado para la modal de registro
 
   const {
-    stateProducto: { productos, cantidad, productoSeleccionado, page, page_size },
+    stateProducto: {
+      productos,
+      cantidad,
+      productoSeleccionado,
+      page,
+      page_size,
+    },
     eliminarProductoContext,
     getProductoContext,
     getProductosContext,
@@ -35,10 +40,7 @@ export const ProductosContenedor = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-
   const modalRef = useRef(null); // Referencia para el modal
-
-
 
   useEffect(() => {
     // se ejecuta la funcion cargarCategorias al montar el componente
@@ -91,32 +93,19 @@ export const ProductosContenedor = () => {
     setShowModal(false);
   };
 
-  
-  const cambiarPagina = ({ newPage }) => {
-    const { page_size, incluir_inactivos, filtro, orden } = parametrosDeConsulta();
-
-    // en caso haya un filtro activo, se mantiene de lo contrario se elimina
-    setSearchParams({
-      page: newPage,
-      page_size: page_size,
-      incluir_inactivos: incluir_inactivos, // incluir inactivos siempre se mantiene
-      ...(orden && { orden: orden }),
-      ...(filtro && { filtro: filtro }),
-    });
-  };
-
-  
-
   return (
     <section className="pt-2">
       <div className="row d-flex mb-2">
         <div className="col-md-2">
-          <ButtonNew onClick={() => setShowRegistroModal(true)} >
+          <ButtonNew onClick={() => setShowRegistroModal(true)}>
             Nuevo
           </ButtonNew>
         </div>
         <div className="col-md-10 d-flex align-items-center gap-2">
-          <FiltroProductos setIsLoading={setIsLoading} getProductos={getProductosContext} />
+          <FiltroProductos
+            setIsLoading={setIsLoading}
+            getProductos={getProductosContext}
+          />
         </div>
       </div>
       {isLoading ? (
@@ -132,7 +121,7 @@ export const ProductosContenedor = () => {
           pageSize={page_size}
         />
       )}
-      <PaginacionProductos cantidad={cantidad} cambiarPagina={cambiarPagina} />
+      <PaginacionProductos cantidad={cantidad} />
 
       <CustomModal
         ref={modalRef}

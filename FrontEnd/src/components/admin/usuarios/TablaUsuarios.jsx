@@ -1,7 +1,7 @@
 import { useId } from "react";
 import { MagicMotion } from "react-magic-motion";
 import "./styles.css";
-import { calcularContador } from "@utils/calcularContador";
+import calcularContador from "@utils/calcularContador";
 export const MostrarTabla = ({
   listaUsuarios,
   borrarUsuario,

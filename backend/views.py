@@ -412,16 +412,54 @@ class UsuarioView(viewsets.ModelViewSet): # este método es para listar, crear, 
     # .destroy(): Para eliminar un objeto existente (DELETE)
     # Por lo tanto, puedes realizar operaciones CRUD en el modelo Usuario a través de esta vista.
 
+class ProveedorPagination(PageNumberPagination):
+    page_size_query_param = 'page_size'  # Parámetro de consulta para el tamaño de la página
+    page_size = 10 # Tamaño de la página predeterminado
+
 class ProveedorView(viewsets.ModelViewSet):
     serializer_class = ProveedorSerializer
-    queryset = Proveedor.objects.all() # Esto indica que todas las instancias del modelo Proveedor son el conjunto de datos sobre el que operará esta vista.
+ 
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]  # Cambiado a JWTAuthentication
+    pagination_class = ProveedorPagination  # Usar la clase de paginación personalizada en lugar de la predeterminada en esta vista
+
+    def get_queryset(self): 
+        
+
+        queryset = Proveedor.objects.all()
+        filtro = self.request.query_params.get('filtro', None)
+        orden = self.request.query_params.get('orden', None)
+        if filtro:
+            if filtro.isdigit():
+                queryset = queryset.filter(rut__icontains=filtro)
+            else:
+                queryset = queryset.filter(nombre__icontains=filtro)
+
+        if orden is not None:
+            if orden == 'a-z':
+                queryset = queryset.order_by(Lower('nombre').asc())
+            elif orden == 'z-a':
+                queryset = queryset.order_by(Lower('nombre').desc())
+            elif orden == 'activos':
+                queryset = queryset.filter(estado=True)
+            elif orden == 'inactivos':
+                queryset = queryset.filter(estado=False)
+        return queryset
+
+
     def list(self, request, *args, **kwargs):
         try:
             queryset = self.get_queryset()
+
+            page = self.paginate_queryset(queryset)
+
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                paginated_response = self.get_paginated_response(serializer.data)
+                paginated_response.data['message'] = 'Proveedores obtenidos!'
+                return paginated_response
             serializer = self.get_serializer(queryset, many=True)
-            return Response({'data': serializer.data, 'message': 'Proveedores obtenidos!'}, status=status.HTTP_200_OK)
+       
         except Exception as e:
             return Response({'error': 'Error al obtener los Proveedores'}, status=status.HTTP_400_BAD_REQUEST)
     def destroy(self, request, *args, **kwargs):

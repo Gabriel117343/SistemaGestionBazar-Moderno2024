@@ -76,28 +76,30 @@ export const FiltroSecciones = ({ getSeccionesContext, setIsLoading }) => {
     print();
   };
 
+  const { filtro, orden } = obtenerParametros();
+
   return (
     <section className="col-md-10 d-flex align-items-center gap-2">
-      <label htmlFor="filtro" aria-label="filtro">
+      <label htmlFor="filtro" aria-label="icono lupa">
         <i className="bi bi-search"></i>
       </label>
 
       <InputSearch
         ref={inputFiltroRef}
         id="filtro"
-        // Nota: se usa defaultValue ya que el input no tiene que ser controlado poque utiliza un debounce
-        defaultValue={searchParams.get("filtro") ?? ""}
+        // Nota: se usa defaultValue ya que el input no tiene que ser controlado porque utiliza un debounce
+        defaultValue={filtro ?? ""}
         onChange={(e) => debounceFiltrarPorNombre(e.target.value)}
         placeholder="Buscar por nombre o por número"
       />
       <label htmlFor="orden" aria-label="orden">
         Orden:
       </label>
-      {!searchParams.get("orden") && <i className="bi-bi-arrow-down-up"></i>}
+      {!orden && <i className="bi bi-arrow-repeat"></i>}
       {ordenPorSecciones.map((option) => {
-        const ordenActual = searchParams.get("orden") ?? "";
+        const ordenActual = orden ?? "all";
         if (option.value === ordenActual) {
-          return <i className={option.classIcon}></i>;
+          return <i key={option.value} className={option.classIcon}></i>;
         }
       })}
       <select
@@ -105,9 +107,9 @@ export const FiltroSecciones = ({ getSeccionesContext, setIsLoading }) => {
         name="orden"
         className="form-select w-auto"
         onChange={(e) => handleOrdenarChange(e.target.value)}
-        value={searchParams.get("orden") ?? ""}
+        value={orden ?? "all"}
       >
-        <option value="">Ninguno</option>
+        <option value="all">Ninguno</option>
         {ordenPorSecciones.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}

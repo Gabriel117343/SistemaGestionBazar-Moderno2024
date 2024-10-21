@@ -8,7 +8,10 @@ export const ProveedoresReducer = (stateProveedor, action) => {
     case 'GET_PROVEEDORES':
       return {
         ...stateProveedor,
-        proveedores: payload // guarda los proveedores en el estado
+        proveedores: payload.proveedores,
+        cantidad: payload.cantidad,
+        page: payload.page,
+        page_size: payload.page_size
       }
     case 'GET_PROVEEDOR':
       return {

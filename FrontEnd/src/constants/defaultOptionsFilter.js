@@ -100,6 +100,29 @@ export const ordenPorProductosVenta = [
     classIcon: "bi bi-currency-dollar bi-sort-numeric-down"
   }
 ];
+
+export const ordenPorProveedores = [
+  {
+    value: "a-z",
+    label: "A-Z",
+    classIcon: "bi bi-sort-alpha-up-alt"
+  },
+  {
+    value: "z-a",
+    label: "Z-A",
+    classIcon: "bi bi-sort-alpha-down-alt"
+  },
+  {
+    value: "activos",
+    label: "Activos",
+    classIcon: "bi bi-toggle-on"
+  },
+  {
+    value: "inactivos",
+    label: "Inactivos",
+    classIcon: "bi bi-toggle2-off"
+  }
+]
 export const ordenPorProductos = [
   {
     value: "a-z",

@@ -37,6 +37,17 @@ export const paginaStock = {
   },
 
 };
+export const paginaProveedores = {
+  mandatorios: {
+    page: 1,
+    page_size: 10,
+    incluir_inactivos: true,
+  },
+  opcionales: {
+    orden: "all",
+    filtro: "",
+  },
+}
 export const paginaUsuarios = {
   mandatorios: {
     page: 1,

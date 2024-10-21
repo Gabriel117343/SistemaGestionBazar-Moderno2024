@@ -84,7 +84,6 @@ export const ProductosProvider = ({ children }) => {
       }
       return ({ success: false, message: res.data.error })
     } catch (error) {
-      console.error(error)
       return ({ success: false, message: error.response.data.error })
     }
   }

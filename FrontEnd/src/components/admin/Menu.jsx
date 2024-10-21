@@ -5,7 +5,7 @@ import { LoginContext } from "../../context/LoginContext";
 import { SidebarContext } from "../../context/SidebarContext";
 import "./Menu.css";
 
-import { paginaProductos, paginaPuntoVenta, paginaSecciones, paginaUsuarios, paginaStock } from '@constants/defaultParams';
+import { paginaProductos, paginaPuntoVenta, paginaSecciones, paginaUsuarios, paginaStock, paginaProveedores } from '@constants/defaultParams';
 
 //MENU DE OPCIONES PARA EL ADMINISTRADOR
 export const Menu = ({ children }) => {
@@ -90,7 +90,7 @@ export const Menu = ({ children }) => {
       name: "Mantenimiento",
     },
     {
-      path: "/admin/proveedores?page=1&page_size=10",
+      path: asignarParametrosUrl('/admin/proveedores', paginaProveedores.mandatorios),
       name: "Proveedores",
       icon: <i className="bi bi-truck"></i>,
     },
