@@ -312,7 +312,10 @@ class UsuarioView(viewsets.ModelViewSet): # este método es para listar, crear, 
 
         filtro = self.request.query_params.get('filtro', None)
         orden = self.request.query_params.get('orden', None)
+        incluir_inactivos = self.request.query_params.get('incluir_inactivos', 'false').lower() == 'true'
 
+        if incluir_inactivos is False:
+            queryset = queryset.filter(is_active=True)
         # por rut, nombre, o correo
         if filtro is not None:
             queryset = queryset.filter(
@@ -429,6 +432,9 @@ class ProveedorView(viewsets.ModelViewSet):
         queryset = Proveedor.objects.all()
         filtro = self.request.query_params.get('filtro', None)
         orden = self.request.query_params.get('orden', None)
+        incluir_inactivos = self.request.query_params.get('incluir_inactivos', 'false').lower() == 'true'
+        if not incluir_inactivos:
+            queryset = queryset.filter(estado=True)
         if filtro:
             if filtro.isdigit():
                 queryset = queryset.filter(rut__icontains=filtro)

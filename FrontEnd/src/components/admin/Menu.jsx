@@ -95,7 +95,7 @@ export const Menu = ({ children }) => {
       icon: <i className="bi bi-truck"></i>,
     },
     {
-      path: "/admin/productos?page=1&page_size=10&incluir_inactivos=true",
+      path: asignarParametrosUrl("/admin/productos", paginaProductos.mandatorios),
       name: "Productos",
       icon: <i className="bi bi-bag"></i>,
     },

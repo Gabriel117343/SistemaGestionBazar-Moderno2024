@@ -4,12 +4,13 @@ const usuariosApi = createApiInstance('usuarios/datos/v1/usuarios')
 // Este es el crud
 
 // Authenticación basada en token JWT (Json Web Token) con Django Rest Framework (DRF) y React
-export const getAllUsers = ({ page, page_size, orden, filtro }) => {
+export const getAllUsers = ({ page, page_size, incluir_inactivos, orden, filtro }) => {
   // return axios.get("http://127.0.0.1:8000/usuarios/datos/v1/usuarios/") > anterior
   return usuariosApi.get('/', {
     params:  {
       page: page,
       page_size: page_size,
+      incluir_inactivos,
       orden: orden,
       filtro: filtro 
     }
