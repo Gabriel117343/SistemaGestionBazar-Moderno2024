@@ -91,7 +91,7 @@ export const FiltroUsuarios = ({ setIsLoading, getUsuarios }) => {
 
       <label htmlFor="orden">Orden:</label>
 
-      {!searchParams.get("orden") && <i className="bi bi-arrow-down-up"></i>}
+      {!orden && <i className="bi bi-arrow-down-up"></i>}
       {ordenPorUsuarios.map((option) => {
         const ordenActual = orden ?? "";
         if (option.value === ordenActual) {
@@ -103,9 +103,9 @@ export const FiltroUsuarios = ({ setIsLoading, getUsuarios }) => {
         name="orden"
         className="form-select w-auto"
         onChange={(e) => handleOrdenarChange(e.target.value)}
-        defaultValue={orden}
+        value={orden}
       >
-        <option value="">Ninguno</option>
+        <option value="all">Ninguno</option>
         {ordenPorUsuarios.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}

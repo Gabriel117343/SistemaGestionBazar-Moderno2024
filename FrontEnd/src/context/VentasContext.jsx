@@ -9,6 +9,8 @@ export const VentasProvider = ({ children }) => {
   const initialState = {
     ventas: [],
     cantidad: 0,
+    page: 0,
+    page_size: 0,
     ventaSeleccionada: null,
 
   }
@@ -33,18 +35,27 @@ export const VentasProvider = ({ children }) => {
       return { success: false, message: error.response.data.message }
     }
   }
-  const getVentasContext = async () => {
+  const getVentasContext = async (parametros) => {
+
+
     try {
-      const res = await getAllVentas(TOKEN_ACCESO)
-    
+      const res = await getAllVentas(parametros)
+      
+      console.log({ ventas: res.data})
       if (res.status === 200) {
-        dispatchVenta({ type: 'GET_VENTAS', payload: res.data.results })
-        dispatchVenta({ type: 'SET_CANTIDAD', payload: res.data.count })
+        dispatchVenta({ type: 'GET_VENTAS', payload: {
+          ventas:  res.data.results,
+          cantidad: res.data.count,
+          page: parametros.page,
+          page_size: parametros.page_size
+        } })
+
         return { success: true, message: res.data.message }
       }
       return { success: false, message: res.data.message }
      
     } catch (error) {
+
       return { success: false, message: error.response.data.message }
     }
   }

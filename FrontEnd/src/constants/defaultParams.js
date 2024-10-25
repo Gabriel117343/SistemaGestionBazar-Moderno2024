@@ -7,7 +7,7 @@ export const paginaPuntoVenta = {
     incluir_inactivos: false,
   },
   opcionales: {
-    categoria: 0,
+    categoria: 0, // representa el id de la categoria de productos
     orden: "all",
     seccion: "all",
     filtro: "",
@@ -24,7 +24,17 @@ export const paginaProductos = {
     filtro: "",
   }
 };
-
+export const paginaVentas = {
+  mandatorios: {
+    page: 1,
+    page_size: 10,
+  },
+  opcionales: {
+    vendedor: 0, // representa el id del usuario Vendedor que realizo la venta
+    orden: "all",
+    filtro: "",
+  },
+}
 export const paginaStock = {
   mandatorios: {
     page: 1,

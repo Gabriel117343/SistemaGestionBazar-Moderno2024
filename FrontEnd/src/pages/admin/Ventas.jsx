@@ -1,4 +1,4 @@
-import { FiltroVentas } from '../../components/admin/ventas/FiltroVentas'
+import { VentasContainer } from '../../components/admin/ventas/VentasContainer'
 
 import GradualSpacing from '../../components/shared/magic_ui/GradualSpacing'
 import "./stylepages.css";
@@ -11,7 +11,7 @@ export const Ventas = () => {
           </div>
           <GradualSpacing text="Ventas Realizadas" className='m-0' type='h2'/>
         </div>
-          <FiltroVentas />
+          <VentasContainer />
       </section>
   )
 }

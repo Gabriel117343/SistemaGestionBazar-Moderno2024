@@ -100,7 +100,6 @@ export const TablaUsuariosContenedor = () => {
           <Modal.Title>Editar Usuario</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {/* Aquí va tu formulario de edición. Puedes pasar usuarioSeleccionado como prop a tu formulario */}
           <FormularioEdicion
             usuario={usuarioSeleccionado}
             cerrarModal={cerrarModal}

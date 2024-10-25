@@ -25,7 +25,7 @@ export const UsuariosProvider = ({ children }) => {
 
     try {
       const res = await getAllUsers(props) // res para referenciarse al response del servidor
-      console.log(res)
+      console.log({ respuestaUsuarios: res })
       if (res.status === 200) {
         dispatch({
           type: 'GET_USUARIOS',

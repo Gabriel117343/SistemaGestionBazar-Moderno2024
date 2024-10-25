@@ -68,6 +68,37 @@ export const ordenPorUsuarios = [
   }
 ];
 
+export const ordenPorVentas = [
+
+  {
+    value: "fecha_asc",
+    label: "Ventas recientes",
+    classIcon: "bi bi-calendar"
+  },
+  {
+    value: "fecha_desc",
+    label: "Ventas antiguas",
+    classIcon: "bi bi-calendar"
+  }, {
+    value: "total_asc",
+    label: "Menor total",
+    classIcon: "bi bi-currency-dollar"
+  },
+  {
+    value: "total_desc",
+    label: "Mayor total",
+    classIcon: "bi bi-currency-dollar"
+  }, {
+    value: "vendedor",
+    label: "Vendedor",
+    classIcon: "bi bi-person-badge"
+  }, {
+    value: "cliente",
+    label: "Cliente",
+    classIcon: "bi bi-person-circle"
+  }
+]
+
 export const ordenPorProductosVenta = [
   {
     value: "ventas",

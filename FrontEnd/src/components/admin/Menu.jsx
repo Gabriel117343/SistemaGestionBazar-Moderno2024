@@ -5,7 +5,7 @@ import { LoginContext } from "../../context/LoginContext";
 import { SidebarContext } from "../../context/SidebarContext";
 import "./Menu.css";
 
-import { paginaProductos, paginaPuntoVenta, paginaSecciones, paginaUsuarios, paginaStock, paginaProveedores } from '@constants/defaultParams';
+import { paginaProductos, paginaPuntoVenta, paginaSecciones, paginaUsuarios, paginaStock, paginaProveedores, paginaVentas } from '@constants/defaultParams';
 
 //MENU DE OPCIONES PARA EL ADMINISTRADOR
 export const Menu = ({ children }) => {
@@ -77,7 +77,7 @@ export const Menu = ({ children }) => {
       icon: <i className="bi bi-box"></i>,
     },
     {
-      path: "/admin/venta?page=1&page_size=10",
+      path: asignarParametrosUrl("/admin/ventas", paginaVentas.mandatorios),
       name: "Ventas",
       icon: <i className="bi bi-cart4"></i>,
     },

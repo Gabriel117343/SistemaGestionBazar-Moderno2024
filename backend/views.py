@@ -961,20 +961,46 @@ class ClienteView(viewsets.ModelViewSet):
             return Response({'error': 'No se ha podido crear el Cliente'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': 'Error al crear el Cliente'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class VentaPagination(PageNumberPagination):
+    page_size_query_param = 'page_size'  # Parámetro de consulta para el tamaño de la página
+    page_size = 10 # Tamaño de la página predeterminado
+
 class VentaView(viewsets.ModelViewSet):
     serializer_class = VentaSerializer
-    queryset = Venta.objects.all()
+
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
-
+    pagination_class = VentaPagination
     def get_queryset(self):
         queryset = Venta.objects.select_related('cliente', 'vendedor')
         
         # Filtro por nombre del vendendor si se proporciona en la URL o el nombre del cliente
+        vendedor = self.request.query_params.get('vendedor', None)
         filtro = self.request.query_params.get('filtro', None)
-        if filtro: 
+        orden = self.request.query_params.get('orden', None)
+        if vendedor is not None:
+            queryset = queryset.filter(vendedor__nombre__icontains=vendedor)
+
+        if filtro is not None:
             # Q permite combinar múltiples condiciones de filtro usando operadores lógicos como AND, OR, y NOT, y se utiliza para construir consultas complejas 
-            queryset = queryset.filter(Q(cliente__nombre__icontains=filtro) | Q(vendedor__nombre__icontains=filtro))
+            queryset = queryset.filter(Q(cliente__nombre__icontains=filtro))
+        
+        if orden is not None:
+
+            if orden == "fecha_asc":
+                queryset = queryset.order_by('-fecha_venta')
+            elif orden == "fecha_desc":
+                queryset = queryset.order_by('fecha_venta')
+            elif orden == "total_asc":
+                queryset = queryset.order_by('total')
+            elif orden == "total_desc":
+                queryset = queryset.order_by('-total')
+            elif orden == "vendedor":
+                queryset = queryset.order_by('vendedor__nombre')
+            elif orden == "cliente":
+                queryset = queryset.order_by('cliente__nombre')
+
         return queryset
     def list(self, request, *args, **kwargs):
         try:

@@ -1,131 +1,162 @@
-import { useContext, useEffect, useState, useRef } from "react";
-import { VentasContext } from "../../../context/VentasContext";
-import CargaDeDatos from "../../../views/CargaDeDatos";
+import { useEffect, useState, useRef, useContext } from "react";
+
 import { toast } from "react-hot-toast";
 
-import { debounce } from 'lodash'; 
-import { ValidarVentas } from "./ListaVentas";
-import { InputSearch } from '../../shared/InputSearch'
-import { ButtonPrint, ButtonRefresh } from '../../shared/ButtonSpecialAccion'
-export const FiltroVentas = () => {
-  const {
-    stateVenta: { ventas },
-    getVentasContext,
-  } = useContext(VentasContext);
+import { debounce } from "es-toolkit";
 
-  const [ventasFiltradas, setVentasFiltradas] = useState(ventas);
-  const [isLoading, setIsLoading] = useState(true);
+import { InputSearch } from "../../shared/InputSearch";
+import { ButtonPrint, ButtonRefresh } from "../../shared/ButtonSpecialAccion";
+import { useMagicSearchParams } from "../../../hooks/useMagicSearchParams";
+import { ordenPorVentas } from "@constants/defaultOptionsFilter";
+import { paginaVentas } from "@constants/defaultParams";
+
+import { Modal } from "react-bootstrap";
+import { SelectVendedor } from './vendedores/SelectVendedor'
+import { UsuariosContext } from '../../../context/UsuariosContext'
+
+export const FiltroVentas = ({ ventas, setIsLoading, getVentas }) => {
+  const { mandatorios, opcionales } = paginaVentas;
+  const {
+    searchParams,
+    actualizarParametros,
+    limpiarParametros,
+    obtenerParametros,
+  } = useMagicSearchParams({ mandatory: mandatorios, optional: opcionales });
+
+
+  const { stateUsuario: { usuarioSeleccionado } } = useContext(UsuariosContext);
+  const [showModal, setShowModal] = useState(false);
 
   const inputRef = useRef(null);
-  const selectRef = useRef(null);
-
   useEffect(() => {
     toast.loading("Cargando ventas...", { id: "loading" });
     const cargarVentas = async () => {
-      // se utiliza async/await en lugar de promesas para esperar la respuesta y obtener el mensaje
-      // hace el código más limpio, fácil de entender y rápido
-      const { success, message } = await getVentasContext();
+      const parametros = obtenerParametros();
+      const { success, message } = await getVentas(parametros);
+
       if (!success) {
         toast.error(
-          message ?? "Ha ocurrido un error inesperado al cargar las ventas", { id: "loading" }
+          message ?? "Ha ocurrido un error inesperado al cargar las ventas",
+          { id: "loading" }
         );
       } else {
         setIsLoading(false);
-        toast.success(message ?? "Ventas cargadas correctamente", { id: "loading", duration: 2000 });
+        toast.success(message ?? "Ventas cargadas correctamente", {
+          id: "loading",
+          duration: 2000,
+        });
       }
     };
     cargarVentas();
-  }, []);
-  const vendedoresConVentas = ventas?.reduce((acc, venta) => {
-    // Asegurarse de que venta.vendedor exista y tenga una propiedad id
-    if (venta.vendedor && venta.vendedor.id) {
-      // Buscar si el vendedor ya está en el acumulador
-      const vendedorExistente = acc.find((v) => v.id === venta.vendedor.id);
-      if (!vendedorExistente) {
-        // Si no está, añadir el objeto del vendedor al acumulador
-        acc.push({
-          id: venta.vendedor.id,
-          nombre: venta.vendedor.nombre,
-          apellido: venta.vendedor.apellido,
-        });
-      }
-    }
-    return acc;
-  }, []);
- 
-  const filtroCliente = (filtro) => {
-    selectRef.current.value = "all";
+  }, [searchParams]);
 
-    const ventasFiltradas = ventas.filter((venta) =>
-      venta.cliente.nombre.toLowerCase().includes(filtro.toLowerCase()) || venta.cliente.apellido.toLowerCase().includes(filtro.toLowerCase()) || venta.cliente.rut.toLowerCase().includes(filtro.toLowerCase())
-    );
-    
-    setVentasFiltradas(ventasFiltradas);
-  
+
+  const cambiarFiltro = (filtro) => {
+    const newFiltro = filtro.trim().toLowerCase();
+    actualizarParametros({ newParams: { filtro: newFiltro, page: 1 } });
   };
+  const debounceCambiarFiltro = debounce(cambiarFiltro, 400);
+
   const filtrarPorVendedor = (id) => {
     inputRef.current.value = "";
-    console.log(id)
-    if (id === "all") {
-      setVentasFiltradas(ventas);
-      return;
-    }
-    const ventasFiltradas = ventas.filter((venta) => venta.vendedor.id === parseInt(id));
-    setVentasFiltradas(ventasFiltradas);
-  }
+
+    const newSearch = { page: 1, vendedor: id };
+    actualizarParametros({
+      newParams: newSearch,
+      keepParams: { filtro: false }, // no se mantiene el filtro
+    });
+  };
+  const handleOrdenarChange = (selectedOption) => {
+    const newSearch = { page: 1, orden: selectedOption };
+    inputRef.current.value = "";
+    actualizarParametros({
+      newParams: newSearch,
+      keepParams: { filtro: false },
+    });
+  };
   const refrescarTabla = async () => {
-    const { success, message } = await getVentasContext(ventas);
+    const parametros = obtenerParametros();
+    const { success, message } = await getVentas(parametros);
     if (!success) {
       toast.error(
         message ?? "Ha ocurrido un error inesperado al cargar las ventas"
       );
     } else {
       setIsLoading(false);
-      toast.success(message ?? 'Tabla actualizada correctamente');
+      toast.success(message ?? "Tabla actualizada correctamente");
     }
   };
   const debounceRefrescarTabla = debounce(refrescarTabla, 500);
   const imprimirTabla = () => {
     print();
   };
-  const filtroActivo = selectRef.current?.value !== "all" || inputRef.current?.value?.length > 0;
+
+  const { vendedor, orden, filtro } = obtenerParametros({ convertir: true });
+
+  const vendedorSeleccionado = usuarioSeleccionado
   return (
     <section>
-      <div className="d-flex align-items-center mb-2 column">
-        <div className="col-md-3 pe-4">
-          <label htmlFor="vendedor">Vendedor</label>
-          <select ref={selectRef} id="vendedor" className="form-select" onChange={(e) => filtrarPorVendedor(e.target.value)}>
-            <option value="all">Todos</option>
-            {vendedoresConVentas.map((vendedor) => (
-              <option key={vendedor.id} value={vendedor.id}>
-                {vendedor.nombre} {vendedor.apellido}
+      <div className="d-flex row align-items-center mb-2 ">
+        <div className="col-md-3 d-flex align-items-center gap-2">
+
+          {}
+          <label htmlFor="vendedor">Vendedor:</label>
+          <div
+            className="form-select"
+            onClick={() => setShowModal(true)}
+            style={{ cursor: "pointer" }}
+          >
+            {vendedorSeleccionado ? vendedorSeleccionado.nombre : "Elegir Vendedor"}
+          </div>
+        </div>
+        <div className="col-md-9 d-flex align-items-center gap-2">
+          <label htmlFor="filtro" aria-label="Buscar">
+            <i className="bi bi-search pe-1 pb-2"></i>
+          </label>
+          <InputSearch
+            ref={inputRef}
+            id="filtro" 
+            onChange={(e) => debounceCambiarFiltro(e.target.value)}
+            placeholder="Buscar por cliente"
+            defaultValue={filtro}
+          />
+          <label htmlFor="orden">Orden:</label>
+
+          {!orden && <i className="bi bi-arrow-down-up"></i>}
+          {ordenPorVentas.map((option) => {
+            const ordenActual = orden ?? "";
+            if (option.value === ordenActual) {
+              return <i key={option.value} className={option.classIcon} />;
+            }
+          })}
+          <select
+            id="orden"
+            name="orden"
+            className="form-select w-auto"
+            onChange={(e) => handleOrdenarChange(e.target.value)}
+            value={orden}
+          >
+            <option value="all">Ninguno</option>
+            {ordenPorVentas.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
               </option>
             ))}
           </select>
-        </div>
-        <div className="col-md-9 d-flex align-items-end gap-1">
-          <i className="bi bi-search pe-1 pb-2"></i>
-          <div style={{ width: "100%" }}>
-            <label htmlFor="filtro">Buscar</label>
-            <InputSearch
-              ref={inputRef}
-              id="filtro"
-              onChange={e => filtroCliente(e.target.value)}
-              placeholder="Buscar por cliente"
-            />
-          </div>
           <ButtonRefresh onClick={debounceRefrescarTabla} />
           <ButtonPrint onClick={imprimirTabla} />
-
         </div>
       </div>
-      {isLoading ? (
-        <CargaDeDatos />
-      ) : (
-        <ValidarVentas ventas={filtroActivo ? 
-          ventasFiltradas : ventas
-        } />
-      )}
+
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton className="bg-info">
+          <Modal.Title>Seleccionar Vendedor</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {/** Nota: Un Administrador también podría actuar como Vendedor */}
+          <SelectVendedor  ventas={ventas} setShowModal={setShowModal}/>
+        </Modal.Body>
+      </Modal>
     </section>
   );
 };
