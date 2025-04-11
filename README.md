@@ -165,4 +165,5 @@ Este proyecto se encuentra bajo la licencia `MIT`. Consulta el archivo LICENSE p
   <img src="https://github.com/user-attachments/assets/1590d566-f378-4447-ab93-194a995dab32" alt="Imagen del Sistema" width="250" style="margin:10px;" />
   <img src="https://github.com/user-attachments/assets/f4d163d8-5e81-4d76-8dfd-75864b69d4b9" alt="Imagen del Sistema" width="250" style="margin:10px;" />
   <img src="https://github.com/user-attachments/assets/65cf2687-e1e2-46c6-a54a-5f3fe3c35b5c" alt="Imagen del Sistema" width="250" style="margin:10px;" />
+  <img src="https://github.com/user-attachments/assets/6027a10c-3b20-45c5-b74a-86f66e490ebf" alt="Imagen del Sistema" width="250" style="margin:10px;" />
 </div>
