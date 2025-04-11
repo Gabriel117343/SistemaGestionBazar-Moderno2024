@@ -9,6 +9,9 @@ export const ItemSelectVendedor = ({ vendedor, contador, totalVentas }) => {
       </td>
       <td>{vendedor.rut}</td>
       <td align="center">{totalVentas}</td>
+      <td>
+        <button className="btn btn-primary btn-sm">Seleccionar</button>
+      </td>
     </tr>
   );
 };

@@ -116,8 +116,6 @@ export const Menu = ({ children }) => {
     },
   ];
 
-
-
   return (
     <div className="contenedor">
       <aside className={`sidebar `}>

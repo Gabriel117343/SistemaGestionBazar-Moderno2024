@@ -8,7 +8,7 @@ import { InputSearch } from "../../../shared/InputSearch";
 import { debounce } from "es-toolkit";
 import { ItemSelectVendedor } from "./ItemSelectVendedor";
 import calcularContador from "@utils/calcularContador";
-import { PaginacionVendedores } from './PaginacionVendedores'
+import { PaginacionVendedores } from "./PaginacionVendedores";
 
 export const SelectVendedor = ({ ventas, setShowModal }) => {
   const {
@@ -20,10 +20,11 @@ export const SelectVendedor = ({ ventas, setShowModal }) => {
   const inputRef = useRef(null);
 
   const TIEMPO_ESPERA = 1000; // milisegundos
-  console.log({ usuarios })
+  console.log({ usuarios });
   async function cargarUsuarios({ page } = {}) {
     // el { page } = {} indica que page es un parametro opcional y si no se pasa se asigna un objeto vacio para que no sea undefined y de error
 
+    console.log({ filtroVendedor });
     const { success, message } = await getUsuarios({
       ...paginaUsuarios.mandatorios,
       ...(page ? { page } : {}), // si hay un page se agrega al objeto, sino se mantienen los parametros por defecto
@@ -40,22 +41,15 @@ export const SelectVendedor = ({ ventas, setShowModal }) => {
 
   useEffect(() => {
     cargarUsuarios();
-  }, []);
+  }, [filtroVendedor]);
 
   const cambiarPagina = ({ newPage }) => {
-
     cargarUsuarios({ page: newPage });
-
-  }
+  };
 
   const filtrarVendedores = (filtro) => {
     const filtroLimpio = filtro.trim().toLowerCase();
-
-    if (filtroLimpio.length > 0) {
-      setFiltroVendedor(filtroLimpio);
-     
-    }
-    cargarUsuarios()
+    setFiltroVendedor(filtroLimpio);
   };
   const debounceFiltrarVendedores = debounce(filtrarVendedores, 400);
 
@@ -98,6 +92,7 @@ export const SelectVendedor = ({ ventas, setShowModal }) => {
             <th>Vendedor</th>
             <th>Rut</th>
             <th>Total Ventas</th>
+            <th>Opciones</th>
           </tr>
         </thead>
         <tbody>
@@ -111,7 +106,7 @@ export const SelectVendedor = ({ ventas, setShowModal }) => {
                 pageSize: page_size,
                 currentPage: page,
               });
-              console.log({ page, page_size, index, cantidad })
+              console.log({ page, page_size, index, cantidad });
               return (
                 <ItemSelectVendedor
                   key={vendedor.id}
@@ -126,9 +121,12 @@ export const SelectVendedor = ({ ventas, setShowModal }) => {
         </tbody>
       </table>
 
-      <PaginacionVendedores page={page} cambiarPagina={cambiarPagina} cantidad={cantidad} pageSize={page_size}/>
-
-
+      <PaginacionVendedores
+        page={page}
+        cambiarPagina={cambiarPagina}
+        cantidad={cantidad}
+        pageSize={page_size}
+      />
     </section>
   );
 };

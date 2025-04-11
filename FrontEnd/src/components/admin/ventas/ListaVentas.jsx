@@ -1,15 +1,17 @@
-import { useId } from 'react'
+import { useId } from "react";
 import { MagicMotion as Animar } from "react-magic-motion";
 
-import calcularContador from '@utils/calcularContador'
-import { ItemVenta } from './ItemVenta'
+import calcularContador from "@utils/calcularContador";
+import { ItemVenta } from "./ItemVenta";
 const ListaVentas = ({ ventas, currentPage, pageSize }) => {
-
-  const id = useId()
+  const id = useId();
 
   return (
     <section>
-      <table id={`${id}-tabla-ventas`} className="table table-striped table-hover">
+      <table
+        id={`${id}-tabla-ventas`}
+        className="table table-striped table-hover"
+      >
         <thead>
           <tr>
             <th>#</th>
@@ -25,9 +27,12 @@ const ListaVentas = ({ ventas, currentPage, pageSize }) => {
         </thead>
         <tbody>
           <Animar>
-            {ventas?.map((venta, index) =>  {
-
-              const contador = calcularContador({ currentPage, pageSize, index })
+            {ventas?.map((venta, index) => {
+              const contador = calcularContador({
+                currentPage,
+                pageSize,
+                index,
+              });
               return (
                 <ItemVenta key={venta.id} contador={contador} venta={venta} />
               );
@@ -35,7 +40,6 @@ const ListaVentas = ({ ventas, currentPage, pageSize }) => {
           </Animar>
         </tbody>
       </table>
-    
     </section>
   );
 };
